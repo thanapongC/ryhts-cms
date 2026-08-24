@@ -5,6 +5,13 @@ module.exports = [
   'strapi::cors',
   'strapi::poweredBy',
   'strapi::query',
+  {
+    name: 'global::locale',
+    config: {
+      locales: ['th', 'en'],
+      defaultLocale: 'th',
+    },
+  },
   'strapi::body',
   'strapi::session',
   'strapi::favicon',

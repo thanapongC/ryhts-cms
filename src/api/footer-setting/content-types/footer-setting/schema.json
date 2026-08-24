@@ -1,0 +1,32 @@
+{
+  "kind": "singleType",
+  "collectionName": "footer_settings",
+  "info": {
+    "singularName": "footer-setting",
+    "pluralName": "footer-settings",
+    "displayName": "Footer Setting",
+    "description": "Footer configuration - copyright, social links"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "copyright_text": {
+      "type": "string"
+    },
+    "social_links": {
+      "type": "json"
+    },
+    "footer_links": {
+      "type": "json"
+    },
+    "newsletter_text": {
+      "type": "text"
+    }
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "kind": "singleType",
+  "collectionName": "privacy_policies",
+  "info": {
+    "singularName": "privacy-policy",
+    "pluralName": "privacy-policies",
+    "displayName": "Privacy Policy",
+    "description": "Privacy policy page content - PDPA-compliant privacy disclosure"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "default": "Privacy Policy"
+    },
+    "description": {
+      "type": "text",
+      "description": "Short summary of the privacy policy"
+    },
+    "content": {
+      "type": "richtext",
+      "description": "Full privacy policy content (PDPA-compliant sections)"
+    },
+    "effective_date": {
+      "type": "datetime",
+      "description": "Date the privacy policy took effect"
+    },
+    "last_updated": {
+      "type": "datetime",
+      "description": "When the privacy policy was last updated"
+    },
+    "meta_title": {
+      "type": "string"
+    },
+    "meta_description": {
+      "type": "text",
+      "maxLength": 160
+    },
+    "og_image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
+    }
+  }
+}

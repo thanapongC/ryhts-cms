@@ -20,7 +20,32 @@ const deniedExecutableTypes = [
   'application/x-mach-binary',
 ];
 
-module.exports = () => ({
+module.exports = ({ env }) => ({
+  email: {
+    config: {
+      provider: 'nodemailer',
+      providerOptions: {
+        host: env('SMTP_HOST', 'smtp.gmail.com'),
+        port: env.int('SMTP_PORT', 465),
+        secure: true,
+        auth: {
+          user: env('SMTP_USERNAME'),
+          pass: env('SMTP_PASSWORD'),
+        },
+      },
+      settings: {
+        defaultFrom: env('SMTP_FROM', 'info@ryhts.com'),
+        defaultReplyTo: env('SMTP_REPLY_TO', 'info@ryhts.com'),
+      },
+    },
+  },
+  i18n: {
+    enabled: true,
+    config: {
+      defaultLocale: 'th',
+      locales: ['th', 'en'],
+    },
+  },
   'users-permissions': {
     config: {
       jwtManagement: 'refresh',

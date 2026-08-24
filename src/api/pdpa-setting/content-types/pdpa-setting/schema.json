@@ -1,0 +1,104 @@
+{
+  "kind": "singleType",
+  "collectionName": "pdpa_settings",
+  "info": {
+    "singularName": "pdpa-setting",
+    "pluralName": "pdpa-settings",
+    "displayName": "PDPA Setting",
+    "description": "PDPA compliance settings - DPO, consent banner, data retention"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "company_name": {
+      "type": "string",
+      "required": true,
+      "description": "Company name as registered under PDPA"
+    },
+    "dpo_name": {
+      "type": "string",
+      "description": "Data Protection Officer name"
+    },
+    "dpo_email": {
+      "type": "email",
+      "description": "DPO contact email"
+    },
+    "dpo_phone": {
+      "type": "string",
+      "description": "DPO contact phone"
+    },
+    "dpo_position": {
+      "type": "string",
+      "description": "DPO job title or position"
+    },
+    "data_retention_days": {
+      "type": "integer",
+      "default": 365,
+      "min": 1,
+      "description": "Default data retention period in days"
+    },
+    "data_retention_description": {
+      "type": "text",
+      "description": "Explanation of data retention policy"
+    },
+    "consent_banner_title": {
+      "type": "string",
+      "description": "Cookie consent banner heading text"
+    },
+    "consent_banner_description": {
+      "type": "text",
+      "description": "Cookie consent banner description text"
+    },
+    "consent_accept_all_text": {
+      "type": "string",
+      "default": "Accept All",
+      "description": "Accept all cookies button text"
+    },
+    "consent_reject_all_text": {
+      "type": "string",
+      "default": "Reject All",
+      "description": "Reject all cookies button text"
+    },
+    "consent_manage_text": {
+      "type": "string",
+      "default": "Manage Preferences",
+      "description": "Manage preferences button text"
+    },
+    "consent_save_text": {
+      "type": "string",
+      "default": "Save Preferences",
+      "description": "Save preferences button text"
+    },
+    "privacy_policy_url": {
+      "type": "string",
+      "description": "Link to full privacy policy page"
+    },
+    "cookie_policy_url": {
+      "type": "string",
+      "description": "Link to full cookie policy page"
+    },
+    "rights_text": {
+      "type": "richtext",
+      "description": "Data subject rights explanation (access, rectify, erase, etc.)"
+    },
+    "third_parties_text": {
+      "type": "richtext",
+      "description": "Third-party data sharing disclosure"
+    },
+    "contact_text": {
+      "type": "text",
+      "description": "Instructions for contacting DPO or exercising data rights"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Enable/disable PDPA compliance features on frontend"
+    }
+  }
+}
