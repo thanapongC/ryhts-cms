@@ -1,0 +1,30 @@
+{
+  "collectionName": "components_navigation_nav_child_item",
+  "info": {
+    "displayName": "Nav Child Item",
+    "description": "A nested navigation link inside a dropdown menu"
+  },
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true,
+      "description": "Link text"
+    },
+    "url": {
+      "type": "string",
+      "description": "Link URL (manual fallback)"
+    },
+    "product_page": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::product.product",
+      "description": "Link to a Product Page (preferred over manual URL)"
+    },
+    "target": {
+      "type": "enumeration",
+      "enum": ["_self", "_blank"],
+      "default": "_self",
+      "description": "Link target (_self or _blank)"
+    }
+  }
+}

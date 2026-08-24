@@ -1,0 +1,33 @@
+{
+  "collectionName": "components_shared_footer_labels",
+  "info": {
+    "displayName": "Footer Labels",
+    "description": "Shared footer heading and link labels"
+  },
+  "attributes": {
+    "contact_heading": {
+      "type": "string",
+      "description": "Contact section heading in footer"
+    },
+    "links_heading": {
+      "type": "string",
+      "description": "Links section heading in footer"
+    },
+    "about_heading": {
+      "type": "string",
+      "description": "About section heading in footer"
+    },
+    "newsletter_heading": {
+      "type": "string",
+      "description": "Newsletter section heading"
+    },
+    "newsletter_placeholder": {
+      "type": "string",
+      "description": "Newsletter email input placeholder"
+    },
+    "newsletter_button": {
+      "type": "string",
+      "description": "Newsletter subscribe button text"
+    }
+  }
+}

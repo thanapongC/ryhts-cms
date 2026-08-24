@@ -1,0 +1,55 @@
+{
+  "kind": "singleType",
+  "collectionName": "navigations",
+  "info": {
+    "singularName": "navigation",
+    "pluralName": "navigations",
+    "displayName": "Site - Navigation",
+    "description": "Site navigation menus and shared navigation labels"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "description": "Navigation menu name"
+    },
+    "header_items": {
+      "type": "component",
+      "repeatable": true,
+      "component": "navigation.nav-item",
+      "description": "Header navigation menu items"
+    },
+    "footer_sections": {
+      "type": "component",
+      "repeatable": true,
+      "component": "navigation.footer-section",
+      "description": "Footer navigation sections"
+    },
+    "footer_labels": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.footer-labels",
+      "description": "Footer heading and link labels"
+    },
+    "product_names": {
+      "type": "component",
+      "repeatable": true,
+      "component": "navigation.product-name",
+      "description": "Product name mappings for navigation display"
+    },
+    "button_labels": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.button-labels",
+      "description": "Shared CTA and action labels"
+    }
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "kind": "singleType",
+  "collectionName": "contact_floatings",
+  "info": {
+    "singularName": "contact-floating",
+    "pluralName": "contact-floatings",
+    "displayName": "Site - Contact Floating",
+    "description": "Floating contact widget settings"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "is_enabled": {
+      "type": "boolean",
+      "default": true,
+      "description": "Enable/disable the floating contact widget"
+    },
+    "button_label": {
+      "type": "string",
+      "description": "Floating button label"
+    },
+    "panel_title": {
+      "type": "string",
+      "description": "Contact panel heading"
+    },
+    "panel_description": {
+      "type": "text",
+      "description": "Contact panel description"
+    },
+    "close_label": {
+      "type": "string",
+      "description": "Close button label"
+    },
+    "actions": {
+      "type": "component",
+      "repeatable": true,
+      "component": "contact-floating.contact-action",
+      "description": "Contact action buttons (phone, email, line, etc.)"
+    }
+  }
+}

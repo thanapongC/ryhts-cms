@@ -27,12 +27,15 @@ import {
   type Category,
   type CompanyInfo,
   type ContactPage,
+  type ContactFloating,
   type CookieCategory,
   type CookiePolicy,
+  type CookieSetting,
   type Faq,
   type FooterSetting,
   type FreeTrial,
   type GlobalSetting,
+  type Navigation,
   type Partner,
   type PdpaSetting,
   type PrivacyPolicy,
@@ -56,6 +59,12 @@ import {
   type FormLabel,
   type TrialFeature,
   type FaqItem,
+  type CookieConsentSettings,
+  type ContactAction,
+  type NavItem,
+  type NavChildItem,
+  type FooterLabels,
+  type ButtonLabels,
 } from "./strapi";
 
 import {
@@ -74,6 +83,9 @@ import {
   mockTermsOfService,
   mockCookiePolicy,
   mockCookieCategories,
+  mockCookieSetting,
+  mockContactFloating,
+  mockNavigation,
 } from "./mock-data";
 
 // ─── Re-export helpers for backward compat ──────────────────────────
@@ -120,6 +132,15 @@ export {
   type FormLabel,
   type TrialFeature,
   type FaqItem,
+  type CookieConsentSettings,
+  type ContactAction,
+  type NavItem,
+  type NavChildItem,
+  type FooterLabels,
+  type ButtonLabels,
+  type CookieSetting,
+  type ContactFloating,
+  type Navigation,
 };
 
 // ─── Populate Lists (integate-rule.md §3) ───────────────────────────
@@ -129,11 +150,18 @@ export {
 
 const POPULATE = {
   siteSetting: ["site_logo", "site_favicon", "stats"],
-  globalSetting: ["seoConfig", "seoConfig.default_og_image"],
+  globalSetting: [
+    "site_logo",
+    "contact_info",
+    "stats",
+    "seoConfig",
+    "seoConfig.default_og_image",
+  ],
   footerSetting: [
+    "stats",
     "footer_sections",
     "footer_sections.links",
-    "footer_sections.links.product",
+    "footer_sections.links.product_page",
     "legal_links",
   ],
   companyInfo: ["contact_info"],
@@ -279,12 +307,44 @@ export async function getCookiePolicy(locale: Locale = "th") {
     populate: [...POPULATE.cookiePolicy],
   });
   return res.data;
-}
-
-export async function getPdpaSetting(locale: Locale = "th") {
+}export async function getPdpaSetting(locale: Locale = "th") {
   const res = await fetchStrapiSingle<PdpaSetting>("pdpa-setting", {
     locale,
     populate: [...POPULATE.pdpaSetting],
+  });
+  return res.data;
+}
+
+export async function getCookieSetting(locale: Locale = "th") {
+  const res = await fetchStrapiSingle<CookieSetting>("cookie-setting", {
+    locale,
+    populate: ["settings"],
+  });
+  return res.data;
+}
+
+export async function getContactFloating(locale: Locale = "th") {
+  const res = await fetchStrapiSingle<ContactFloating>("contact-floating", {
+    locale,
+    populate: ["actions"],
+  });
+  return res.data;
+}
+
+export async function getNavigation(locale: Locale = "th") {
+  const res = await fetchStrapiSingle<Navigation>("navigation", {
+    locale,
+    populate: [
+      "header_items",
+      "header_items.children",
+      "header_items.children.product_page",
+      "footer_sections",
+      "footer_sections.links",
+      "footer_sections.links.product_page",
+      "footer_labels",
+      "product_names",
+      "button_labels",
+    ],
   });
   return res.data;
 }
@@ -584,4 +644,16 @@ export async function safeGetFaq(locale: Locale = "th") {
     () => getFaq(locale),
     [] as Faq[],
   );
+}
+
+export async function safeGetCookieSetting(locale: Locale = "th") {
+  return safeFetch(() => getCookieSetting(locale), mockCookieSetting);
+}
+
+export async function safeGetContactFloating(locale: Locale = "th") {
+  return safeFetch(() => getContactFloating(locale), mockContactFloating);
+}
+
+export async function safeGetNavigation(locale: Locale = "th") {
+  return safeFetch(() => getNavigation(locale), mockNavigation);
 }

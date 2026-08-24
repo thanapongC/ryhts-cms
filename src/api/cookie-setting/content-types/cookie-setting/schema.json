@@ -1,0 +1,26 @@
+{
+  "kind": "singleType",
+  "collectionName": "cookie_settings",
+  "info": {
+    "singularName": "cookie-setting",
+    "pluralName": "cookie-settings",
+    "displayName": "Site - Cookie Settings",
+    "description": "Cookie consent banner labels and preference copy"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "settings": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.cookie-consent-settings",
+      "description": "Consent UI labels and descriptions"
+    }
+  }
+}

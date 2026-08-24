@@ -1,0 +1,77 @@
+{
+  "collectionName": "components_shared_cookie_consent_settings",
+  "info": {
+    "displayName": "Cookie Consent Settings",
+    "description": "Cookie consent banner labels, descriptions, and action text"
+  },
+  "attributes": {
+    "title": {
+      "type": "string",
+      "description": "Consent banner heading text"
+    },
+    "description": {
+      "type": "text",
+      "description": "Consent banner description text"
+    },
+    "necessary_label": {
+      "type": "string",
+      "description": "Label for necessary cookies category"
+    },
+    "necessary_description": {
+      "type": "text",
+      "description": "Description for necessary cookies category"
+    },
+    "analytics_label": {
+      "type": "string",
+      "description": "Label for analytics cookies category"
+    },
+    "analytics_description": {
+      "type": "text",
+      "description": "Description for analytics cookies category"
+    },
+    "marketing_label": {
+      "type": "string",
+      "description": "Label for marketing cookies category"
+    },
+    "marketing_description": {
+      "type": "text",
+      "description": "Description for marketing cookies category"
+    },
+    "accept_all_label": {
+      "type": "string",
+      "default": "Accept All",
+      "description": "Accept all cookies button text"
+    },
+    "reject_all_label": {
+      "type": "string",
+      "default": "Reject All",
+      "description": "Reject all cookies button text"
+    },
+    "manage_label": {
+      "type": "string",
+      "default": "Manage Preferences",
+      "description": "Manage preferences button text"
+    },
+    "save_label": {
+      "type": "string",
+      "default": "Save Preferences",
+      "description": "Save preferences button text"
+    },
+    "privacy_policy_label": {
+      "type": "string",
+      "description": "Privacy policy link text"
+    },
+    "cookie_policy_label": {
+      "type": "string",
+      "description": "Cookie policy link text"
+    },
+    "always_on_label": {
+      "type": "string",
+      "description": "Label for always-on badge on required cookies"
+    },
+    "learn_more_label": {
+      "type": "string",
+      "description": "Learn more link text"
+    }
+  }
+}

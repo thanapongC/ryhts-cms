@@ -23,6 +23,9 @@ import type {
   TermsOfService,
   CookiePolicy,
   CookieCategory,
+  CookieSetting,
+  ContactFloating,
+  Navigation,
 } from "./strapi";
 
 
@@ -280,6 +283,16 @@ export const mockSiteSetting: SiteSetting = {
 };
 
 export const mockGlobalSetting: GlobalSetting = {
+  site_name: "RYHTS",
+  site_logo: { id: 501, name: "logo.png", url: IMG.logo, alternativeText: "Ryhts Ribbon" },
+  contact_info: [
+    { label: "Phone", value: "094-624-6649", icon: "fa-phone", url: "tel:0946246649" },
+    { label: "Email", value: "info@ryhts.com", icon: "fa-envelope", url: "mailto:info@ryhts.com" },
+  ],
+  stats: [
+    { label: "Customers", value: "257+", icon: "fa-users" },
+    { label: "Products", value: "100+", icon: "fa-box" },
+  ],
   seoConfig: {
     site_url: "https://ryhts.com",
     site_name: "Ryhts Ribbon",
@@ -293,7 +306,18 @@ export const mockGlobalSetting: GlobalSetting = {
 };
 
 export const mockFooterSetting: FooterSetting = {
-  copyright_text: `© ${new Date().getFullYear()} Ryhts Ribbon. All rights reserved.`,
+  cta_badge: "ติดต่อเรา",
+  cta_title: "พร้อมให้บริการ",
+  cta_description: "สอบถามข้อมูลสินค้าและบริการจากทีมงาน Ryhts",
+  primary_cta_label: "ติดต่อฝ่ายขาย",
+  primary_cta_url: "/contact",
+  secondary_cta_label: "โทรเลย",
+  secondary_cta_url: "tel:0946246649",
+  stats: [
+    { label: "Customers", value: "257+" },
+    { label: "Products", value: "100+" },
+  ],
+  company_description: "Ryhts Ribbon ผู้จำหน่ายริบบอนสำหรับเครื่องพิมพ์บาร์โค้ดชั้นนำ",
   social_links: {
     facebook: "https://facebook.com/ryhts",
     line: "https://line.me/ti/p/@ryhts",
@@ -304,7 +328,7 @@ export const mockFooterSetting: FooterSetting = {
     { label: "Terms of Service", url: "/terms-of-service" },
     { label: "Cookie Policy", url: "/cookie-policy" },
   ],
-  newsletter_text: "สมัครรับข่าวสารจาก Ryhts Ribbon",
+  copyright: `© ${new Date().getFullYear()} Ryhts Ribbon. All rights reserved.`,
 };
 
 export const mockCompanyInfo: CompanyInfo = {
@@ -411,3 +435,74 @@ export const mockCookieCategories: CookieCategory[] = [
     privacy_policy_url: "/privacy-policy",
   },
 ];
+
+// ─── Mock Cookie Setting ───────────────────────────────────────────
+
+export const mockCookieSetting: CookieSetting = {
+  settings: {
+    title: "เราใช้คุกกี้",
+    description: "เว็บไซต์นี้ใช้คุกกี้เพื่อปรับปรุงประสบการณ์ของคุณ",
+    necessary_label: "คุกกี้จำเป็น",
+    necessary_description: "คุกกี้เหล่านี้จำเป็นสำหรับการทำงานของเว็บไซต์",
+    analytics_label: "คุกกี้วิเคราะห์",
+    analytics_description: "ช่วยให้เราเข้าใจวิธีการใช้งานเว็บไซต์",
+    marketing_label: "คุกกี้โฆษณา",
+    marketing_description: "ใช้ในการโฆษณาที่ตรงกับความสนใจ",
+    accept_all_label: "ยอมรับทั้งหมด",
+    reject_all_label: "ปฏิเสธทั้งหมด",
+    manage_label: "จัดการ偏好",
+    save_label: "บันทึก偏好",
+    privacy_policy_label: "นโยบายความเป็นส่วนตัว",
+    cookie_policy_label: "นโยบายคุกกี้",
+    always_on_label: "เปิดอยู่เสมอ",
+    learn_more_label: "เรียนรู้เพิ่มเติม",
+  },
+};
+
+// ─── Mock Contact Floating ─────────────────────────────────────────
+
+export const mockContactFloating: ContactFloating = {
+  is_enabled: true,
+  button_label: "ติดต่อเรา",
+  panel_title: "ติดต่อฝ่ายขาย",
+  panel_description: "สอบถามข้อมูลสินค้าและบริการ",
+  close_label: "ปิด",
+  actions: [
+    { type: "phone", label: "โทรเลย", url: "tel:0946246649", description: "094-624-6649" },
+    { type: "line", label: "Line", url: "https://line.me/ti/p/@ryhts", open_in_new_tab: true },
+    { type: "email", label: "Email", url: "mailto:info@ryhts.com" },
+  ],
+};
+
+// ─── Mock Navigation ───────────────────────────────────────────────
+
+export const mockNavigation: Navigation = {
+  name: "Main Navigation",
+  header_items: [
+    { label: "Home", url: "/" },
+    { label: "About us", url: "/about" },
+    { label: "Products", url: "/products" },
+    { label: "Articles", url: "/articles" },
+    { label: "Contact us", url: "/contact" },
+  ],
+  footer_sections: [],
+  footer_labels: {
+    contact_heading: "ติดต่อฝ่ายขาย Ryhts",
+    links_heading: "Links",
+    about_heading: "เกี่ยวกับเรา",
+    newsletter_heading: "สมัครรับข่าวสาร",
+    newsletter_placeholder: "อีเมลของคุณ",
+    newsletter_button: "สมัคร",
+  },
+  product_names: [],
+  button_labels: {
+    contact_us: "ติดต่อเรา",
+    learn_more: "เรียนรู้เพิ่มเติม",
+    view_all: "ดูทั้งหมด",
+    read_more: "อ่านต่อ",
+    back_to_home: "กลับหน้าแรก",
+    call_now: "โทรเลย",
+    request_quote: "ขอใบเสนอราคา",
+    download: "ดาวน์โหลด",
+  },
+};

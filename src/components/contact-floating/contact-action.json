@@ -1,0 +1,48 @@
+{
+  "collectionName": "components_contact_floating_contact_action",
+  "info": {
+    "displayName": "Contact Action",
+    "description": "An action button in the floating contact widget"
+  },
+  "attributes": {
+    "type": {
+      "type": "enumeration",
+      "enum": ["phone", "email", "line", "whatsapp", "link"],
+      "required": true,
+      "description": "Action type determines icon and behavior"
+    },
+    "label": {
+      "type": "string",
+      "required": true,
+      "description": "Action button label"
+    },
+    "description": {
+      "type": "text",
+      "description": "Short description shown below the label"
+    },
+    "url": {
+      "type": "string",
+      "required": true,
+      "description": "Action URL (tel:, mailto:, https://, line://)"
+    },
+    "aria_label": {
+      "type": "string",
+      "description": "Accessible label for screen readers"
+    },
+    "open_in_new_tab": {
+      "type": "boolean",
+      "default": false,
+      "description": "Open link in a new browser tab"
+    },
+    "sort_order": {
+      "type": "integer",
+      "default": 0,
+      "description": "Display order (lower number appears first)"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Show or hide this action"
+    }
+  }
+}

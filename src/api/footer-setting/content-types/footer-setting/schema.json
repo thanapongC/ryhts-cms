@@ -4,8 +4,8 @@
   "info": {
     "singularName": "footer-setting",
     "pluralName": "footer-settings",
-    "displayName": "Footer Setting",
-    "description": "Footer configuration - copyright, social links"
+    "displayName": "Site - Footer Settings",
+    "description": "Footer CTA, statistics, navigation, legal links, and copyright"
   },
   "options": {
     "draftAndPublish": true
@@ -16,17 +16,63 @@
     }
   },
   "attributes": {
-    "copyright_text": {
-      "type": "string"
+    "cta_badge": {
+      "type": "string",
+      "description": "CTA section badge text"
+    },
+    "cta_title": {
+      "type": "string",
+      "description": "CTA section heading"
+    },
+    "cta_description": {
+      "type": "text",
+      "description": "CTA section description"
+    },
+    "primary_cta_label": {
+      "type": "string",
+      "description": "Primary CTA button text"
+    },
+    "primary_cta_url": {
+      "type": "string",
+      "description": "Primary CTA button URL"
+    },
+    "secondary_cta_label": {
+      "type": "string",
+      "description": "Secondary CTA button text"
+    },
+    "secondary_cta_url": {
+      "type": "string",
+      "description": "Secondary CTA button URL"
+    },
+    "stats": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.stat-item",
+      "description": "Footer statistics display"
+    },
+    "company_description": {
+      "type": "text",
+      "description": "Company description text in footer"
     },
     "social_links": {
-      "type": "json"
+      "type": "json",
+      "description": "Social media links as JSON object"
     },
-    "footer_links": {
-      "type": "json"
+    "footer_sections": {
+      "type": "component",
+      "repeatable": true,
+      "component": "footer.footer-section",
+      "description": "Navigation sections in the footer"
     },
-    "newsletter_text": {
-      "type": "text"
+    "legal_links": {
+      "type": "component",
+      "repeatable": true,
+      "component": "footer.legal-link",
+      "description": "Legal page links (Privacy, Terms, etc.)"
+    },
+    "copyright": {
+      "type": "text",
+      "description": "Copyright text"
     }
   }
 }

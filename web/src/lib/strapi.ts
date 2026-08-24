@@ -130,9 +130,9 @@ export interface FooterSection {
 /** footer.footer-link */
 export interface FooterLink {
   label: string;
-  product?: Product | null;
+  product_page?: Product | null;
   url?: string;
-  open_in_new_tab?: boolean;
+  target?: "_self" | "_blank";
   sort_order?: number;
   is_active?: boolean;
 }
@@ -141,8 +141,94 @@ export interface FooterLink {
 export interface LegalLink {
   label: string;
   url: string;
+  target?: "_self" | "_blank";
   sort_order?: number;
   is_active?: boolean;
+}
+
+/** shared.cookie-consent-settings */
+export interface CookieConsentSettings {
+  title?: string;
+  description?: string;
+  necessary_label?: string;
+  necessary_description?: string;
+  analytics_label?: string;
+  analytics_description?: string;
+  marketing_label?: string;
+  marketing_description?: string;
+  accept_all_label?: string;
+  reject_all_label?: string;
+  manage_label?: string;
+  save_label?: string;
+  privacy_policy_label?: string;
+  cookie_policy_label?: string;
+  always_on_label?: string;
+  learn_more_label?: string;
+}
+
+/** contact-floating.contact-action */
+export interface ContactAction {
+  type: "phone" | "email" | "line" | "whatsapp" | "link";
+  label: string;
+  description?: string;
+  url: string;
+  aria_label?: string;
+  open_in_new_tab?: boolean;
+  sort_order?: number;
+  is_active?: boolean;
+}
+
+/** navigation.nav-child-item */
+export interface NavChildItem {
+  label: string;
+  url?: string;
+  product_page?: Product | null;
+  target?: "_self" | "_blank";
+}
+
+/** navigation.nav-item */
+export interface NavItem {
+  label: string;
+  url?: string;
+  target?: "_self" | "_blank";
+  children?: NavChildItem[];
+}
+
+/** navigation.footer-section */
+export interface NavigationFooterSection {
+  title: string;
+  links?: NavChildItem[];
+  sort_order?: number;
+  is_active?: boolean;
+}
+
+/** navigation.product-name */
+export interface ProductName {
+  name: string;
+  url?: string;
+  sort_order?: number;
+}
+
+/** shared.footer-labels */
+export interface FooterLabels {
+  contact_heading?: string;
+  links_heading?: string;
+  about_heading?: string;
+  newsletter_heading?: string;
+  newsletter_placeholder?: string;
+  newsletter_button?: string;
+}
+
+/** shared.button-labels */
+export interface ButtonLabels {
+  contact_us?: string;
+  learn_more?: string;
+  view_all?: string;
+  read_more?: string;
+  back_to_home?: string;
+  call_now?: string;
+  request_quote?: string;
+  download?: string;
 }
 
 /** privacy.policy-section */
@@ -323,11 +409,19 @@ export interface Faq {
 
 /** api::footer-setting.footer-setting */
 export interface FooterSetting {
-  copyright_text?: string;
+  cta_badge?: string;
+  cta_title?: string;
+  cta_description?: string;
+  primary_cta_label?: string;
+  primary_cta_url?: string;
+  secondary_cta_label?: string;
+  secondary_cta_url?: string;
+  stats?: StatItem[];
+  company_description?: string;
   social_links?: Record<string, string> | null;
   footer_sections?: FooterSection[];
   legal_links?: LegalLink[];
-  newsletter_text?: string;
+  copyright?: string;
 }
 
 /** api::free-trial.free-trial */
@@ -345,7 +439,36 @@ export interface FreeTrial {
 
 /** api::global-setting.global-setting */
 export interface GlobalSetting {
+  site_name?: string;
+  site_logo?: StrapiMedia | null;
+  contact_info?: ContactInfo[];
+  stats?: StatItem[];
   seoConfig?: SeoConfig | null;
+}
+
+/** api::cookie-setting.cookie-setting */
+export interface CookieSetting {
+  settings?: CookieConsentSettings | null;
+}
+
+/** api::contact-floating.contact-floating */
+export interface ContactFloating {
+  is_enabled?: boolean;
+  button_label?: string;
+  panel_title?: string;
+  panel_description?: string;
+  close_label?: string;
+  actions?: ContactAction[];
+}
+
+/** api::navigation.navigation */
+export interface Navigation {
+  name: string;
+  header_items?: NavItem[];
+  footer_sections?: NavigationFooterSection[];
+  footer_labels?: FooterLabels | null;
+  product_names?: ProductName[];
+  button_labels?: ButtonLabels | null;
 }
 
 /** api::partner.partner */
@@ -670,10 +793,10 @@ export function normalizeInternalUrl(
  * (integate-rule.md §8)
  */
 export function getLinkUrl(
-  link: { product?: { slug?: string } | null; url?: string },
+  link: { product_page?: { slug?: string } | null; url?: string },
   homePrefix: string,
 ): string {
-  if (link.product?.slug) return `${homePrefix}${link.product.slug}/`;
+  if (link.product_page?.slug) return `${homePrefix}${link.product_page.slug}/`;
   return normalizeInternalUrl(link.url, homePrefix);
 }
 

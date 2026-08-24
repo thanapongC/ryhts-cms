@@ -5,7 +5,7 @@
     "singularName": "global-setting",
     "pluralName": "global-settings",
     "displayName": "Site - Global Settings",
-    "description": "Global SEO, analytics, and site-wide defaults"
+    "description": "Site-wide settings: header, footer contact, stats, and SEO defaults"
   },
   "options": {
     "draftAndPublish": true
@@ -16,6 +16,29 @@
     }
   },
   "attributes": {
+    "site_name": {
+      "type": "string",
+      "required": true,
+      "description": "Localized site name"
+    },
+    "site_logo": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"],
+      "description": "Site logo image"
+    },
+    "contact_info": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.contact-info",
+      "description": "Site-wide contact information blocks"
+    },
+    "stats": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.stat-item",
+      "description": "Key site statistics (e.g. customers, products, years)"
+    },
     "seoConfig": {
       "type": "component",
       "repeatable": false,

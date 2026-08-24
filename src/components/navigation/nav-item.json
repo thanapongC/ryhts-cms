@@ -1,0 +1,30 @@
+{
+  "collectionName": "components_navigation_nav_item",
+  "info": {
+    "displayName": "Nav Item",
+    "description": "A header navigation menu item with optional dropdown children"
+  },
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true,
+      "description": "Navigation link text"
+    },
+    "url": {
+      "type": "string",
+      "description": "Link URL (used when no children)"
+    },
+    "target": {
+      "type": "enumeration",
+      "enum": ["_self", "_blank"],
+      "default": "_self",
+      "description": "Link target"
+    },
+    "children": {
+      "type": "component",
+      "repeatable": true,
+      "component": "navigation.nav-child-item",
+      "description": "Dropdown sub-items"
+    }
+  }
+}

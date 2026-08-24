@@ -15,6 +15,12 @@
       "required": true,
       "description": "Link URL (e.g. /privacy-policy, /terms-of-service)"
     },
+    "target": {
+      "type": "enumeration",
+      "enum": ["_self", "_blank"],
+      "default": "_self",
+      "description": "Link target (_self or _blank)"
+    },
     "sort_order": {
       "type": "integer",
       "default": 0,

@@ -10,7 +10,7 @@
       "required": true,
       "description": "Link text (e.g. Products, About Us)"
     },
-    "product": {
+    "product_page": {
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::product.product",
@@ -20,10 +20,11 @@
       "type": "string",
       "description": "Manual link URL (fallback if no product relation)"
     },
-    "open_in_new_tab": {
-      "type": "boolean",
-      "default": false,
-      "description": "Open link in a new browser tab"
+    "target": {
+      "type": "enumeration",
+      "enum": ["_self", "_blank"],
+      "default": "_self",
+      "description": "Link target (_self or _blank)"
     },
     "sort_order": {
       "type": "integer",

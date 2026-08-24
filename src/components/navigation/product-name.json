@@ -1,0 +1,23 @@
+{
+  "collectionName": "components_navigation_product_name",
+  "info": {
+    "displayName": "Product Name",
+    "description": "Product name mapping for navigation display"
+  },
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "description": "Display name for the product"
+    },
+    "url": {
+      "type": "string",
+      "description": "Product URL"
+    },
+    "sort_order": {
+      "type": "integer",
+      "default": 0,
+      "description": "Display order (lower number appears first)"
+    }
+  }
+}

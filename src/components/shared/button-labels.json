@@ -1,0 +1,41 @@
+{
+  "collectionName": "components_shared_button_labels",
+  "info": {
+    "displayName": "Button Labels",
+    "description": "Shared CTA and action button labels across the site"
+  },
+  "attributes": {
+    "contact_us": {
+      "type": "string",
+      "description": "Contact us button label"
+    },
+    "learn_more": {
+      "type": "string",
+      "description": "Learn more button label"
+    },
+    "view_all": {
+      "type": "string",
+      "description": "View all button label"
+    },
+    "read_more": {
+      "type": "string",
+      "description": "Read more button label"
+    },
+    "back_to_home": {
+      "type": "string",
+      "description": "Back to home button label"
+    },
+    "call_now": {
+      "type": "string",
+      "description": "Call now button label"
+    },
+    "request_quote": {
+      "type": "string",
+      "description": "Request quote button label"
+    },
+    "download": {
+      "type": "string",
+      "description": "Download button label"
+    }
+  }
+}
