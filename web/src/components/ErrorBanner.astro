@@ -1,0 +1,104 @@
+---
+interface Props {
+  message?: string;
+  retryUrl?: string;
+}
+
+const {
+  message = "Unable to connect to the server. Some content may be unavailable.",
+  retryUrl,
+} = Astro.props;
+---
+
+<div class="error-banner" role="alert">
+  <div class="container error-banner-inner">
+    <div class="error-banner-icon">
+      <i class="fas fa-wifi"></i>
+    </div>
+    <div class="error-banner-text">
+      <p class="error-banner-title">Connection Error</p>
+      <p class="error-banner-message">{message}</p>
+    </div>
+    {retryUrl ? (
+      <a href={retryUrl} class="error-banner-retry btn btn-sm btn-outline">
+        <i class="fas fa-redo"></i> Retry
+      </a>
+    ) : (
+      <button class="error-banner-retry btn btn-sm btn-outline" onclick="location.reload()">
+        <i class="fas fa-redo"></i> Retry
+      </button>
+    )}
+  </div>
+</div>
+
+<style>
+  .error-banner {
+    background: linear-gradient(135deg, #fef2f2 0%, #fde8e8 100%);
+    border-bottom: 1px solid #fca5a5;
+    padding: 12px 0;
+    position: sticky;
+    top: var(--header-height);
+    z-index: 999;
+  }
+
+  .error-banner-inner {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .error-banner-icon {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #fee2e2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .error-banner-icon i {
+    color: #dc2626;
+    font-size: 16px;
+  }
+
+  .error-banner-text {
+    flex: 1;
+  }
+
+  .error-banner-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #991b1b;
+    margin-bottom: 2px;
+  }
+
+  .error-banner-message {
+    font-size: 13px;
+    color: #b91c1c;
+    margin: 0;
+  }
+
+  .error-banner-retry {
+    flex-shrink: 0;
+    border-color: #fca5a5;
+    color: #991b1b;
+  }
+
+  .error-banner-retry:hover {
+    background: #fee2e2;
+    border-color: #f87171;
+  }
+
+  @media (max-width: 768px) {
+    .error-banner-inner {
+      flex-wrap: wrap;
+    }
+
+    .error-banner-retry {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+</style>

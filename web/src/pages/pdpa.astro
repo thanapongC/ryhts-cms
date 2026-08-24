@@ -1,0 +1,85 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { safeGetPdpaSetting } from "../lib/api";
+import OfflineNotice from "../components/OfflineNotice.astro";
+
+const pdpaResult = await safeGetPdpaSetting("th");
+const pdpa = pdpaResult.data;
+
+function formatDate(dateStr: string): string {
+  if (!dateStr) return "";
+  const d = new Date(dateStr);
+  return d.toLocaleDateString("th-TH", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
+---
+
+<BaseLayout
+  title={pdpa?.title || "PDPA"}
+  description={"PDPA compliance policy of Ryhts Ribbon"}
+  jsonLd={{
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name: pdpa?.title || "PDPA",
+    description: "PDPA compliance policy of Ryhts Ribbon",
+  }}
+>
+  <div class="page-header">
+    <div class="container">
+      <h1>{pdpa?.title || "PDPA"}</h1>
+      {pdpa?.last_updated && (
+        <p>Last updated: {formatDate(pdpa.last_updated)}</p>
+      )}
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="/">Home</a>
+        <span>/</span>
+        <span>PDPA</span>
+      </div>
+
+      {pdpaResult.isOffline && (
+        <OfflineNotice
+          title="部分内容不可用"
+          message="PDPA content may be unavailable due to a connection issue."
+        />
+      )}
+
+      <div class="policy-content">
+        {pdpa?.description && (
+          <p class="policy-summary">{pdpa.description}</p>
+        )}
+
+        {pdpa?.content ? (
+          <div class="rich-text" set:html={pdpa.content} />
+        ) : (
+          <div class="rich-text">
+            <p>PDPA policy content is not yet available. Please check back later.</p>
+          </div>
+        )}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .policy-content {
+    max-width: 800px;
+  }
+
+  .policy-summary {
+    font-size: 17px;
+    color: var(--color-text-secondary);
+    line-height: 1.8;
+    margin-bottom: 32px;
+    padding: 20px;
+    background: var(--color-bg-light);
+    border-radius: var(--radius);
+  }
+</style>

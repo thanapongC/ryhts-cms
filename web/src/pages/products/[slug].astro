@@ -1,0 +1,302 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { safeGetProductBySlug, getStrapiMedia } from "../../lib/api";
+import OfflineNotice from "../../components/OfflineNotice.astro";
+
+const { slug } = Astro.params;
+const productResult = await safeGetProductBySlug(slug as string, "th");
+const product = productResult.data;
+
+if (!product) {
+  return Astro.redirect("/products");
+}
+
+const ribbonTypeLabels: Record<string, string> = {
+  wax: "Ribbon Wax",
+  wax_resin: "Ribbon Wax-Resin",
+  resin: "Ribbon Resin",
+};
+
+const mainImage = getStrapiMedia(product.images?.[0]?.url);
+const galleryImages = product.images?.slice(1) || [];
+---
+
+<BaseLayout
+  title={product.meta_title || product.title}
+  description={product.meta_description || product.short_description}
+  ogImage={product.og_image?.url || product.images?.[0]?.url}
+  ogType="product"
+  jsonLd={{
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.title,
+    description: product.short_description,
+    image: product.images?.[0]?.url ? getStrapiMedia(product.images[0].url) : undefined,
+    brand: product.brand ? { "@type": "Brand", name: product.brand.name } : undefined,
+    offers: product.price > 0 ? {
+      "@type": "Offer",
+      price: product.price,
+      priceCurrency: "THB",
+      availability: "https://schema.org/InStock",
+    } : undefined,
+  }}
+>
+  <div class="page-header">
+    <div class="container">
+      <h1>{product.title}</h1>
+      {product.short_description && <p>{product.short_description}</p>}
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="/">Home</a>
+        <span>/</span>
+        <a href="/products">Products</a>
+        <span>/</span>
+        <span>{product.title}</span>
+      </div>
+
+      {productResult.isOffline ? (
+        <OfflineNotice
+          title="部分内容不可用"
+          message="Some product details may be unavailable due to a connection issue."
+        />
+      ) : null}
+
+      <div class="product-detail">
+        <!-- Image Gallery -->
+        <div class="product-gallery">
+          {mainImage && (
+            <div class="gallery-main">
+              <img src={mainImage} alt={product.title} />
+            </div>
+          )}
+          {galleryImages.length > 0 && (
+            <div class="gallery-thumbs">
+              {galleryImages.map((img) => {
+                const thumbUrl = getStrapiMedia(img.url);
+                return thumbUrl ? (
+                  <div class="gallery-thumb">
+                    <img src={thumbUrl} alt={product.title} loading="lazy" />
+                  </div>
+                ) : null;
+              })}
+            </div>
+          )}
+        </div>
+
+        <!-- Product Info -->
+        <div class="product-info">
+          <div class="product-meta">
+            <span class={`badge badge-${product.ribbon_type}`}>
+              {ribbonTypeLabels[product.ribbon_type] || product.ribbon_type}
+            </span>
+            {product.brand && <span class="product-brand-name">{product.brand.name}</span>}
+          </div>
+
+          <h2 class="product-title">{product.title}</h2>
+
+          {product.price > 0 && (
+            <div class="product-price">
+              <span class="price-value">฿{product.price.toLocaleString()}</span>
+            </div>
+          )}
+
+          {product.short_description && (
+            <p class="product-desc">{product.short_description}</p>
+          )}
+
+          {product.compatibility && (
+            <div class="product-spec">
+              <h4>Compatibility</h4>
+              <p>{product.compatibility}</p>
+            </div>
+          )}
+
+          {product.sizes && (
+            <div class="product-spec">
+              <h4>Sizes</h4>
+              <p>{typeof product.sizes === 'string' ? product.sizes : JSON.stringify(product.sizes)}</p>
+            </div>
+          )}
+
+          {product.categories?.length > 0 && (
+            <div class="product-spec">
+              <h4>Categories</h4>
+              <div class="product-categories">
+                {product.categories.map((cat) => (
+                  <a href={`/products?category=${cat.slug}`} class="category-tag">{cat.name}</a>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div class="product-actions">
+            <a href="/contact" class="btn btn-primary btn-lg">ติดต่อสอบถาม</a>
+            <a href="tel:0946246649" class="btn btn-outline btn-lg">
+              <i class="fas fa-phone"></i> โทรเลย
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Full Description -->
+      {product.description && (
+        <div class="product-full-desc">
+          <h3>รายละเอียดสินค้า</h3>
+          <div class="rich-text" set:html={product.description} />
+        </div>
+      )}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .product-detail {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    margin-bottom: 48px;
+  }
+
+  .gallery-main {
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+
+  .gallery-main img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+
+  .gallery-thumbs {
+    display: flex;
+    gap: 8px;
+  }
+
+  .gallery-thumb {
+    width: 80px;
+    height: 60px;
+    border-radius: var(--radius);
+    overflow: hidden;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: border-color var(--transition);
+  }
+
+  .gallery-thumb:hover {
+    border-color: var(--color-primary);
+  }
+
+  .gallery-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .product-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .badge-wax { background: #fef3c7; color: #b45309; }
+  .badge-wax_resin { background: #dbeafe; color: #1e40af; }
+  .badge-resin { background: #dcfce7; color: #166534; }
+
+  .product-brand-name {
+    font-size: 14px;
+    color: var(--color-text-light);
+  }
+
+  .product-title {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+
+  .product-price {
+    margin-bottom: 20px;
+  }
+
+  .price-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--color-primary);
+  }
+
+  .product-desc {
+    font-size: 16px;
+    color: var(--color-text-secondary);
+    line-height: 1.8;
+    margin-bottom: 24px;
+  }
+
+  .product-spec {
+    margin-bottom: 20px;
+  }
+
+  .product-spec h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: 6px;
+  }
+
+  .product-spec p {
+    font-size: 15px;
+    color: var(--color-text-secondary);
+  }
+
+  .product-categories {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .category-tag {
+    padding: 4px 12px;
+    background: var(--color-bg-light);
+    border-radius: 16px;
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+  }
+
+  .category-tag:hover {
+    background: var(--color-primary);
+    color: #fff;
+  }
+
+  .product-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 32px;
+  }
+
+  .product-full-desc {
+    border-top: 1px solid var(--color-border);
+    padding-top: 40px;
+  }
+
+  .product-full-desc h3 {
+    font-size: 22px;
+    margin-bottom: 24px;
+  }
+
+  @media (max-width: 768px) {
+    .product-detail {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+
+    .product-actions {
+      flex-direction: column;
+    }
+  }
+</style>

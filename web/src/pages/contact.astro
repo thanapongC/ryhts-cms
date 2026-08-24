@@ -1,0 +1,278 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { safeGetPageBySlug, safeGetCompanyInfo, safeGetSiteSetting } from "../lib/api";
+import OfflineNotice from "../components/OfflineNotice.astro";
+
+const pageResult = await safeGetPageBySlug("contact-us", "th");
+const companyResult = await safeGetCompanyInfo("th");
+const siteResult = await safeGetSiteSetting("th");
+
+const page = pageResult.data;
+const companyInfo = companyResult.data;
+const siteSetting = siteResult.data;
+
+const contactTitle = companyInfo?.contact_form_title || "ติดต่อเรา";
+const isOffline = pageResult.isOffline || companyResult.isOffline || siteResult.isOffline;
+---
+
+<BaseLayout
+  title={page?.meta_title || "Contact Us"}
+  description={page?.meta_description || "ติดต่อ Ryhts Ribbon"}
+  jsonLd={{
+    "@context": "https://schema.org",
+    "@type": "ContactPage",
+    name: contactTitle,
+    description: page?.meta_description || "",
+    mainEntity: companyInfo ? {
+      "@type": "Organization",
+      name: companyInfo.company_name,
+      telephone: companyInfo.phone,
+      email: companyInfo.email,
+      address: companyInfo.address ? {
+        "@type": "PostalAddress",
+        streetAddress: companyInfo.address,
+      } : undefined,
+    } : undefined,
+  }}
+>
+  <div class="page-header">
+    <div class="container">
+      <h1>{contactTitle}</h1>
+      {page?.meta_description && <p>{page.meta_description}</p>}
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="/">Home</a>
+        <span>/</span>
+        <span>Contact Us</span>
+      </div>
+
+      {isOffline && (
+        <OfflineNotice
+          title="部分内容不可用"
+          message="Some contact information may be unavailable due to a connection issue."
+        />
+      )}
+
+      <div class="contact-grid">
+        <!-- Contact Info -->
+        <div class="contact-info">
+          <h2>ข้อมูลการติดต่อ</h2>
+
+          {companyInfo?.company_name && (
+            <div class="info-item">
+              <div class="info-icon"><i class="fas fa-building"></i></div>
+              <div>
+                <h4>{companyInfo.company_name}</h4>
+                {companyInfo.company_name_en && <p>{companyInfo.company_name_en}</p>}
+              </div>
+            </div>
+          )}
+
+          {companyInfo?.address && (
+            <div class="info-item">
+              <div class="info-icon"><i class="fas fa-map-marker-alt"></i></div>
+              <div>
+                <h4>ที่อยู่</h4>
+                <p>{companyInfo.address}</p>
+              </div>
+            </div>
+          )}
+
+          {companyInfo?.phone && (
+            <div class="info-item">
+              <div class="info-icon"><i class="fas fa-phone"></i></div>
+              <div>
+                <h4>โทรศัพท์</h4>
+                <p><a href={`tel:${companyInfo.phone}`}>{companyInfo.phone}</a></p>
+              </div>
+            </div>
+          )}
+
+          {companyInfo?.email && (
+            <div class="info-item">
+              <div class="info-icon"><i class="fas fa-envelope"></i></div>
+              <div>
+                <h4>อีเมล</h4>
+                <p><a href={`mailto:${companyInfo.email}`}>{companyInfo.email}</a></p>
+              </div>
+            </div>
+          )}
+
+          {companyInfo?.business_hours && (
+            <div class="info-item">
+              <div class="info-icon"><i class="fas fa-clock"></i></div>
+              <div>
+                <h4>เวลาทำการ</h4>
+                <p>{companyInfo.business_hours}</p>
+              </div>
+            </div>
+          )}
+
+          {siteSetting?.phone && (
+            <div class="info-item">
+              <div class="info-icon"><i class="fas fa-headset"></i></div>
+              <div>
+                <h4>ฝ่ายขาย</h4>
+                <p><a href={`tel:${siteSetting.phone}`}>{siteSetting.phone}</a></p>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <!-- Contact Form -->
+        <div class="contact-form-wrapper">
+          <h2>ส่งข้อความถึงเรา</h2>
+          <form class="contact-form" action="#" method="POST">
+            <div class="form-group">
+              <label for="name">ชื่อ *</label>
+              <input type="text" id="name" name="name" required placeholder="กรอกชื่อของคุณ" />
+            </div>
+            <div class="form-group">
+              <label for="email">อีเมล *</label>
+              <input type="email" id="email" name="email" required placeholder="กรอกอีเมลของคุณ" />
+            </div>
+            <div class="form-group">
+              <label for="phone">โทรศัพท์</label>
+              <input type="tel" id="phone" name="phone" placeholder="กรอกเบอร์โทรศัพท์" />
+            </div>
+            <div class="form-group">
+              <label for="subject">หัวข้อ *</label>
+              <input type="text" id="subject" name="subject" required placeholder="กรอกหัวข้อ" />
+            </div>
+            <div class="form-group">
+              <label for="message">ข้อความ *</label>
+              <textarea id="message" name="message" rows="5" required placeholder="กรอกข้อความของคุณ"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-lg">ส่งข้อความ</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Map -->
+      {companyInfo?.map_link && (
+        <div class="contact-map">
+          <iframe
+            src={companyInfo.map_link}
+            width="100%"
+            height="400"
+            style="border:0; border-radius: var(--radius-lg);"
+            allowfullscreen
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+          ></iframe>
+        </div>
+      )}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 48px;
+    margin-bottom: 48px;
+  }
+
+  .contact-info h2,
+  .contact-form-wrapper h2 {
+    font-size: 24px;
+    margin-bottom: 28px;
+  }
+
+  .info-item {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .info-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--color-primary-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .info-icon i {
+    color: var(--color-primary);
+    font-size: 18px;
+  }
+
+  .info-item h4 {
+    font-size: 15px;
+    margin-bottom: 4px;
+  }
+
+  .info-item p {
+    font-size: 14px;
+    color: var(--color-text-secondary);
+  }
+
+  .info-item a {
+    color: var(--color-text-secondary);
+  }
+
+  .info-item a:hover {
+    color: var(--color-primary);
+  }
+
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .form-group label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text);
+  }
+
+  .form-group input,
+  .form-group textarea {
+    padding: 12px 16px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    font-family: var(--font-family);
+    font-size: 15px;
+    color: var(--color-text);
+    background: #fff;
+    transition: border-color var(--transition);
+  }
+
+  .form-group input:focus,
+  .form-group textarea:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(1, 127, 228, 0.1);
+  }
+
+  .form-group textarea {
+    resize: vertical;
+    min-height: 120px;
+  }
+
+  .contact-map {
+    margin-top: 24px;
+  }
+
+  @media (max-width: 768px) {
+    .contact-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,170 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { safeGetPageBySlug, safeGetCompanyInfo, getStrapiMedia } from "../lib/api";
+import OfflineNotice from "../components/OfflineNotice.astro";
+
+const pageResult = await safeGetPageBySlug("about-ryhts", "th");
+const companyResult = await safeGetCompanyInfo("th");
+
+const page = pageResult.data;
+const companyInfo = companyResult.data;
+
+const pageTitle = page?.title || "About Ryhts";
+const pageContent = page?.content || "";
+const featuredImage = getStrapiMedia(page?.featured_image?.url);
+---
+
+<BaseLayout
+  title={page?.meta_title || pageTitle}
+  description={page?.meta_description}
+  ogImage={page?.og_image?.url || page?.featured_image?.url}
+  jsonLd={{
+    "@context": "https://schema.org",
+    "@type": "AboutPage",
+    name: pageTitle,
+    description: page?.meta_description || "",
+  }}
+>
+  <div class="page-header">
+    <div class="container">
+      <h1>{pageTitle}</h1>
+      {page?.meta_description && <p>{page.meta_description}</p>}
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="/">Home</a>
+        <span>/</span>
+        <span>{pageTitle}</span>
+      </div>
+
+      {(pageResult.isOffline || companyResult.isOffline) && (
+        <OfflineNotice
+          title="部分内容不可用"
+          message="Some content may be unavailable due to a connection issue."
+        />
+      )}
+
+      {featuredImage && (
+        <div class="about-hero-image">
+          <img src={featuredImage} alt={pageTitle} />
+        </div>
+      )}
+
+      {pageContent ? (
+        <div class="rich-text about-content" set:html={pageContent} />
+      ) : (
+        <div class="about-default">
+          <div class="about-grid">
+            <div class="about-text">
+              <h2>เกี่ยวกับ Ryhts</h2>
+              <p>
+                ไรต์ส (ryhts) เราคือผู้จำหน่ายริบบอนหรือผ้าหมึกพิมพ์สำหรับใช้กับเครื่องพิมพ์บาร์โค้ดทุกขนาด
+                มีให้ท่านเลือกใช้หลากหลายแบบ
+              </p>
+              <p>
+                เรามุ่งมั่นที่จะพัฒนาสินค้านำเข้าที่ได้มาตรฐาน และให้บริการที่ตอบโจทย์
+                ช่วยให้การทำงานของท่านได้สะดวกรวดเร็วและมีประสิทธิภาพที่ดีขึ้น
+              </p>
+              <p>
+                สินค้าของเรามีหลายประเภท ได้แก่ Ribbon Wax, Ribbon Wax-Resin, และ Ribbon Resin
+                ซึ่งเหมาะกับการใช้งานที่แตกต่างกัน
+              </p>
+            </div>
+            <div class="about-stats">
+              {companyInfo && (
+                <>
+                  <div class="stat-item">
+                    <span class="stat-number">{companyInfo.customer_count}+</span>
+                    <span class="stat-label">ลูกค้าที่ไว้วางใจ</span>
+                  </div>
+                  <div class="stat-item">
+                    <span class="stat-number">3</span>
+                    <span class="stat-label">ประเภทสินค้าหลัก</span>
+                  </div>
+                  <div class="stat-item">
+                    <span class="stat-number">100%</span>
+                    <span class="stat-label">มาตรฐานคุณภาพ</span>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .about-hero-image {
+    margin-bottom: 40px;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+
+  .about-hero-image img {
+    width: 100%;
+    max-height: 400px;
+    object-fit: cover;
+  }
+
+  .about-content {
+    max-width: 800px;
+  }
+
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 60px;
+    align-items: start;
+  }
+
+  .about-text h2 {
+    font-size: 28px;
+    margin-bottom: 20px;
+  }
+
+  .about-text p {
+    font-size: 16px;
+    color: var(--color-text-secondary);
+    line-height: 1.8;
+    margin-bottom: 16px;
+  }
+
+  .about-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .stat-item {
+    background: var(--color-bg-light);
+    padding: 24px;
+    border-radius: var(--radius-lg);
+    text-align: center;
+  }
+
+  .stat-number {
+    display: block;
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--color-primary);
+    line-height: 1;
+  }
+
+  .stat-label {
+    display: block;
+    font-size: 14px;
+    color: var(--color-text-secondary);
+    margin-top: 8px;
+  }
+
+  @media (max-width: 768px) {
+    .about-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

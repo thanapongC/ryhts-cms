@@ -1,0 +1,184 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { safeGetArticles, getStrapiMedia } from "../../lib/api";
+import OfflineNotice from "../../components/OfflineNotice.astro";
+
+const articlesResult = await safeGetArticles("th", 1, 24);
+const articles = articlesResult.data?.data || [];
+const isOffline = articlesResult.isOffline;
+
+function formatDate(dateStr: string): string {
+  if (!dateStr) return "";
+  const d = new Date(dateStr);
+  return d.toLocaleDateString("th-TH", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
+---
+
+<BaseLayout
+  title="Articles"
+  description="ติดตามข่าวสารและบทความเกี่ยวกับริบบอนและเครื่องพิมพ์บาร์โค้ด"
+  jsonLd={{
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "Articles",
+    description: "ติดตามข่าวสารและบทความเกี่ยวกับริบบอนและเครื่องพิมพ์บาร์โค้ด",
+  }}
+>
+  <div class="page-header">
+    <div class="container">
+      <h1>บทความและข่าวสาร</h1>
+      <p>ติดตามข่าวสารและบทความเกี่ยวกับริบบอนและเครื่องพิมพ์บาร์โค้ด</p>
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="/">Home</a>
+        <span>/</span>
+        <span>Articles</span>
+      </div>
+
+      {isOffline && articles.length === 0 ? (
+        <OfflineNotice
+          title="ไม่สามารถโหลดบทความได้"
+          message="Unable to load articles. Please check your connection."
+        />
+      ) : articles.length > 0 ? (
+        <div class="articles-grid">
+          {articles.map((article) => {
+            const imageUrl = getStrapiMedia(article.featured_image?.url);
+            return (
+              <a href={`/articles/${article.slug}`} class="article-card">
+                {imageUrl && (
+                  <div class="article-card-image">
+                    <img src={imageUrl} alt={article.title} loading="lazy" />
+                  </div>
+                )}
+                <div class="article-card-body">
+                  <div class="article-meta">
+                    {article.author && <span><i class="fas fa-user"></i> {article.author}</span>}
+                    {article.publishedAt && (
+                      <span><i class="fas fa-calendar"></i> {formatDate(article.publishedAt)}</span>
+                    )}
+                  </div>
+                  <h3>{article.title}</h3>
+                  <p class="article-excerpt">{article.excerpt}</p>
+                  <span class="article-link">อ่านต่อ →</span>
+                </div>
+              </a>
+            );
+          })}
+        </div>
+      ) : (
+        <div class="empty-state">
+          <i class="fas fa-newspaper" style="font-size: 48px; color: var(--color-primary);"></i>
+          <p>ยังไม่มีบทความในขณะนี้</p>
+        </div>
+      )}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .articles-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+  }
+
+  .article-card {
+    background: #fff;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: all var(--transition);
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .article-card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-4px);
+  }
+
+  .article-card-image {
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+  }
+
+  .article-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+
+  .article-card:hover .article-card-image img {
+    transform: scale(1.05);
+  }
+
+  .article-card-body {
+    padding: 24px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .article-meta {
+    display: flex;
+    gap: 16px;
+    font-size: 13px;
+    color: var(--color-text-light);
+    margin-bottom: 12px;
+  }
+
+  .article-meta i {
+    margin-right: 4px;
+    color: var(--color-primary);
+  }
+
+  .article-card h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    line-height: 1.4;
+  }
+
+  .article-excerpt {
+    font-size: 14px;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    flex: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .article-link {
+    display: inline-block;
+    margin-top: 16px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-primary);
+  }
+
+  @media (max-width: 1024px) {
+    .articles-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .articles-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

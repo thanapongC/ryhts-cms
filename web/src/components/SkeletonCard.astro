@@ -1,0 +1,120 @@
+---
+interface Props {
+  count?: number;
+  variant?: "product" | "article" | "text";
+}
+
+const { count = 3, variant = "product" } = Astro.props;
+---
+
+<div class:list={["skeleton-grid", `skeleton-${variant}`]}>
+  {Array.from({ length: count }).map(() => (
+    <div class="skeleton-card">
+      {variant === "product" && (
+        <div class="skeleton-image skeleton-pulse"></div>
+      )}
+      {variant === "article" && (
+        <div class="skeleton-image skeleton-pulse" style="aspect-ratio: 16/9;"></div>
+      )}
+      <div class="skeleton-body">
+        <div class="skeleton-badge skeleton-pulse"></div>
+        <div class="skeleton-title skeleton-pulse"></div>
+        <div class="skeleton-text skeleton-pulse"></div>
+        <div class="skeleton-text skeleton-text-short skeleton-pulse"></div>
+      </div>
+    </div>
+  ))}
+</div>
+
+<style>
+  .skeleton-grid {
+    display: grid;
+    gap: 28px;
+  }
+
+  .skeleton-product {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .skeleton-article {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .skeleton-text {
+    grid-template-columns: 1fr;
+  }
+
+  .skeleton-card {
+    background: #fff;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+
+  .skeleton-image {
+    aspect-ratio: 4 / 3;
+    background: #e5e7eb;
+  }
+
+  .skeleton-body {
+    padding: 24px;
+  }
+
+  .skeleton-badge {
+    width: 80px;
+    height: 24px;
+    border-radius: 12px;
+    background: #e5e7eb;
+    margin-bottom: 12px;
+  }
+
+  .skeleton-title {
+    width: 70%;
+    height: 20px;
+    border-radius: 4px;
+    background: #e5e7eb;
+    margin-bottom: 12px;
+  }
+
+  .skeleton-text {
+    width: 100%;
+    height: 14px;
+    border-radius: 4px;
+    background: #e5e7eb;
+    margin-bottom: 8px;
+  }
+
+  .skeleton-text-short {
+    width: 60%;
+  }
+
+  .skeleton-pulse {
+    animation: skeleton-pulse 1.5s ease-in-out infinite;
+    background-color: #e5e7eb;
+    background-image: linear-gradient(90deg, #e5e7eb 0px, #f3f4f6 40px, #e5e7eb 80px);
+    background-size: 200px;
+  }
+
+  @keyframes skeleton-pulse {
+    0% {
+      background-position: -200px 0;
+    }
+    100% {
+      background-position: 200px 0;
+    }
+  }
+
+  @media (max-width: 1024px) {
+    .skeleton-product,
+    .skeleton-article {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .skeleton-product,
+    .skeleton-article {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,59 @@
+---
+interface Props {
+  title?: string;
+  message?: string;
+}
+
+const {
+  title = "部分内容不可用",
+  message = "Unable to connect to the server. Please check your internet connection and try again.",
+} = Astro.props;
+---
+
+<div class="offline-notice">
+  <div class="offline-notice-icon">
+    <i class="fas fa-cloud-rain"></i>
+  </div>
+  <h3>{title}</h3>
+  <p>{message}</p>
+  <button class="btn btn-primary" onclick="location.reload()">
+    <i class="fas fa-redo"></i> Try Again
+  </button>
+</div>
+
+<style>
+  .offline-notice {
+    text-align: center;
+    padding: 60px 20px;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  .offline-notice-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: var(--color-bg-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+  }
+
+  .offline-notice-icon i {
+    font-size: 36px;
+    color: var(--color-text-light);
+  }
+
+  .offline-notice h3 {
+    font-size: 20px;
+    margin-bottom: 12px;
+  }
+
+  .offline-notice p {
+    font-size: 15px;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin-bottom: 24px;
+  }
+</style>

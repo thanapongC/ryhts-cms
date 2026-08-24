@@ -1,0 +1,169 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { safeGetArticleBySlug, getStrapiMedia } from "../../lib/api";
+import OfflineNotice from "../../components/OfflineNotice.astro";
+
+const { slug } = Astro.params;
+const articleResult = await safeGetArticleBySlug(slug as string, "th");
+const article = articleResult.data;
+
+if (!article) {
+  return Astro.redirect("/articles");
+}
+
+const featuredImage = getStrapiMedia(article.featured_image?.url);
+
+function formatDate(dateStr: string): string {
+  if (!dateStr) return "";
+  const d = new Date(dateStr);
+  return d.toLocaleDateString("th-TH", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
+---
+
+<BaseLayout
+  title={article.meta_title || article.title}
+  description={article.meta_description || article.excerpt}
+  ogImage={article.og_image?.url || article.featured_image?.url}
+  ogType="article"
+  jsonLd={{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: article.title,
+    description: article.excerpt,
+    image: featuredImage || undefined,
+    author: article.author ? { "@type": "Person", name: article.author } : undefined,
+    datePublished: article.publishedAt || undefined,
+    publisher: {
+      "@type": "Organization",
+      name: "Ryhts Ribbon",
+    },
+  }}
+>
+  <div class="page-header">
+    <div class="container">
+      <h1>{article.title}</h1>
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="/">Home</a>
+        <span>/</span>
+        <a href="/articles">Articles</a>
+        <span>/</span>
+        <span>{article.title}</span>
+      </div>
+
+      {articleResult.isOffline && (
+        <OfflineNotice
+          title="部分内容不可用"
+          message="Some article details may be unavailable due to a connection issue."
+        />
+      )}
+
+      <article class="article-detail">
+        <div class="article-meta-bar">
+          {article.author && (
+            <span class="meta-item"><i class="fas fa-user"></i> {article.author}</span>
+          )}
+          {article.publishedAt && (
+            <span class="meta-item"><i class="fas fa-calendar"></i> {formatDate(article.publishedAt)}</span>
+          )}
+          {article.views > 0 && (
+            <span class="meta-item"><i class="fas fa-eye"></i> {article.views} views</span>
+          )}
+        </div>
+
+        {featuredImage && (
+          <div class="article-featured-image">
+            <img src={featuredImage} alt={article.title} />
+          </div>
+        )}
+
+        {article.content && (
+          <div class="rich-text article-content" set:html={article.content} />
+        )}
+
+        {article.tags?.length > 0 && (
+          <div class="article-tags">
+            <i class="fas fa-tags"></i>
+            {article.tags.map((tag) => (
+              <span class="tag">{tag}</span>
+            ))}
+          </div>
+        )}
+      </article>
+
+      <div class="article-nav">
+        <a href="/articles" class="btn btn-outline">← กลับไปบทความทั้งหมด</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .article-detail {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .article-meta-bar {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 24px;
+    font-size: 14px;
+    color: var(--color-text-secondary);
+  }
+
+  .meta-item i {
+    color: var(--color-primary);
+    margin-right: 6px;
+  }
+
+  .article-featured-image {
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    margin-bottom: 32px;
+  }
+
+  .article-featured-image img {
+    width: 100%;
+    max-height: 480px;
+    object-fit: cover;
+  }
+
+  .article-content {
+    margin-bottom: 40px;
+  }
+
+  .article-tags {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding-top: 24px;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .article-tags i {
+    color: var(--color-primary);
+  }
+
+  .tag {
+    padding: 4px 12px;
+    background: var(--color-bg-light);
+    border-radius: 16px;
+    font-size: 13px;
+    color: var(--color-text-secondary);
+  }
+
+  .article-nav {
+    margin-top: 40px;
+    text-align: center;
+  }
+</style>

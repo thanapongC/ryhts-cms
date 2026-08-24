@@ -1,0 +1,62 @@
+---
+/**
+ * SeoHead — comprehensive SEO meta tags component.
+ *
+ * Renders: title, description, canonical, OG tags, Twitter cards,
+ * robots directives, and JSON-LD structured data.
+ */
+
+import { getStrapiMedia } from "../lib/api";
+
+interface Props {
+  title: string;
+  description?: string;
+  canonical?: string;
+  ogImage?: string;
+  ogType?: "website" | "article" | "product";
+  robots?: string;
+  // JSON-LD structured data
+  jsonLd?: Record<string, any>;
+}
+
+const {
+  title,
+  description = "",
+  canonical,
+  ogImage,
+  ogType = "website",
+  robots = "index, follow",
+  jsonLd,
+} = Astro.props;
+
+const siteUrl = Astro.url.origin;
+const resolvedOgImage = ogImage ? getStrapiMedia(ogImage) : "";
+const canonicalUrl = canonical || Astro.url.href;
+---
+
+<title>{title}</title>
+<meta name="description" content={description} />
+<meta name="robots" content={robots} />
+<link rel="canonical" href={canonicalUrl} />
+
+<!-- Open Graph -->
+<meta property="og:type" content={ogType} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonicalUrl} />
+<meta property="og:site_name" content="Ryhts Ribbon" />
+{resolvedOgImage && <meta property="og:image" content={resolvedOgImage} />}
+{resolvedOgImage && <meta property="og:image:width" content="1200" />}
+{resolvedOgImage && <meta property="og:image:height" content="630" />}
+<meta property="og:locale" content="th_TH" />
+
+<!-- Twitter -->
+<meta name="twitter:card" content={resolvedOgImage ? "summary_large_image" : "summary"} />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+{resolvedOgImage && <meta name="twitter:image" content={resolvedOgImage} />}
+
+<!-- JSON-LD -->
+{jsonLd && (
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+)}

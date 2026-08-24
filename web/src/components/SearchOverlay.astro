@@ -1,0 +1,608 @@
+---
+/**
+ * SearchOverlay — client-side search across products and articles.
+ *
+ * - Opened by clicking the search icon in the header
+ * - Fetches all products + articles from Strapi on first open
+ * - Filters client-side as the user types (debounced)
+ * - Shows results grouped by type with images and links
+ * - Keyboard accessible: Escape to close, arrow keys to navigate results
+ */
+
+const STRAPI_URL = import.meta.env.PUBLIC_STRAPI_URL || "http://localhost:1337";
+---
+
+<!-- Search trigger button (placed in header via BaseLayout) -->
+<button class="search-trigger" id="search-trigger" aria-label="Search">
+  <svg width="20" height="20" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-miterlimit="10">
+    <circle cx="11.35" cy="11.35" r="6" />
+    <line x1="15.59" y1="15.59" x2="20.65" y2="20.65" />
+  </svg>
+</button>
+
+<!-- Search overlay -->
+<div id="search-overlay" class="search-overlay" hidden>
+  <div class="search-overlay-backdrop" id="search-backdrop"></div>
+  <div class="search-panel" role="search" aria-label="Site search">
+    <div class="search-panel-header">
+      <div class="search-input-wrapper">
+        <i class="fas fa-search search-icon"></i>
+        <input
+          type="search"
+          id="search-input"
+          class="search-input"
+          placeholder="Search products, articles..."
+          autocomplete="off"
+          aria-label="Search"
+        />
+        <div id="search-spinner" class="search-spinner" hidden>
+          <i class="fas fa-circle-notch fa-spin"></i>
+        </div>
+        <button id="search-close" class="search-close" aria-label="Close search">
+          <i class="fas fa-times"></i>
+          <span class="search-close-hint">ESC</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="search-panel-body" id="search-body">
+      <!-- Initial state -->
+      <div id="search-idle" class="search-idle">
+        <div class="search-idle-icon">
+          <i class="fas fa-search"></i>
+        </div>
+        <p>Type to search across products and articles</p>
+      </div>
+
+      <!-- Results -->
+      <div id="search-results" class="search-results" hidden></div>
+
+      <!-- No results -->
+      <div id="search-empty" class="search-empty" hidden>
+        <i class="fas fa-search" style="font-size: 32px; color: var(--color-text-light);"></i>
+        <p>No results found</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* ─── Trigger button ───────────────────────────────────────────── */
+  .search-trigger {
+    background: none;
+    border: none;
+    color: var(--color-text);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: var(--radius);
+    transition: all var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .search-trigger:hover {
+    color: var(--color-primary);
+    background: var(--color-primary-light);
+  }
+
+  /* ─── Overlay ──────────────────────────────────────────────────── */
+  .search-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 3000;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 80px;
+  }
+
+  .search-overlay[hidden] {
+    display: none;
+  }
+
+  .search-overlay-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    animation: fadeIn 0.2s ease;
+  }
+
+  .search-panel {
+    position: relative;
+    background: #fff;
+    border-radius: var(--radius-lg);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+    width: 100%;
+    max-width: 640px;
+    max-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    animation: slideDown 0.25s ease;
+    margin: 0 16px;
+  }
+
+  /* ─── Header / Input ───────────────────────────────────────────── */
+  .search-panel-header {
+    padding: 4px;
+    border-bottom: 1px solid var(--color-border-light);
+  }
+
+  .search-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+  }
+
+  .search-icon {
+    color: var(--color-text-light);
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .search-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 17px;
+    font-family: var(--font-family);
+    color: var(--color-text);
+    background: transparent;
+  }
+
+  .search-input::placeholder {
+    color: var(--color-text-light);
+  }
+
+  .search-spinner {
+    color: var(--color-primary);
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .search-spinner[hidden] {
+    display: none;
+  }
+
+  .search-close {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--color-bg-light);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    padding: 4px 10px;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--color-text-secondary);
+    transition: all var(--transition);
+    flex-shrink: 0;
+  }
+
+  .search-close:hover {
+    background: var(--color-border);
+  }
+
+  .search-close-hint {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  /* ─── Body ─────────────────────────────────────────────────────── */
+  .search-panel-body {
+    overflow-y: auto;
+    flex: 1;
+    padding: 16px;
+  }
+
+  .search-idle,
+  .search-empty {
+    text-align: center;
+    padding: 48px 20px;
+    color: var(--color-text-secondary);
+  }
+
+  .search-idle-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--color-bg-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+  }
+
+  .search-idle-icon i {
+    font-size: 22px;
+    color: var(--color-text-light);
+  }
+
+  .search-idle p,
+  .search-empty p {
+    font-size: 15px;
+    margin: 0;
+  }
+
+  /* ─── Results ──────────────────────────────────────────────────── */
+  .search-results[hidden] {
+    display: none;
+  }
+
+  .search-results-group {
+    margin-bottom: 20px;
+  }
+
+  .search-results-group:last-child {
+    margin-bottom: 0;
+  }
+
+  .search-results-group-title {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--color-text-light);
+    padding: 0 8px 8px;
+    border-bottom: 1px solid var(--color-border-light);
+    margin-bottom: 8px;
+  }
+
+  .search-result-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 8px;
+    border-radius: var(--radius);
+    text-decoration: none;
+    color: inherit;
+    transition: background var(--transition);
+  }
+
+  .search-result-item:hover,
+  .search-result-item.focused {
+    background: var(--color-primary-light);
+  }
+
+  .search-result-thumb {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius);
+    overflow: hidden;
+    flex-shrink: 0;
+    background: var(--color-bg-light);
+  }
+
+  .search-result-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .search-result-thumb .placeholder-icon {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-light);
+    font-size: 18px;
+  }
+
+  .search-result-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .search-result-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .search-result-excerpt {
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 2px;
+  }
+
+  .search-result-badge {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 500;
+    flex-shrink: 0;
+    background: var(--color-bg-light);
+    color: var(--color-text-secondary);
+  }
+
+  .search-result-badge.product {
+    background: #dbeafe;
+    color: #1e40af;
+  }
+
+  .search-result-badge.article {
+    background: #dcfce7;
+    color: #166534;
+  }
+
+  .search-highlight {
+    background: #fef08a;
+    border-radius: 2px;
+    padding: 0 1px;
+  }
+
+  /* ─── Animations ──────────────────────────────────────────────── */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── Responsive ──────────────────────────────────────────────── */
+  @media (max-width: 768px) {
+    .search-overlay {
+      padding-top: 0;
+    }
+
+    .search-panel {
+      max-height: 100vh;
+      border-radius: 0;
+      margin: 0;
+      height: 100vh;
+    }
+
+    .search-close-hint {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  const STRAPI_URL = import.meta.env.PUBLIC_STRAPI_URL || "http://localhost:1337";
+
+  interface SearchItem {
+    type: "product" | "article";
+    title: string;
+    slug: string;
+    excerpt: string;
+    image: string;
+  }
+
+  let allItems: SearchItem[] = [];
+  let dataLoaded = false;
+  let focusedIndex = -1;
+
+  const overlay = document.getElementById("search-overlay") as HTMLElement;
+  const input = document.getElementById("search-input") as HTMLInputElement;
+  const resultsEl = document.getElementById("search-results") as HTMLElement;
+  const idleEl = document.getElementById("search-idle") as HTMLElement;
+  const emptyEl = document.getElementById("search-empty") as HTMLElement;
+  const spinnerEl = document.getElementById("search-spinner") as HTMLElement;
+
+  function open() {
+    overlay?.removeAttribute("hidden");
+    document.body.style.overflow = "hidden";
+    setTimeout(() => input?.focus(), 100);
+    if (!dataLoaded) fetchData();
+  }
+
+  function close() {
+    overlay?.setAttribute("hidden", "");
+    document.body.style.overflow = "";
+    if (input) input.value = "";
+    showIdle();
+    focusedIndex = -1;
+  }
+
+  function showIdle() {
+    idleEl?.removeAttribute("hidden");
+    resultsEl?.setAttribute("hidden", "");
+    emptyEl?.setAttribute("hidden", "");
+  }
+
+  function showResults(html: string) {
+    resultsEl.innerHTML = html;
+    resultsEl?.removeAttribute("hidden");
+    idleEl?.setAttribute("hidden", "");
+    emptyEl?.setAttribute("hidden", "");
+  }
+
+  function showEmpty() {
+    emptyEl?.removeAttribute("hidden");
+    idleEl?.setAttribute("hidden", "");
+    resultsEl?.setAttribute("hidden", "");
+  }
+
+  function highlight(text: string, query: string): string {
+    if (!query) return text;
+    const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    return text.replace(new RegExp(`(${escaped})`, "gi"), '<span class="search-highlight">$1</span>');
+  }
+
+  async function fetchData() {
+    spinnerEl?.removeAttribute("hidden");
+
+    try {
+      const [productsRes, articlesRes] = await Promise.all([
+        fetch(`${STRAPI_URL}/api/products?populate=*&locale=th&pagination[pageSize]=100&sort=publishedAt:desc`),
+        fetch(`${STRAPI_URL}/api/articles?populate=*&locale=th&pagination[pageSize]=100&sort=publishedAt:desc`),
+      ]);
+
+      const productsJson = productsRes.ok ? await productsRes.json() : { data: [] };
+      const articlesJson = articlesRes.ok ? await articlesRes.json() : { data: [] };
+
+      const getImage = (item: any): string => {
+        const img = item.images?.[0] || item.featured_image;
+        if (!img) return "";
+        return img.url?.startsWith("http") ? img.url : `${STRAPI_URL}${img.url}`;
+      };
+
+      allItems = [
+        ...productsJson.data.map((p: any) => ({
+          type: "product" as const,
+          title: p.title,
+          slug: p.slug,
+          excerpt: p.short_description || "",
+          image: getImage(p),
+        })),
+        ...articlesJson.data.map((a: any) => ({
+          type: "article" as const,
+          title: a.title,
+          slug: a.slug,
+          excerpt: a.excerpt || "",
+          image: getImage(a),
+        })),
+      ];
+
+      dataLoaded = true;
+    } catch {
+      allItems = [];
+    } finally {
+      spinnerEl?.setAttribute("hidden", "");
+    }
+  }
+
+  function performSearch(query: string) {
+    const q = query.trim().toLowerCase();
+    if (!q) {
+      showIdle();
+      return;
+    }
+
+    const matches = allItems.filter(
+      (item) =>
+        item.title.toLowerCase().includes(q) ||
+        item.excerpt.toLowerCase().includes(q)
+    );
+
+    if (matches.length === 0) {
+      showEmpty();
+      return;
+    }
+
+    const products = matches.filter((m) => m.type === "product");
+    const articles = matches.filter((m) => m.type === "article");
+
+    let html = "";
+
+    if (products.length > 0) {
+      html += `<div class="search-results-group">
+        <div class="search-results-group-title">Products (${products.length})</div>
+        ${products
+          .map(
+            (item) => `
+          <a href="/products/${item.slug}" class="search-result-item" data-type="product">
+            <div class="search-result-thumb">
+              ${
+                item.image
+                  ? `<img src="${item.image}" alt="${item.title}" loading="lazy" />`
+                  : '<div class="placeholder-icon"><i class="fas fa-box"></i></div>'
+              }
+            </div>
+            <div class="search-result-info">
+              <div class="search-result-title">${highlight(item.title, q)}</div>
+              ${item.excerpt ? `<div class="search-result-excerpt">${highlight(item.excerpt, q)}</div>` : ""}
+            </div>
+            <span class="search-result-badge product">Product</span>
+          </a>
+        `
+          )
+          .join("")}
+      </div>`;
+    }
+
+    if (articles.length > 0) {
+      html += `<div class="search-results-group">
+        <div class="search-results-group-title">Articles (${articles.length})</div>
+        ${articles
+          .map(
+            (item) => `
+          <a href="/articles/${item.slug}" class="search-result-item" data-type="article">
+            <div class="search-result-thumb">
+              ${
+                item.image
+                  ? `<img src="${item.image}" alt="${item.title}" loading="lazy" />`
+                  : '<div class="placeholder-icon"><i class="fas fa-newspaper"></i></div>'
+              }
+            </div>
+            <div class="search-result-info">
+              <div class="search-result-title">${highlight(item.title, q)}</div>
+              ${item.excerpt ? `<div class="search-result-excerpt">${highlight(item.excerpt, q)}</div>` : ""}
+            </div>
+            <span class="search-result-badge article">Article</span>
+          </a>
+        `
+          )
+          .join("")}
+      </div>`;
+    }
+
+    showResults(html);
+    focusedIndex = -1;
+  }
+
+  // ─── Event listeners ──────────────────────────────────────────
+  document.getElementById("search-trigger")?.addEventListener("click", open);
+  document.getElementById("search-close")?.addEventListener("click", close);
+  document.getElementById("search-backdrop")?.addEventListener("click", close);
+
+  // Debounced search
+  let debounceTimer: ReturnType<typeof setTimeout>;
+  input?.addEventListener("input", () => {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+      performSearch(input.value);
+    }, 200);
+  });
+
+  // Keyboard navigation
+  document.addEventListener("keydown", (e) => {
+    // Escape closes
+    if (e.key === "Escape" && !overlay?.hasAttribute("hidden")) {
+      close();
+      return;
+    }
+
+    // Cmd/Ctrl+K opens
+    if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+      e.preventDefault();
+      open();
+      return;
+    }
+
+    // Arrow keys navigate results
+    if (!overlay?.hasAttribute("hidden")) {
+      const items = resultsEl?.querySelectorAll(".search-result-item");
+      if (!items || items.length === 0) return;
+
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        focusedIndex = Math.min(focusedIndex + 1, items.length - 1);
+        items.forEach((el, i) => el.classList.toggle("focused", i === focusedIndex));
+        items[focusedIndex]?.scrollIntoView({ block: "nearest" });
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        focusedIndex = Math.max(focusedIndex - 1, 0);
+        items.forEach((el, i) => el.classList.toggle("focused", i === focusedIndex));
+        items[focusedIndex]?.scrollIntoView({ block: "nearest" });
+      } else if (e.key === "Enter" && focusedIndex >= 0) {
+        e.preventDefault();
+        (items[focusedIndex] as HTMLAnchorElement)?.click();
+      }
+    }
+  });
+</script>
