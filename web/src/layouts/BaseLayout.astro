@@ -1,8 +1,10 @@
 ---
 import { safeGetSiteSetting, safeGetFooterSetting, getStrapiMedia } from "../lib/api";
+import { detectLocale, type Locale } from "../lib/i18n";
 import ErrorBanner from "../components/ErrorBanner.astro";
 import CookieConsent from "../components/CookieConsent.astro";
 import SearchOverlay from "../components/SearchOverlay.astro";
+import LanguageSwitcher from "../components/LanguageSwitcher.astro";
 import SeoHead from "../components/SeoHead.astro";
 
 interface ArticleMeta {
@@ -29,14 +31,17 @@ interface Props {
   title?: string;
   description?: string;
   ogImage?: string;
+  ogImageAlt?: string;
   canonical?: string;
   ogType?: "website" | "article" | "product";
   robots?: string;
   author?: string;
   keywords?: string[];
   themeColor?: string;
+  locale?: string;
   twitterSite?: string;
   twitterCreator?: string;
+  facebookAppId?: string;
   hreflangs?: Hreflang[];
   article?: ArticleMeta;
   product?: ProductMeta;
@@ -49,14 +54,17 @@ const {
   title,
   description,
   ogImage,
+  ogImageAlt,
   canonical,
   ogType,
   robots,
   author,
   keywords,
   themeColor,
+  locale: propLocale,
   twitterSite,
   twitterCreator,
+  facebookAppId,
   hreflangs,
   article,
   product,
@@ -65,8 +73,14 @@ const {
   jsonLd,
 } = Astro.props;
 
-const siteResult = await safeGetSiteSetting("th");
-const footerResult = await safeGetFooterSetting("th");
+// Detect locale: prop > cookie > Accept-Language > default
+const cookieHeader = Astro.request.headers.get("cookie") || undefined;
+const acceptLanguage = Astro.request.headers.get("accept-language") || undefined;
+const detectedLocale = detectLocale(cookieHeader, acceptLanguage);
+const locale = propLocale || detectedLocale;
+
+const siteResult = await safeGetSiteSetting(locale);
+const footerResult = await safeGetFooterSetting(locale);
 
 const siteSetting = siteResult.data;
 const footerSetting = footerResult.data;
@@ -92,10 +106,35 @@ const navItems = [
 
 const socialLinks = footerSetting?.social_links || {};
 const copyrightText = footerSetting?.copyright_text || `© ${new Date().getFullYear()} Ryhts Ribbon. All rights reserved.`;
+
+// Generate hreflang tags for multilingual support
+// Current site supports: th (Thai), en (English)
+const currentPath = Astro.url.pathname;
+const siteOrigin = Astro.url.origin;
+
+// Helper to build language-specific URL
+function getLanguageUrl(lang: string): string {
+  // For now, since we only have th locale, en would be a future implementation
+  // This structure allows easy expansion when en locale is added
+  if (lang === "en") {
+    // Future: return `${siteOrigin}/en${currentPath}`;
+    return `${siteOrigin}${currentPath}`; // Fallback to current for now
+  }
+  return `${siteOrigin}${currentPath}`;
+}
+
+// Default hreflangs if not provided by page
+const defaultHreflangs: Hreflang[] = [
+  { lang: "th", href: getLanguageUrl("th") },
+  { lang: "en", href: getLanguageUrl("en") },
+  { lang: "x-default", href: getLanguageUrl("th") }, // Default to Thai
+];
+
+const resolvedHreflangs = hreflangs || defaultHreflangs;
 ---
 
 <!doctype html>
-<html lang="th">
+<html lang={locale}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -107,6 +146,7 @@ const copyrightText = footerSetting?.copyright_text || `© ${new Date().getFullY
       title={pageTitle}
       description={metaDescription}
       ogImage={resolvedOgImage}
+      ogImageAlt={ogImageAlt}
       canonical={canonical}
       ogType={ogType}
       robots={robots}
@@ -115,7 +155,8 @@ const copyrightText = footerSetting?.copyright_text || `© ${new Date().getFullY
       themeColor={themeColor}
       twitterSite={twitterSite}
       twitterCreator={twitterCreator}
-      hreflangs={hreflangs}
+      facebookAppId={facebookAppId}
+      hreflangs={resolvedHreflangs}
       article={article}
       product={product}
       ogVideo={ogVideo}
@@ -154,6 +195,7 @@ const copyrightText = footerSetting?.copyright_text || `© ${new Date().getFullY
         </nav>
 
         <div class="header-right">
+          <LanguageSwitcher currentLocale={locale} />
           <SearchOverlay />
           {siteSetting?.phone && (
             <a href={`tel:${siteSetting.phone}`} class="header-phone">

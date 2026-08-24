@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { safeGetArticleBySlug, getStrapiMedia } from "../../lib/api";
+import { getOgImageUrl } from "../../lib/og";
 import OfflineNotice from "../../components/OfflineNotice.astro";
 
 const { slug } = Astro.params;
@@ -12,6 +13,16 @@ if (!article) {
 }
 
 const featuredImage = getStrapiMedia(article.featured_image?.url);
+
+// Generate dynamic OG image URL
+const dynamicOgImage = getOgImageUrl({
+  baseUrl: Astro.url.origin,
+  title: article.title,
+  subtitle: article.excerpt || article.author || "",
+  type: "article",
+  brand: "Ryhts Ribbon",
+  category: article.category || "",
+});
 
 function formatDate(dateStr: string): string {
   if (!dateStr) return "";
@@ -27,7 +38,7 @@ function formatDate(dateStr: string): string {
 <BaseLayout
   title={article.meta_title || article.title}
   description={article.meta_description || article.excerpt}
-  ogImage={article.og_image?.url || article.featured_image?.url}
+  ogImage={article.og_image?.url || dynamicOgImage}
   ogType="article"
   author={article.author}
   keywords={article.seo_keywords || [article.title, 'ribbon', 'thermal transfer', 'article'].filter(Boolean)}

@@ -34,14 +34,16 @@ interface Props {
   description?: string;
   canonical?: string;
   ogImage?: string;
+  ogImageAlt?: string;
   ogType?: "website" | "article" | "product";
   robots?: string;
   author?: string;
   keywords?: string[];
   themeColor?: string;
-  // Twitter handle
+  // Social handles
   twitterSite?: string;
   twitterCreator?: string;
+  facebookAppId?: string;
   // Hreflang for multilingual
   hreflangs?: Hreflang[];
   // Article-specific metadata
@@ -60,6 +62,7 @@ const {
   description = "",
   canonical,
   ogImage,
+  ogImageAlt,
   ogType = "website",
   robots = "index, follow",
   author,
@@ -67,6 +70,7 @@ const {
   themeColor = "#017fe4",
   twitterSite,
   twitterCreator,
+  facebookAppId,
   hreflangs = [],
   article,
   product,
@@ -107,26 +111,49 @@ const keywordsString = keywords.length > 0 ? keywords.join(", ") : undefined;
 {keywordsString && <meta name="keywords" content={keywordsString} />}
 {themeColor && <meta name="theme-color" content={themeColor} />}
 
-<!-- Open Graph -->
+<!-- Open Graph / Facebook -->
 <meta property="og:type" content={ogType} />
+<meta property="og:url" content={canonicalUrl} />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
-<meta property="og:url" content={canonicalUrl} />
 <meta property="og:site_name" content="Ryhts Ribbon" />
-{resolvedOgImage && <meta property="og:image" content={resolvedOgImage} />}
-{resolvedOgImage && <meta property="og:image:width" content="1200" />}
-{resolvedOgImage && <meta property="og:image:height" content="630" />}
 <meta property="og:locale" content="th_TH" />
+<meta property="og:locale:alternate" content="en_US" />
+{resolvedOgImage && (
+  <>
+    <meta property="og:image" content={resolvedOgImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={ogImageAlt || title} />
+    <meta property="og:image:type" content="image/png" />
+  </>
+)}
 {ogVideo && <meta property="og:video" content={ogVideo} />}
 {ogAudio && <meta property="og:audio" content={ogAudio} />}
+{facebookAppId && <meta property="fb:app_id" content={facebookAppId} />}
 
 <!-- Twitter -->
 <meta name="twitter:card" content={resolvedOgImage ? "summary_large_image" : "summary"} />
+<meta name="twitter:url" content={canonicalUrl} />
 <meta name="twitter:title" content={title} />
 <meta name="twitter:description" content={description} />
-{resolvedOgImage && <meta name="twitter:image" content={resolvedOgImage} />}
+{resolvedOgImage && (
+  <>
+    <meta name="twitter:image" content={resolvedOgImage} />
+    <meta name="twitter:image:alt" content={ogImageAlt || title} />
+  </>
+)}
 {twitterSite && <meta name="twitter:site" content={twitterSite} />}
 {twitterCreator && <meta name="twitter:creator" content={twitterCreator} />}
+
+<!-- LinkedIn -->
+<meta property="linkedin:owner" content={facebookAppId || ""} />
+
+<!-- Pinterest -->
+<meta name="pinterest-rich-pin" content="true" />
+
+<!-- WhatsApp / LINE / Social Apps -->
+<meta property="og:see_also" content={canonicalUrl} />
 
 <!-- Hreflang -->
 {hreflangs.map(({ lang, href }) => (
