@@ -1023,6 +1023,7 @@ export interface ApiSiteSettingSiteSetting extends Struct.SingleTypeSchema {
       'oneToMany',
       'api::site-setting.site-setting'
     >;
+    og_image: Schema.Attribute.Media<'images'>;
     phone: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
     site_description: Schema.Attribute.Text;

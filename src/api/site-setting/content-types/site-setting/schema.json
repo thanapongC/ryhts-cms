@@ -42,6 +42,11 @@
     },
     "email": {
       "type": "email"
+    },
+    "og_image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
     }
   }
 }

@@ -114,6 +114,7 @@ export interface SiteSetting {
   currency: string;
   phone: string;
   email: string;
+  og_image: StrapiMedia | null;
 }
 
 export interface StrapiMedia {
