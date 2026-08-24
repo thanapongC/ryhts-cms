@@ -1,0 +1,39 @@
+# robots.txt for Ryhts Ribbon
+# https://ryhts-ribbon.com
+
+# Allow all crawlers
+User-agent: *
+Allow: /
+
+# Disallow admin and API routes
+Disallow: /api/
+Disallow: /admin/
+
+# Disallow private/internal pages
+Disallow: /_server-islands/
+
+# Sitemap location
+Sitemap: https://ryhts-ribbon.com/sitemap-index.xml
+
+# Crawl-delay for polite bots (optional)
+# User-agent: Bingbot
+# Crawl-delay: 10
+
+# Specific bot directives
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /

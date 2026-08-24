@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#017fe4;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#015cb0;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="accent-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.1" />
+      <stop offset="100%" style="stop-color:#ffffff;stop-opacity:0.05" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg-gradient)"/>
+  
+  <!-- Decorative elements -->
+  <circle cx="100" cy="100" r="200" fill="rgba(255,255,255,0.05)"/>
+  <circle cx="1100" cy="530" r="250" fill="rgba(255,255,255,0.05)"/>
+  <rect x="0" y="580" width="1200" height="50" fill="rgba(0,0,0,0.1)"/>
+  
+  <!-- Ribbon pattern (decorative) -->
+  <path d="M-50 200 Q200 180 400 250 T800 220 T1250 280" stroke="rgba(255,255,255,0.1)" stroke-width="40" fill="none"/>
+  <path d="M-50 400 Q300 380 500 420 T900 400 T1250 450" stroke="rgba(255,255,255,0.08)" stroke-width="30" fill="none"/>
+  
+  <!-- Logo area -->
+  <rect x="80" y="80" width="60" height="60" rx="12" fill="rgba(255,255,255,0.2)"/>
+  <text x="110" y="120" font-family="Arial, sans-serif" font-size="28" font-weight="bold" fill="white" text-anchor="middle">R</text>
+  
+  <!-- Site name -->
+  <text x="160" y="125" font-family="Arial, sans-serif" font-size="42" font-weight="bold" fill="white">Ryhts Ribbon</text>
+  
+  <!-- Tagline -->
+  <text x="600" y="280" font-family="Arial, sans-serif" font-size="56" font-weight="bold" fill="white" text-anchor="middle">Premier Ribbons for</text>
+  <text x="600" y="350" font-family="Arial, sans-serif" font-size="56" font-weight="bold" fill="white" text-anchor="middle">Premier Printing</text>
+  
+  <!-- Description -->
+  <text x="600" y="430" font-family="Arial, sans-serif" font-size="24" fill="rgba(255,255,255,0.85)" text-anchor="middle">ผู้จำหน่ายริบบอนสำหรับเครื่องพิมพ์บาร์โค้ดคุณภาพสูง</text>
+  
+  <!-- Bottom bar -->
+  <rect x="0" y="560" width="1200" height="70" fill="rgba(0,0,0,0.2)"/>
+  <text x="600" y="605" font-family="Arial, sans-serif" font-size="18" fill="rgba(255,255,255,0.7)" text-anchor="middle">ryhts-ribbon.com | ริบบอนคุณภาพ นำเข้ามาตรฐาน</text>
+</svg>

@@ -5,6 +5,26 @@ import CookieConsent from "../components/CookieConsent.astro";
 import SearchOverlay from "../components/SearchOverlay.astro";
 import SeoHead from "../components/SeoHead.astro";
 
+interface ArticleMeta {
+  publishedTime?: string;
+  modifiedTime?: string;
+  author?: string;
+  section?: string;
+  tags?: string[];
+}
+
+interface ProductMeta {
+  price?: string;
+  currency?: string;
+  availability?: string;
+  brand?: string;
+}
+
+interface Hreflang {
+  lang: string;
+  href: string;
+}
+
 interface Props {
   title?: string;
   description?: string;
@@ -12,10 +32,38 @@ interface Props {
   canonical?: string;
   ogType?: "website" | "article" | "product";
   robots?: string;
-  jsonLd?: Record<string, any>;
+  author?: string;
+  keywords?: string[];
+  themeColor?: string;
+  twitterSite?: string;
+  twitterCreator?: string;
+  hreflangs?: Hreflang[];
+  article?: ArticleMeta;
+  product?: ProductMeta;
+  ogVideo?: string;
+  ogAudio?: string;
+  jsonLd?: Record<string, any> | Record<string, any>[];
 }
 
-const { title, description, ogImage, canonical, ogType, robots, jsonLd } = Astro.props;
+const {
+  title,
+  description,
+  ogImage,
+  canonical,
+  ogType,
+  robots,
+  author,
+  keywords,
+  themeColor,
+  twitterSite,
+  twitterCreator,
+  hreflangs,
+  article,
+  product,
+  ogVideo,
+  ogAudio,
+  jsonLd,
+} = Astro.props;
 
 const siteResult = await safeGetSiteSetting("th");
 const footerResult = await safeGetFooterSetting("th");
@@ -29,6 +77,10 @@ const siteDescription = siteSetting?.site_description || "Premier Ribbons for Pr
 const pageTitle = title ? `${title} | ${siteName}` : siteName;
 const metaDescription = description || siteDescription;
 const logoUrl = getStrapiMedia(siteSetting?.site_logo?.url);
+
+// Default OG image from site settings if not provided by page
+const defaultOgImage = siteSetting?.og_image?.url || siteSetting?.site_logo?.url || "/og-default.svg";
+const resolvedOgImage = ogImage || defaultOgImage;
 
 const navItems = [
   { label: "Home", href: "/" },
@@ -49,14 +101,25 @@ const copyrightText = footerSetting?.copyright_text || `© ${new Date().getFullY
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
     <meta name="generator" content={Astro.generator} />
     <SeoHead
       title={pageTitle}
       description={metaDescription}
-      ogImage={ogImage}
+      ogImage={resolvedOgImage}
       canonical={canonical}
       ogType={ogType}
       robots={robots}
+      author={author}
+      keywords={keywords}
+      themeColor={themeColor}
+      twitterSite={twitterSite}
+      twitterCreator={twitterCreator}
+      hreflangs={hreflangs}
+      article={article}
+      product={product}
+      ogVideo={ogVideo}
+      ogAudio={ogAudio}
       jsonLd={jsonLd}
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />

@@ -26,20 +26,52 @@ const galleryImages = product.images?.slice(1) || [];
   description={product.meta_description || product.short_description}
   ogImage={product.og_image?.url || product.images?.[0]?.url}
   ogType="product"
-  jsonLd={{
-    "@context": "https://schema.org",
-    "@type": "Product",
-    name: product.title,
-    description: product.short_description,
-    image: product.images?.[0]?.url ? getStrapiMedia(product.images[0].url) : undefined,
-    brand: product.brand ? { "@type": "Brand", name: product.brand.name } : undefined,
-    offers: product.price > 0 ? {
-      "@type": "Offer",
-      price: product.price,
-      priceCurrency: "THB",
-      availability: "https://schema.org/InStock",
-    } : undefined,
+  keywords={product.seo_keywords || [product.title, product.brand?.name, product.ribbon_type, 'ribbons', 'thermal transfer'].filter(Boolean)}
+  product={{
+    price: product.price?.toString(),
+    currency: 'THB',
+    availability: 'InStock',
+    brand: product.brand?.name,
   }}
+  jsonLd={[
+    {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      name: product.title,
+      description: product.short_description,
+      image: product.images?.[0]?.url ? getStrapiMedia(product.images[0].url) : undefined,
+      brand: product.brand ? { "@type": "Brand", name: product.brand.name } : undefined,
+      offers: product.price > 0 ? {
+        "@type": "Offer",
+        price: product.price,
+        priceCurrency: "THB",
+        availability: "https://schema.org/InStock",
+      } : undefined,
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: "Home",
+          item: Astro.url.origin,
+        },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: "Products",
+          item: `${Astro.url.origin}/products`,
+        },
+        {
+          "@type": "ListItem",
+          position: 3,
+          name: product.title,
+        },
+      ],
+    },
+  ]}
 >
   <div class="page-header">
     <div class="container">
