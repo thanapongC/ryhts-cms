@@ -1035,6 +1035,50 @@ export interface ApiSiteSettingSiteSetting extends Struct.SingleTypeSchema {
   };
 }
 
+export interface ApiTermsOfServiceTermsOfService
+  extends Struct.SingleTypeSchema {
+  collectionName: 'terms_of_services';
+  info: {
+    description: 'Terms of Service page content';
+    displayName: 'Terms of Service';
+    pluralName: 'terms-of-services';
+    singularName: 'terms-of-service';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
+  attributes: {
+    content: Schema.Attribute.RichText;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Text;
+    last_updated: Schema.Attribute.DateTime;
+    locale: Schema.Attribute.String;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::terms-of-service.terms-of-service'
+    >;
+    meta_description: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 160;
+      }>;
+    meta_title: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'Terms of Service'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface PluginContentReleasesRelease
   extends Struct.CollectionTypeSchema {
   collectionName: 'strapi_releases';
@@ -1559,6 +1603,7 @@ declare module '@strapi/strapi' {
       'api::privacy-policy.privacy-policy': ApiPrivacyPolicyPrivacyPolicy;
       'api::product.product': ApiProductProduct;
       'api::site-setting.site-setting': ApiSiteSettingSiteSetting;
+      'api::terms-of-service.terms-of-service': ApiTermsOfServiceTermsOfService;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;
