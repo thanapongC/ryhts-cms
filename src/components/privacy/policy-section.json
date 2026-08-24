@@ -1,0 +1,29 @@
+{
+  "collectionName": "components_privacy_policy_section",
+  "info": {
+    "displayName": "Policy Section",
+    "description": "A section of the privacy policy with heading and content"
+  },
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "description": "Section heading (e.g. Data Collection, Third Parties)"
+    },
+    "content": {
+      "type": "richtext",
+      "required": true,
+      "description": "Section content in rich text"
+    },
+    "sort_order": {
+      "type": "integer",
+      "default": 0,
+      "description": "Display order (lower number appears first)"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Show or hide this section"
+    }
+  }
+}

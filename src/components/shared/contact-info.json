@@ -1,0 +1,37 @@
+{
+  "collectionName": "components_shared_contact_info",
+  "info": {
+    "displayName": "Contact Info",
+    "description": "Contact information display with icon and label"
+  },
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true,
+      "description": "Field label (e.g. Phone, Email, Address)"
+    },
+    "value": {
+      "type": "string",
+      "required": true,
+      "description": "Contact value (e.g. phone number, email address)"
+    },
+    "icon": {
+      "type": "string",
+      "description": "Font Awesome icon class (e.g. fa-phone, fa-envelope)"
+    },
+    "url": {
+      "type": "string",
+      "description": "Clickable link URL (e.g. tel:xxx, mailto:xxx)"
+    },
+    "sort_order": {
+      "type": "integer",
+      "default": 0,
+      "description": "Display order (lower number appears first)"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Show or hide this contact item"
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "collectionName": "components_free_trial_form_labels",
+  "info": {
+    "displayName": "Form Labels",
+    "description": "Localized labels for the Free Trial signup form"
+  },
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true,
+      "description": "Field label (e.g. Full Name, Email, Company)"
+    },
+    "placeholder": {
+      "type": "string",
+      "description": "Placeholder text for the input field"
+    },
+    "sort_order": {
+      "type": "integer",
+      "default": 0,
+      "description": "Display order (lower number appears first)"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Show or hide this form field"
+    }
+  }
+}

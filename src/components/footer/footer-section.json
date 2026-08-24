@@ -1,0 +1,30 @@
+{
+  "collectionName": "components_footer_footer_section",
+  "info": {
+    "displayName": "Footer Section",
+    "description": "A column/group of links in the footer"
+  },
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "description": "Section heading (e.g. Products, Company, Support)"
+    },
+    "links": {
+      "type": "component",
+      "repeatable": true,
+      "component": "footer.footer-link",
+      "description": "Links in this section"
+    },
+    "sort_order": {
+      "type": "integer",
+      "default": 0,
+      "description": "Display order (lower number appears first)"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Show or hide this footer section"
+    }
+  }
+}

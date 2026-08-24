@@ -1,0 +1,34 @@
+{
+  "collectionName": "components_privacy_related_link",
+  "info": {
+    "displayName": "Related Link",
+    "description": "Related link for privacy policy (e.g. product-specific policies)"
+  },
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true,
+      "description": "Link text (e.g. Product A Privacy, Data Processing)"
+    },
+    "product": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::product.product",
+      "description": "Link to a Product Page (preferred over manual URL)"
+    },
+    "url": {
+      "type": "string",
+      "description": "Manual link URL (fallback if no product relation)"
+    },
+    "sort_order": {
+      "type": "integer",
+      "default": 0,
+      "description": "Display order (lower number appears first)"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Show or hide this related link"
+    }
+  }
+}

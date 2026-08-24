@@ -1,0 +1,33 @@
+{
+  "collectionName": "components_shared_stat_item",
+  "info": {
+    "displayName": "Stat Item",
+    "description": "Statistics display with number and label"
+  },
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true,
+      "description": "Stat label (e.g. Customers, Products, Years)"
+    },
+    "value": {
+      "type": "string",
+      "required": true,
+      "description": "Stat value (e.g. 500+, 1000, 15)"
+    },
+    "icon": {
+      "type": "string",
+      "description": "Font Awesome icon class (e.g. fa-users, fa-box)"
+    },
+    "sort_order": {
+      "type": "integer",
+      "default": 0,
+      "description": "Display order (lower number appears first)"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Show or hide this stat item"
+    }
+  }
+}

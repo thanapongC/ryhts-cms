@@ -1,0 +1,60 @@
+{
+  "collectionName": "components_shared_seo_meta",
+  "info": {
+    "displayName": "SEO Meta",
+    "description": "Search engine optimization and social media meta fields"
+  },
+  "attributes": {
+    "meta_title": {
+      "type": "string",
+      "maxLength": 60,
+      "description": "Page title for search engines (max 60 chars)"
+    },
+    "meta_description": {
+      "type": "text",
+      "maxLength": 160,
+      "description": "Page description for search engines (max 160 chars)"
+    },
+    "keywords": {
+      "type": "text",
+      "description": "Comma-separated keywords for SEO"
+    },
+    "canonical_url": {
+      "type": "string",
+      "description": "Canonical URL override (leave empty to auto-generate)"
+    },
+    "og_title": {
+      "type": "string",
+      "description": "Open Graph title for social sharing"
+    },
+    "og_description": {
+      "type": "text",
+      "description": "Open Graph description for social sharing"
+    },
+    "og_image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"],
+      "description": "Open Graph image for social sharing"
+    },
+    "twitter_title": {
+      "type": "string",
+      "description": "Twitter Card title"
+    },
+    "twitter_description": {
+      "type": "text",
+      "description": "Twitter Card description"
+    },
+    "twitter_image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"],
+      "description": "Twitter Card image"
+    },
+    "robots": {
+      "type": "string",
+      "default": "index, follow",
+      "description": "Robots directive (e.g. index, follow / noindex, nofollow)"
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "collectionName": "components_footer_legal_link",
+  "info": {
+    "displayName": "Legal Link",
+    "description": "Legal page link in the footer (Privacy Policy, Terms, etc.)"
+  },
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true,
+      "description": "Link text (e.g. Privacy Policy, Terms of Service)"
+    },
+    "url": {
+      "type": "string",
+      "required": true,
+      "description": "Link URL (e.g. /privacy-policy, /terms-of-service)"
+    },
+    "sort_order": {
+      "type": "integer",
+      "default": 0,
+      "description": "Display order (lower number appears first)"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Show or hide this legal link"
+    }
+  }
+}

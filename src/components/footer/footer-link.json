@@ -1,0 +1,39 @@
+{
+  "collectionName": "components_footer_footer_link",
+  "info": {
+    "displayName": "Footer Link",
+    "description": "Individual link in a footer section"
+  },
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true,
+      "description": "Link text (e.g. Products, About Us)"
+    },
+    "product": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::product.product",
+      "description": "Link to a Product Page (preferred over manual URL)"
+    },
+    "url": {
+      "type": "string",
+      "description": "Manual link URL (fallback if no product relation)"
+    },
+    "open_in_new_tab": {
+      "type": "boolean",
+      "default": false,
+      "description": "Open link in a new browser tab"
+    },
+    "sort_order": {
+      "type": "integer",
+      "default": 0,
+      "description": "Display order (lower number appears first)"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Show or hide this link"
+    }
+  }
+}

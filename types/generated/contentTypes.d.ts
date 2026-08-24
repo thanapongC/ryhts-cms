@@ -443,11 +443,60 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiAboutPageAboutPage extends Struct.SingleTypeSchema {
+  collectionName: 'about_pages';
+  info: {
+    description: 'About Ryhts page content';
+    displayName: 'Page - About Us';
+    pluralName: 'about-pages';
+    singularName: 'about-page';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
+  attributes: {
+    content: Schema.Attribute.RichText;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    featured_image: Schema.Attribute.Media<'images'>;
+    locale: Schema.Attribute.String;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::about-page.about-page'
+    >;
+    partners: Schema.Attribute.Relation<'oneToMany', 'api::partner.partner'>;
+    publishedAt: Schema.Attribute.DateTime;
+    seo: Schema.Attribute.Component<'shared.seo-meta', false>;
+    stats: Schema.Attribute.Component<'shared.stat-item', true>;
+    subtitle: Schema.Attribute.String;
+    team_members: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::team-member.team-member'
+    >;
+    timeline_milestones: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::timeline-milestone.timeline-milestone'
+    >;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'\u0E40\u0E01\u0E35\u0E48\u0E22\u0E27\u0E01\u0E31\u0E1A Ryhts'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiArticleArticle extends Struct.CollectionTypeSchema {
   collectionName: 'articles';
   info: {
     description: 'Blog posts and news articles';
-    displayName: 'Article';
+    displayName: 'Blog - Post';
     pluralName: 'articles';
     singularName: 'article';
   };
@@ -460,8 +509,9 @@ export interface ApiArticleArticle extends Struct.CollectionTypeSchema {
     };
   };
   attributes: {
-    article_date: Schema.Attribute.DateTime;
+    article_date: Schema.Attribute.Date;
     author: Schema.Attribute.String;
+    category: Schema.Attribute.Relation<'manyToOne', 'api::category.category'>;
     content: Schema.Attribute.RichText;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -476,13 +526,8 @@ export interface ApiArticleArticle extends Struct.CollectionTypeSchema {
       'oneToMany',
       'api::article.article'
     >;
-    meta_description: Schema.Attribute.Text &
-      Schema.Attribute.SetMinMaxLength<{
-        maxLength: 160;
-      }>;
-    meta_title: Schema.Attribute.String;
-    og_image: Schema.Attribute.Media<'images'>;
     publishedAt: Schema.Attribute.DateTime;
+    seo: Schema.Attribute.Component<'shared.seo-meta', false>;
     slug: Schema.Attribute.UID<'title'>;
     tags: Schema.Attribute.JSON;
     title: Schema.Attribute.String & Schema.Attribute.Required;
@@ -524,15 +569,10 @@ export interface ApiBrandBrand extends Struct.CollectionTypeSchema {
     locale: Schema.Attribute.String;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::brand.brand'>;
     logo: Schema.Attribute.Media<'images'>;
-    meta_description: Schema.Attribute.Text &
-      Schema.Attribute.SetMinMaxLength<{
-        maxLength: 160;
-      }>;
-    meta_title: Schema.Attribute.String;
     name: Schema.Attribute.String & Schema.Attribute.Required;
-    og_image: Schema.Attribute.Media<'images'>;
     products: Schema.Attribute.Relation<'oneToMany', 'api::product.product'>;
     publishedAt: Schema.Attribute.DateTime;
+    seo: Schema.Attribute.Component<'shared.seo-meta', false>;
     slug: Schema.Attribute.UID<'name'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -543,8 +583,8 @@ export interface ApiBrandBrand extends Struct.CollectionTypeSchema {
 export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
   collectionName: 'categories';
   info: {
-    description: 'Product categories';
-    displayName: 'Category';
+    description: 'Product and blog categories';
+    displayName: 'Blog - Category';
     pluralName: 'categories';
     singularName: 'category';
   };
@@ -557,6 +597,7 @@ export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
     };
   };
   attributes: {
+    articles: Schema.Attribute.Relation<'oneToMany', 'api::article.article'>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -567,15 +608,10 @@ export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
       'oneToMany',
       'api::category.category'
     >;
-    meta_description: Schema.Attribute.Text &
-      Schema.Attribute.SetMinMaxLength<{
-        maxLength: 160;
-      }>;
-    meta_title: Schema.Attribute.String;
     name: Schema.Attribute.String & Schema.Attribute.Required;
-    og_image: Schema.Attribute.Media<'images'>;
-    products: Schema.Attribute.Relation<'oneToMany', 'api::product.product'>;
+    products: Schema.Attribute.Relation<'manyToMany', 'api::product.product'>;
     publishedAt: Schema.Attribute.DateTime;
+    seo: Schema.Attribute.Component<'shared.seo-meta', false>;
     slug: Schema.Attribute.UID<'name'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -587,7 +623,7 @@ export interface ApiCompanyInfoCompanyInfo extends Struct.SingleTypeSchema {
   collectionName: 'company_infos';
   info: {
     description: 'Company contact information - address, phone, hours';
-    displayName: 'Company Info';
+    displayName: 'Site - Company Info';
     pluralName: 'company-infos';
     singularName: 'company-info';
   };
@@ -604,7 +640,7 @@ export interface ApiCompanyInfoCompanyInfo extends Struct.SingleTypeSchema {
     business_hours: Schema.Attribute.Text;
     company_name: Schema.Attribute.String & Schema.Attribute.Required;
     company_name_en: Schema.Attribute.String;
-    contact_form_title: Schema.Attribute.String;
+    contact_info: Schema.Attribute.Component<'shared.contact-info', true>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -625,6 +661,45 @@ export interface ApiCompanyInfoCompanyInfo extends Struct.SingleTypeSchema {
     map_link: Schema.Attribute.String;
     phone: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiContactPageContactPage extends Struct.SingleTypeSchema {
+  collectionName: 'contact_pages';
+  info: {
+    description: 'Contact us page content';
+    displayName: 'Page - Contact Us';
+    pluralName: 'contact-pages';
+    singularName: 'contact-page';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
+  attributes: {
+    content: Schema.Attribute.RichText;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    featured_image: Schema.Attribute.Media<'images'>;
+    locale: Schema.Attribute.String;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::contact-page.contact-page'
+    >;
+    publishedAt: Schema.Attribute.DateTime;
+    seo: Schema.Attribute.Component<'shared.seo-meta', false>;
+    subtitle: Schema.Attribute.String;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'\u0E15\u0E34\u0E14\u0E15\u0E48\u0E2D\u0E40\u0E23\u0E32'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -654,6 +729,7 @@ export interface ApiCookieCategoryCookieCategory
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     description: Schema.Attribute.Text;
+    is_active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     is_default_enabled: Schema.Attribute.Boolean &
       Schema.Attribute.DefaultTo<false>;
     is_required: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
@@ -677,7 +753,7 @@ export interface ApiCookiePolicyCookiePolicy extends Struct.SingleTypeSchema {
   collectionName: 'cookie_policies';
   info: {
     description: 'Cookie policy page content - detailed cookie information';
-    displayName: 'Cookie Policy';
+    displayName: 'Page - Cookie Policy';
     pluralName: 'cookie-policies';
     singularName: 'cookie-policy';
   };
@@ -695,18 +771,15 @@ export interface ApiCookiePolicyCookiePolicy extends Struct.SingleTypeSchema {
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     description: Schema.Attribute.Text;
-    last_updated: Schema.Attribute.DateTime;
+    featured_image: Schema.Attribute.Media<'images'>;
+    last_updated: Schema.Attribute.Date;
     locale: Schema.Attribute.String;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::cookie-policy.cookie-policy'
     >;
-    meta_description: Schema.Attribute.Text &
-      Schema.Attribute.SetMinMaxLength<{
-        maxLength: 160;
-      }>;
-    meta_title: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
+    seo: Schema.Attribute.Component<'shared.seo-meta', false>;
     title: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<'Cookie Policy'>;
@@ -716,11 +789,47 @@ export interface ApiCookiePolicyCookiePolicy extends Struct.SingleTypeSchema {
   };
 }
 
+export interface ApiFaqFaq extends Struct.CollectionTypeSchema {
+  collectionName: 'faqs';
+  info: {
+    description: 'Frequently asked questions';
+    displayName: 'FAQ';
+    pluralName: 'faqs';
+    singularName: 'faq';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Text;
+    is_active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    items: Schema.Attribute.Component<'faq.faq-item', true>;
+    locale: Schema.Attribute.String;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::faq.faq'>;
+    publishedAt: Schema.Attribute.DateTime;
+    seo: Schema.Attribute.Component<'shared.seo-meta', false>;
+    slug: Schema.Attribute.UID<'title'>;
+    sort_order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiFooterSettingFooterSetting extends Struct.SingleTypeSchema {
   collectionName: 'footer_settings';
   info: {
-    description: 'Footer configuration - copyright, social links';
-    displayName: 'Footer Setting';
+    description: 'Footer configuration - copyright, social links, navigation';
+    displayName: 'Site - Footer Settings';
     pluralName: 'footer-settings';
     singularName: 'footer-setting';
   };
@@ -737,7 +846,8 @@ export interface ApiFooterSettingFooterSetting extends Struct.SingleTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    footer_links: Schema.Attribute.JSON;
+    footer_sections: Schema.Attribute.Component<'footer.footer-section', true>;
+    legal_links: Schema.Attribute.Component<'footer.legal-link', true>;
     locale: Schema.Attribute.String;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -752,11 +862,60 @@ export interface ApiFooterSettingFooterSetting extends Struct.SingleTypeSchema {
   };
 }
 
+export interface ApiFreeTrialFreeTrial extends Struct.SingleTypeSchema {
+  collectionName: 'free_trials';
+  info: {
+    description: 'Free trial page content and form configuration';
+    displayName: 'Page - Free Trial';
+    pluralName: 'free-trials';
+    singularName: 'free-trial';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
+  attributes: {
+    content: Schema.Attribute.RichText;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    featured_image: Schema.Attribute.Media<'images'>;
+    form_labels: Schema.Attribute.Component<'free-trial.form-labels', true>;
+    locale: Schema.Attribute.String;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::free-trial.free-trial'
+    >;
+    publishedAt: Schema.Attribute.DateTime;
+    seo: Schema.Attribute.Component<'shared.seo-meta', false>;
+    subtitle: Schema.Attribute.String;
+    testimonials: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::testimonial.testimonial'
+    >;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'\u0E17\u0E14\u0E25\u0E2D\u0E07\u0E43\u0E0A\u0E49\u0E1F\u0E23\u0E35'>;
+    trial_features: Schema.Attribute.Component<
+      'free-trial.trial-feature',
+      true
+    >;
+    trust_items: Schema.Attribute.Component<'free-trial.trust-item', true>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiGlobalSettingGlobalSetting extends Struct.SingleTypeSchema {
   collectionName: 'global_settings';
   info: {
-    description: 'SEO and global settings - meta tags, analytics';
-    displayName: 'Global Setting';
+    description: 'Global SEO and analytics settings';
+    displayName: 'Site - Global Settings';
     pluralName: 'global-settings';
     singularName: 'global-setting';
   };
@@ -779,10 +938,8 @@ export interface ApiGlobalSettingGlobalSetting extends Struct.SingleTypeSchema {
       'oneToMany',
       'api::global-setting.global-setting'
     >;
-    meta_description: Schema.Attribute.Text;
-    meta_title: Schema.Attribute.String;
-    og_image: Schema.Attribute.Media<'images'>;
     publishedAt: Schema.Attribute.DateTime;
+    seo: Schema.Attribute.Component<'shared.seo-meta', false>;
     twitter_handle: Schema.Attribute.String;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -790,13 +947,13 @@ export interface ApiGlobalSettingGlobalSetting extends Struct.SingleTypeSchema {
   };
 }
 
-export interface ApiPagePage extends Struct.CollectionTypeSchema {
-  collectionName: 'pages';
+export interface ApiPartnerPartner extends Struct.CollectionTypeSchema {
+  collectionName: 'partners';
   info: {
-    description: 'Static pages like About, Contact';
-    displayName: 'Page';
-    pluralName: 'pages';
-    singularName: 'page';
+    description: 'Business partners for About page';
+    displayName: 'Partner';
+    pluralName: 'partners';
+    singularName: 'partner';
   };
   options: {
     draftAndPublish: true;
@@ -807,22 +964,28 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
     };
   };
   attributes: {
-    content: Schema.Attribute.RichText;
+    about_page: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::about-page.about-page'
+    >;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    featured_image: Schema.Attribute.Media<'images'>;
+    description: Schema.Attribute.Text;
+    is_active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     locale: Schema.Attribute.String;
-    localizations: Schema.Attribute.Relation<'oneToMany', 'api::page.page'>;
-    meta_description: Schema.Attribute.Text;
-    meta_title: Schema.Attribute.String;
-    og_image: Schema.Attribute.Media<'images'>;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::partner.partner'
+    >;
+    logo: Schema.Attribute.Media<'images'>;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
-    slug: Schema.Attribute.UID<'title'>;
-    title: Schema.Attribute.String & Schema.Attribute.Required;
+    sort_order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    website_url: Schema.Attribute.String;
   };
 }
 
@@ -830,7 +993,7 @@ export interface ApiPdpaSettingPdpaSetting extends Struct.SingleTypeSchema {
   collectionName: 'pdpa_settings';
   info: {
     description: 'PDPA compliance settings - DPO, consent banner, data retention';
-    displayName: 'PDPA Setting';
+    displayName: 'Site - PDPA Setting';
     pluralName: 'pdpa-settings';
     singularName: 'pdpa-setting';
   };
@@ -843,6 +1006,10 @@ export interface ApiPdpaSettingPdpaSetting extends Struct.SingleTypeSchema {
     };
   };
   attributes: {
+    applies_to_products: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::product.product'
+    >;
     company_name: Schema.Attribute.String & Schema.Attribute.Required;
     consent_accept_all_text: Schema.Attribute.String &
       Schema.Attribute.DefaultTo<'Accept All'>;
@@ -854,6 +1021,7 @@ export interface ApiPdpaSettingPdpaSetting extends Struct.SingleTypeSchema {
       Schema.Attribute.DefaultTo<'Reject All'>;
     consent_save_text: Schema.Attribute.String &
       Schema.Attribute.DefaultTo<'Save Preferences'>;
+    contact_info: Schema.Attribute.Component<'shared.contact-info', true>;
     contact_text: Schema.Attribute.Text;
     cookie_policy_url: Schema.Attribute.String;
     createdAt: Schema.Attribute.DateTime;
@@ -881,6 +1049,7 @@ export interface ApiPdpaSettingPdpaSetting extends Struct.SingleTypeSchema {
     privacy_policy_url: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
     rights_text: Schema.Attribute.RichText;
+    seo: Schema.Attribute.Component<'shared.seo-meta', false>;
     third_parties_text: Schema.Attribute.RichText;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -892,7 +1061,7 @@ export interface ApiPrivacyPolicyPrivacyPolicy extends Struct.SingleTypeSchema {
   collectionName: 'privacy_policies';
   info: {
     description: 'Privacy policy page content - PDPA-compliant privacy disclosure';
-    displayName: 'Privacy Policy';
+    displayName: 'Page - Privacy Policy';
     pluralName: 'privacy-policies';
     singularName: 'privacy-policy';
   };
@@ -905,25 +1074,28 @@ export interface ApiPrivacyPolicyPrivacyPolicy extends Struct.SingleTypeSchema {
     };
   };
   attributes: {
+    applies_to_products: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::product.product'
+    >;
+    contact_info: Schema.Attribute.Component<'shared.contact-info', true>;
     content: Schema.Attribute.RichText;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     description: Schema.Attribute.Text;
-    effective_date: Schema.Attribute.DateTime;
-    last_updated: Schema.Attribute.DateTime;
+    effective_date: Schema.Attribute.Date;
+    featured_image: Schema.Attribute.Media<'images'>;
+    last_updated: Schema.Attribute.Date;
     locale: Schema.Attribute.String;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::privacy-policy.privacy-policy'
     >;
-    meta_description: Schema.Attribute.Text &
-      Schema.Attribute.SetMinMaxLength<{
-        maxLength: 160;
-      }>;
-    meta_title: Schema.Attribute.String;
-    og_image: Schema.Attribute.Media<'images'>;
+    policy_sections: Schema.Attribute.Component<'privacy.policy-section', true>;
     publishedAt: Schema.Attribute.DateTime;
+    related_links: Schema.Attribute.Component<'privacy.related-link', true>;
+    seo: Schema.Attribute.Component<'shared.seo-meta', false>;
     title: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<'Privacy Policy'>;
@@ -967,12 +1139,10 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
       'oneToMany',
       'api::product.product'
     >;
-    meta_description: Schema.Attribute.Text &
-      Schema.Attribute.SetMinMaxLength<{
-        maxLength: 160;
-      }>;
-    meta_title: Schema.Attribute.String;
-    og_image: Schema.Attribute.Media<'images'>;
+    pdpa_applied_in: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::pdpa-setting.pdpa-setting'
+    >;
     price: Schema.Attribute.Decimal &
       Schema.Attribute.SetMinMax<
         {
@@ -980,9 +1150,14 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
         },
         number
       >;
+    privacy_applied_in: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::privacy-policy.privacy-policy'
+    >;
     publishedAt: Schema.Attribute.DateTime;
     ribbon_type: Schema.Attribute.Enumeration<['wax', 'wax_resin', 'resin']> &
       Schema.Attribute.Required;
+    seo: Schema.Attribute.Component<'shared.seo-meta', false>;
     short_description: Schema.Attribute.Text &
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 500;
@@ -1000,7 +1175,7 @@ export interface ApiSiteSettingSiteSetting extends Struct.SingleTypeSchema {
   collectionName: 'site_settings';
   info: {
     description: 'General site settings - company name, logo, description';
-    displayName: 'Site Setting';
+    displayName: 'Site - Settings';
     pluralName: 'site-settings';
     singularName: 'site-setting';
   };
@@ -1023,13 +1198,55 @@ export interface ApiSiteSettingSiteSetting extends Struct.SingleTypeSchema {
       'oneToMany',
       'api::site-setting.site-setting'
     >;
-    og_image: Schema.Attribute.Media<'images'>;
     phone: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
     site_description: Schema.Attribute.Text;
     site_favicon: Schema.Attribute.Media<'images'>;
     site_logo: Schema.Attribute.Media<'images'>;
     site_name: Schema.Attribute.String & Schema.Attribute.Required;
+    stats: Schema.Attribute.Component<'shared.stat-item', true>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiTeamMemberTeamMember extends Struct.CollectionTypeSchema {
+  collectionName: 'team_members';
+  info: {
+    description: 'Company team members for About page';
+    displayName: 'Team Member';
+    pluralName: 'team-members';
+    singularName: 'team-member';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
+  attributes: {
+    about_page: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::about-page.about-page'
+    >;
+    avatar: Schema.Attribute.Media<'images'>;
+    bio: Schema.Attribute.Text;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    is_active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    locale: Schema.Attribute.String;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::team-member.team-member'
+    >;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    position: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    sort_order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1041,7 +1258,7 @@ export interface ApiTermsOfServiceTermsOfService
   collectionName: 'terms_of_services';
   info: {
     description: 'Terms of Service page content';
-    displayName: 'Terms of Service';
+    displayName: 'Page - Terms of Service';
     pluralName: 'terms-of-services';
     singularName: 'terms-of-service';
   };
@@ -1059,21 +1276,113 @@ export interface ApiTermsOfServiceTermsOfService
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     description: Schema.Attribute.Text;
-    last_updated: Schema.Attribute.DateTime;
+    effective_date: Schema.Attribute.Date;
+    featured_image: Schema.Attribute.Media<'images'>;
+    last_updated: Schema.Attribute.Date;
     locale: Schema.Attribute.String;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::terms-of-service.terms-of-service'
     >;
-    meta_description: Schema.Attribute.Text &
-      Schema.Attribute.SetMinMaxLength<{
-        maxLength: 160;
-      }>;
-    meta_title: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
+    seo: Schema.Attribute.Component<'shared.seo-meta', false>;
     title: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<'Terms of Service'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiTestimonialTestimonial extends Struct.CollectionTypeSchema {
+  collectionName: 'testimonials';
+  info: {
+    description: 'Customer testimonials for Free Trial page';
+    displayName: 'Testimonial';
+    pluralName: 'testimonials';
+    singularName: 'testimonial';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
+  attributes: {
+    avatar: Schema.Attribute.Media<'images'>;
+    company: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    free_trial_pages: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::free-trial.free-trial'
+    >;
+    is_active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    locale: Schema.Attribute.String;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::testimonial.testimonial'
+    >;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    position: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    quote: Schema.Attribute.Text & Schema.Attribute.Required;
+    rating: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 5;
+          min: 1;
+        },
+        number
+      >;
+    sort_order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiTimelineMilestoneTimelineMilestone
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'timeline_milestones';
+  info: {
+    description: 'Company history milestones for About page';
+    displayName: 'Timeline Milestone';
+    pluralName: 'timeline-milestones';
+    singularName: 'timeline-milestone';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
+  attributes: {
+    about_page: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::about-page.about-page'
+    >;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Text;
+    image: Schema.Attribute.Media<'images'>;
+    is_active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    locale: Schema.Attribute.String;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::timeline-milestone.timeline-milestone'
+    >;
+    milestone_date: Schema.Attribute.Date;
+    publishedAt: Schema.Attribute.DateTime;
+    sort_order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1591,20 +1900,27 @@ declare module '@strapi/strapi' {
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
+      'api::about-page.about-page': ApiAboutPageAboutPage;
       'api::article.article': ApiArticleArticle;
       'api::brand.brand': ApiBrandBrand;
       'api::category.category': ApiCategoryCategory;
       'api::company-info.company-info': ApiCompanyInfoCompanyInfo;
+      'api::contact-page.contact-page': ApiContactPageContactPage;
       'api::cookie-category.cookie-category': ApiCookieCategoryCookieCategory;
       'api::cookie-policy.cookie-policy': ApiCookiePolicyCookiePolicy;
+      'api::faq.faq': ApiFaqFaq;
       'api::footer-setting.footer-setting': ApiFooterSettingFooterSetting;
+      'api::free-trial.free-trial': ApiFreeTrialFreeTrial;
       'api::global-setting.global-setting': ApiGlobalSettingGlobalSetting;
-      'api::page.page': ApiPagePage;
+      'api::partner.partner': ApiPartnerPartner;
       'api::pdpa-setting.pdpa-setting': ApiPdpaSettingPdpaSetting;
       'api::privacy-policy.privacy-policy': ApiPrivacyPolicyPrivacyPolicy;
       'api::product.product': ApiProductProduct;
       'api::site-setting.site-setting': ApiSiteSettingSiteSetting;
+      'api::team-member.team-member': ApiTeamMemberTeamMember;
       'api::terms-of-service.terms-of-service': ApiTermsOfServiceTermsOfService;
+      'api::testimonial.testimonial': ApiTestimonialTestimonial;
+      'api::timeline-milestone.timeline-milestone': ApiTimelineMilestoneTimelineMilestone;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;

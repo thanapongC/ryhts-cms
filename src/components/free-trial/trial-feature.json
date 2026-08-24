@@ -1,0 +1,32 @@
+{
+  "collectionName": "components_free_trial_trial_feature",
+  "info": {
+    "displayName": "Trial Feature",
+    "description": "Feature highlight for Free Trial page"
+  },
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "description": "Feature name (e.g. Barcode Printing, Label Design)"
+    },
+    "icon": {
+      "type": "string",
+      "description": "Font Awesome icon class"
+    },
+    "description": {
+      "type": "text",
+      "description": "Short feature description"
+    },
+    "sort_order": {
+      "type": "integer",
+      "default": 0,
+      "description": "Display order (lower number appears first)"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Show or hide this feature"
+    }
+  }
+}
