@@ -1,551 +1,587 @@
-const STRAPI_URL = import.meta.env.PUBLIC_STRAPI_URL || "http://localhost:1337";
+/**
+ * API Functions — Frontend integration layer
+ *
+ * All CMS fetching goes through strapi.ts.
+ * This file provides page-level fetch functions with proper populate lists
+ * and fallback mock data.
+ *
+ * Rules: integate-rule.md §2–§8
+ */
 
-// ─── Custom Error ──────────────────────────────────────────────────
+import type { Locale } from "./i18n";
+import {
+  fetchStrapiSingle,
+  fetchStrapiCollection,
+  safeFetch,
+  getStrapiMedia,
+  getStrapiAbsoluteImageUrl,
+  normalizeInternalUrl,
+  getLinkUrl,
+  filterAndSort,
+  type StrapiMedia,
+  type ApiResult,
+  // Content types
+  type AboutPage,
+  type Article,
+  type Brand,
+  type Category,
+  type CompanyInfo,
+  type ContactPage,
+  type CookieCategory,
+  type CookiePolicy,
+  type Faq,
+  type FooterSetting,
+  type FreeTrial,
+  type GlobalSetting,
+  type Partner,
+  type PdpaSetting,
+  type PrivacyPolicy,
+  type Product,
+  type SiteSetting,
+  type TeamMember,
+  type TermsOfService,
+  type Testimonial,
+  type TimelineMilestone,
+  // Components
+  type SeoMeta,
+  type SeoConfig,
+  type StatItem,
+  type ContactInfo,
+  type FooterSection,
+  type FooterLink,
+  type LegalLink,
+  type PolicySection,
+  type RelatedLink,
+  type TrustItem,
+  type FormLabel,
+  type TrialFeature,
+  type FaqItem,
+} from "./strapi";
 
-export class StrapiError extends Error {
-  constructor(
-    message: string,
-    public status?: number,
-    public path?: string
-  ) {
-    super(message);
-    this.name = "StrapiError";
-  }
-}
+import {
+  mockSiteSetting,
+  mockGlobalSetting,
+  mockFooterSetting,
+  mockCompanyInfo,
+  mockProducts,
+  mockCategories,
+  mockArticles,
+  mockPages,
+  mockAboutPage,
+  mockContactPage,
+  mockPrivacyPolicy,
+  mockPdpaSetting,
+  mockTermsOfService,
+  mockCookiePolicy,
+  mockCookieCategories,
+} from "./mock-data";
 
-// ─── Types ───────────────────────────────────────────────────────────
+// ─── Re-export helpers for backward compat ──────────────────────────
 
-interface StrapiResponse<T> {
-  data: T;
-  meta?: {
-    pagination?: {
-      page: number;
-      pageSize: number;
-      pageCount: number;
-      total: number;
-    };
-  };
-}
+export {
+  getStrapiMedia,
+  getStrapiAbsoluteImageUrl,
+  normalizeInternalUrl,
+  getLinkUrl,
+  filterAndSort,
+  type StrapiMedia,
+  type ApiResult,
+  type AboutPage,
+  type Article,
+  type Brand,
+  type Category,
+  type CompanyInfo,
+  type ContactPage,
+  type CookieCategory,
+  type CookiePolicy,
+  type Faq,
+  type FooterSetting,
+  type FreeTrial,
+  type GlobalSetting,
+  type Partner,
+  type PdpaSetting,
+  type PrivacyPolicy,
+  type Product,
+  type SiteSetting,
+  type TeamMember,
+  type TermsOfService,
+  type Testimonial,
+  type TimelineMilestone,
+  type SeoMeta,
+  type SeoConfig,
+  type StatItem,
+  type ContactInfo,
+  type FooterSection,
+  type FooterLink,
+  type LegalLink,
+  type PolicySection,
+  type RelatedLink,
+  type TrustItem,
+  type FormLabel,
+  type TrialFeature,
+  type FaqItem,
+};
 
-interface StrapiSingleResponse<T> {
-  data: T;
-}
+// ─── Populate Lists (integate-rule.md §3) ───────────────────────────
+//
+// Every rendered field must be in the populate list.
+// Nested components use dot notation: footerSections.links
 
-function getStrapiMedia(url: string | null | undefined): string {
-  if (!url) return "";
-  if (url.startsWith("http")) return url;
-  return `${STRAPI_URL}${url}`;
-}
+const POPULATE = {
+  siteSetting: ["site_logo", "site_favicon", "stats"],
+  globalSetting: ["seoConfig", "seoConfig.default_og_image"],
+  footerSetting: [
+    "footer_sections",
+    "footer_sections.links",
+    "footer_sections.links.product",
+    "legal_links",
+  ],
+  companyInfo: ["contact_info"],
+  aboutPage: [
+    "featured_image",
+    "stats",
+    "team_members",
+    "team_members.avatar",
+    "partners",
+    "partners.logo",
+    "timeline_milestones",
+    "timeline_milestones.image",
+    "seo",
+    "seo.og_image",
+    "seo.twitter_image",
+  ],
+  contactPage: ["featured_image", "seo", "seo.og_image"],
+  freeTrial: [
+    "featured_image",
+    "trust_items",
+    "trial_features",
+    "form_labels",
+    "testimonials",
+    "testimonials.avatar",
+    "seo",
+    "seo.og_image",
+  ],
+  privacyPolicy: [
+    "featured_image",
+    "policy_sections",
+    "applies_to_products",
+    "related_links",
+    "related_links.product",
+    "contact_info",
+    "seo",
+    "seo.og_image",
+  ],
+  termsOfService: ["featured_image", "seo", "seo.og_image"],
+  cookiePolicy: ["featured_image", "seo", "seo.og_image"],
+  pdpaSetting: [
+    "contact_info",
+    "applies_to_products",
+    "seo",
+    "seo.og_image",
+  ],
+  product: [
+    "images",
+    "brand",
+    "brand.logo",
+    "categories",
+    "categories.image",
+    "seo",
+    "seo.og_image",
+  ],
+  article: ["featured_image", "category", "seo", "seo.og_image"],
+  category: ["image", "products", "seo", "seo.og_image"],
+  brand: ["logo", "products", "seo", "seo.og_image"],
+  cookieCategory: [],
+  faq: ["items", "seo", "seo.og_image"],
+  testimonial: ["avatar", "free_trial_pages"],
+  teamMember: ["avatar", "about_page"],
+  partner: ["logo", "about_page"],
+  timelineMilestone: ["image", "about_page"],
+} as const;
 
-// ─── Fetch with retry + timeout ──────────────────────────────────────
+// ─── Page Fetch Functions ───────────────────────────────────────────
 
-const MAX_RETRIES = 2;
-const TIMEOUT_MS = 8000;
-
-async function fetchAPI<T>(
-  path: string,
-  params: Record<string, string> = {}
-): Promise<T> {
-  const url = new URL(`/api${path}`, STRAPI_URL);
-  Object.entries(params).forEach(([key, value]) => {
-    url.searchParams.set(key, value);
-  });
-
-  let lastError: Error | null = null;
-
-  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
-    try {
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), TIMEOUT_MS);
-
-      const res = await fetch(url.toString(), {
-        headers: { "Content-Type": "application/json" },
-        signal: controller.signal,
-      });
-
-      clearTimeout(timeout);
-
-      if (!res.ok) {
-        throw new StrapiError(
-          `Strapi API error: ${res.status} ${res.statusText}`,
-          res.status,
-          path
-        );
-      }
-
-      return res.json();
-    } catch (err) {
-      lastError = err as Error;
-
-      // Don't retry client errors (4xx) except 408/429
-      if (
-        err instanceof StrapiError &&
-        err.status &&
-        err.status >= 400 &&
-        err.status < 500 &&
-        err.status !== 408 &&
-        err.status !== 429
-      ) {
-        throw err;
-      }
-
-      // Wait before retry (exponential backoff)
-      if (attempt < MAX_RETRIES) {
-        await new Promise((r) => setTimeout(r, 300 * (attempt + 1)));
-      }
-    }
-  }
-
-  // All retries failed
-  throw new StrapiError(
-    `Failed to fetch ${path} after ${MAX_RETRIES + 1} attempts: ${lastError?.message || "Unknown error"}`,
-    undefined,
-    path
-  );
-}
-
-// ─── Types ───────────────────────────────────────────────────────────
-
-export interface SiteSetting {
-  site_name: string;
-  site_logo: StrapiMedia | null;
-  site_favicon: StrapiMedia | null;
-  site_description: string;
-  currency: string;
-  phone: string;
-  email: string;
-  og_image: StrapiMedia | null;
-}
-
-export interface StrapiMedia {
-  id: number;
-  name: string;
-  url: string;
-  alternativeText?: string;
-  width?: number;
-  height?: number;
-  formats?: Record<string, { url: string; width: number; height: number }>;
-}
-
-export interface GlobalSetting {
-  meta_title: string;
-  meta_description: string;
-  og_image: StrapiMedia | null;
-  google_analytics_id: string;
-  facebook_pixel_id: string;
-  twitter_handle: string;
-}
-
-export interface FooterSetting {
-  copyright_text: string;
-  social_links: Record<string, string> | null;
-  footer_links: FooterLink[] | null;
-  newsletter_text: string;
-}
-
-export interface FooterLink {
-  label: string;
-  url: string;
-}
-
-export interface Page {
-  id: number;
-  documentId: string;
-  title: string;
-  slug: string;
-  content: string;
-  meta_title: string;
-  meta_description: string;
-  featured_image: StrapiMedia | null;
-  og_image: StrapiMedia | null;
-}
-
-export interface Product {
-  id: number;
-  documentId: string;
-  title: string;
-  slug: string;
-  description: string;
-  short_description: string;
-  price: number;
-  ribbon_type: "wax" | "wax_resin" | "resin";
-  sizes: unknown;
-  compatibility: string;
-  is_featured: boolean;
-  images: StrapiMedia[];
-  meta_title: string;
-  meta_description: string;
-  og_image: StrapiMedia | null;
-  brand: Brand | null;
-  categories: Category[];
-  publishedAt: string;
-}
-
-export interface Category {
-  id: number;
-  documentId: string;
-  name: string;
-  slug: string;
-  description: string;
-  image: StrapiMedia | null;
-  products: Product[];
-}
-
-export interface Brand {
-  id: number;
-  documentId: string;
-  name: string;
-  slug: string;
-  logo: StrapiMedia | null;
-  description: string;
-  products: Product[];
-}
-
-export interface Article {
-  id: number;
-  documentId: string;
-  title: string;
-  slug: string;
-  content: string;
-  excerpt: string;
-  featured_image: StrapiMedia | null;
-  author: string;
-  article_date: string;
-  tags: string[];
-  views: number;
-  meta_title: string;
-  meta_description: string;
-  og_image: StrapiMedia | null;
-  publishedAt: string;
-}
-
-export interface CompanyInfo {
-  company_name: string;
-  company_name_en: string;
-  address: string;
-  phone: string;
-  email: string;
-  map_link: string;
-  business_hours: string;
-  customer_count: number;
-  contact_form_title: string;
-}
-
-export interface PrivacyPolicy {
-  title: string;
-  content: string;
-  last_updated: string;
-  meta_title: string;
-  meta_description: string;
-}
-
-export interface PdpaSetting {
-  title: string;
-  content: string;
-  last_updated: string;
-  meta_title: string;
-  meta_description: string;
-}
-
-export interface TermsOfService {
-  title: string;
-  description: string;
-  content: string;
-  last_updated: string;
-  meta_title: string;
-  meta_description: string;
-}
-
-export interface CookiePolicy {
-  title: string;
-  description: string;
-  content: string;
-  last_updated: string;
-  meta_title: string;
-  meta_description: string;
-}
-
-export interface CookieCategory {
-  id: number;
-  documentId: string;
-  name: string;
-  slug: string;
-  description: string;
-  is_required: boolean;
-  is_default_enabled: boolean;
-  sort_order: number;
-  cookies: CookieEntry[] | null;
-  privacy_policy_url: string;
-}
-
-export interface CookieEntry {
-  name: string;
-  provider: string;
-  purpose: string;
-  duration: string;
-  type: string;
-}
-
-// ─── Result wrapper ──────────────────────────────────────────────────
-
-export type ApiResult<T> =
-  | { ok: true; data: T; isOffline: false }
-  | { ok: false; data: null; isOffline: true; error: StrapiError };
-
-async function safeFetch<T>(
-  fn: () => Promise<T>,
-  fallback: T
-): Promise<ApiResult<T>> {
-  try {
-    const data = await fn();
-    return { ok: true, data, isOffline: false };
-  } catch (err) {
-    const isOffline =
-      err instanceof StrapiError &&
-      (err.message.includes("fetch") ||
-        err.message.includes("abort") ||
-        err.message.includes("Failed to fetch"));
-    return {
-      ok: false,
-      data: fallback,
-      isOffline,
-      error: err as StrapiError,
-    };
-  }
-}
-
-// ─── API Functions ───────────────────────────────────────────────────
-
-export async function getSiteSetting(locale = "th") {
-  const res = await fetchAPI<StrapiSingleResponse<SiteSetting>>(
-    "/site-setting",
-    { locale, populate: "*" }
-  );
-  return res.data;
-}
-
-export async function getGlobalSetting(locale = "th") {
-  const res = await fetchAPI<StrapiSingleResponse<GlobalSetting>>(
-    "/global-setting",
-    { locale, populate: "*" }
-  );
-  return res.data;
-}
-
-export async function getFooterSetting(locale = "th") {
-  const res = await fetchAPI<StrapiSingleResponse<FooterSetting>>(
-    "/footer-setting",
-    { locale, populate: "*" }
-  );
-  return res.data;
-}
-
-export async function getPages(locale = "th") {
-  const res = await fetchAPI<StrapiResponse<Page[]>>("/pages", {
+export async function getSiteSetting(locale: Locale = "th") {
+  const res = await fetchStrapiSingle<SiteSetting>("site-setting", {
     locale,
-    populate: "*",
+    populate: [...POPULATE.siteSetting],
   });
   return res.data;
 }
 
-export async function getPageBySlug(slug: string, locale = "th") {
-  const res = await fetchAPI<StrapiResponse<Page[]>>("/pages", {
+export async function getGlobalSetting(locale: Locale = "th") {
+  const res = await fetchStrapiSingle<GlobalSetting>("global-setting", {
     locale,
-    populate: "*",
-    "filters[slug][$eq]": slug,
+    populate: [...POPULATE.globalSetting],
   });
-  return res.data?.[0] || null;
+  return res.data;
 }
 
-export async function getProducts(locale = "th", page = 1, pageSize = 12) {
-  const res = await fetchAPI<StrapiResponse<Product[]>>("/products", {
+export async function getFooterSetting(locale: Locale = "th") {
+  const res = await fetchStrapiSingle<FooterSetting>("footer-setting", {
     locale,
-    populate: "*",
+    populate: [...POPULATE.footerSetting],
+  });
+  return res.data;
+}
+
+export async function getCompanyInfo(locale: Locale = "th") {
+  const res = await fetchStrapiSingle<CompanyInfo>("company-info", {
+    locale,
+    populate: [...POPULATE.companyInfo],
+  });
+  return res.data;
+}
+
+export async function getAboutPage(locale: Locale = "th") {
+  const res = await fetchStrapiSingle<AboutPage>("about-page", {
+    locale,
+    populate: [...POPULATE.aboutPage],
+  });
+  return res.data;
+}
+
+export async function getContactPage(locale: Locale = "th") {
+  const res = await fetchStrapiSingle<ContactPage>("contact-page", {
+    locale,
+    populate: [...POPULATE.contactPage],
+  });
+  return res.data;
+}
+
+export async function getFreeTrial(locale: Locale = "th") {
+  const res = await fetchStrapiSingle<FreeTrial>("free-trial", {
+    locale,
+    populate: [...POPULATE.freeTrial],
+  });
+  return res.data;
+}
+
+export async function getPrivacyPolicy(locale: Locale = "th") {
+  const res = await fetchStrapiSingle<PrivacyPolicy>("privacy-policy", {
+    locale,
+    populate: [...POPULATE.privacyPolicy],
+  });
+  return res.data;
+}
+
+export async function getTermsOfService(locale: Locale = "th") {
+  const res = await fetchStrapiSingle<TermsOfService>("terms-of-service", {
+    locale,
+    populate: [...POPULATE.termsOfService],
+  });
+  return res.data;
+}
+
+export async function getCookiePolicy(locale: Locale = "th") {
+  const res = await fetchStrapiSingle<CookiePolicy>("cookie-policy", {
+    locale,
+    populate: [...POPULATE.cookiePolicy],
+  });
+  return res.data;
+}
+
+export async function getPdpaSetting(locale: Locale = "th") {
+  const res = await fetchStrapiSingle<PdpaSetting>("pdpa-setting", {
+    locale,
+    populate: [...POPULATE.pdpaSetting],
+  });
+  return res.data;
+}
+
+// ─── Collection Fetch Functions ─────────────────────────────────────
+
+export async function getProducts(
+  locale: Locale = "th",
+  page = 1,
+  pageSize = 12,
+) {
+  return fetchStrapiCollection<Product>("products", {
+    locale,
+    populate: [...POPULATE.product],
     sort: "publishedAt:desc",
-    "pagination[page]": String(page),
-    "pagination[pageSize]": String(pageSize),
+    pagination: { page, pageSize },
   });
-  return res;
 }
 
-export async function getFeaturedProducts(locale = "th") {
-  const res = await fetchAPI<StrapiResponse<Product[]>>("/products", {
+export async function getFeaturedProducts(locale: Locale = "th") {
+  const res = await fetchStrapiCollection<Product>("products", {
     locale,
-    populate: "*",
-    "filters[is_featured][$eq]": "true",
+    populate: [...POPULATE.product],
+    filters: { "filters[is_featured][$eq]": "true" },
     sort: "publishedAt:desc",
   });
   return res.data;
 }
 
-export async function getProductBySlug(slug: string, locale = "th") {
-  const res = await fetchAPI<StrapiResponse<Product[]>>("/products", {
+export async function getProductBySlug(slug: string, locale: Locale = "th") {
+  const res = await fetchStrapiCollection<Product>("products", {
     locale,
-    populate: "*",
-    "filters[slug][$eq]": slug,
+    populate: [...POPULATE.product],
+    filters: { "filters[slug][$eq]": slug },
   });
   return res.data?.[0] || null;
 }
 
-export async function getCategories(locale = "th") {
-  const res = await fetchAPI<StrapiResponse<Category[]>>("/categories", {
+export async function getCategories(locale: Locale = "th") {
+  const res = await fetchStrapiCollection<Category>("categories", {
     locale,
-    populate: "*",
+    populate: [...POPULATE.category],
   });
   return res.data;
 }
 
-export async function getCategoryBySlug(slug: string, locale = "th") {
-  const res = await fetchAPI<StrapiResponse<Category[]>>("/categories", {
+export async function getCategoryBySlug(slug: string, locale: Locale = "th") {
+  const res = await fetchStrapiCollection<Category>("categories", {
     locale,
-    populate: "*",
-    "filters[slug][$eq]": slug,
+    populate: [...POPULATE.category],
+    filters: { "filters[slug][$eq]": slug },
   });
   return res.data?.[0] || null;
 }
 
-export async function getBrands(locale = "th") {
-  const res = await fetchAPI<StrapiResponse<Brand[]>>("/brands", {
+export async function getBrands(locale: Locale = "th") {
+  const res = await fetchStrapiCollection<Brand>("brands", {
     locale,
-    populate: "*",
+    populate: [...POPULATE.brand],
   });
   return res.data;
 }
 
-export async function getArticles(locale = "th", page = 1, pageSize = 12) {
-  const res = await fetchAPI<StrapiResponse<Article[]>>("/articles", {
+export async function getArticles(
+  locale: Locale = "th",
+  page = 1,
+  pageSize = 12,
+) {
+  return fetchStrapiCollection<Article>("articles", {
     locale,
-    populate: "*",
+    populate: [...POPULATE.article],
     sort: "publishedAt:desc",
-    "pagination[page]": String(page),
-    "pagination[pageSize]": String(pageSize),
+    pagination: { page, pageSize },
   });
-  return res;
 }
 
-export async function getArticleBySlug(slug: string, locale = "th") {
-  const res = await fetchAPI<StrapiResponse<Article[]>>("/articles", {
+export async function getArticleBySlug(slug: string, locale: Locale = "th") {
+  const res = await fetchStrapiCollection<Article>("articles", {
     locale,
-    populate: "*",
-    "filters[slug][$eq]": slug,
+    populate: [...POPULATE.article],
+    filters: { "filters[slug][$eq]": slug },
   });
   return res.data?.[0] || null;
 }
 
-export async function getCompanyInfo(locale = "th") {
-  const res = await fetchAPI<StrapiSingleResponse<CompanyInfo>>(
-    "/company-info",
-    { locale, populate: "*" }
+export async function getCookieCategories(locale: Locale = "th") {
+  const res = await fetchStrapiCollection<CookieCategory>(
+    "cookie-categories",
+    {
+      locale,
+      populate: [...POPULATE.cookieCategory],
+      sort: "sort_order:asc",
+    },
   );
   return res.data;
 }
 
-export async function getPrivacyPolicy(locale = "th") {
-  const res = await fetchAPI<StrapiSingleResponse<PrivacyPolicy>>(
-    "/privacy-policy",
-    { locale, populate: "*" }
-  );
+export async function getFaq(locale: Locale = "th") {
+  const res = await fetchStrapiCollection<Faq>("faqs", {
+    locale,
+    populate: [...POPULATE.faq],
+    sort: "sort_order:asc",
+  });
   return res.data;
 }
 
-export async function getPdpaSetting(locale = "th") {
-  const res = await fetchAPI<StrapiSingleResponse<PdpaSetting>>(
-    "/pdpa-setting",
-    { locale, populate: "*" }
-  );
-  return res.data;
+// ─── Safe Wrappers (integate-rule.md §6 — fallback hierarchy) ──────
+//
+// CMS value → i18n/static value → safe default
+
+export async function safeGetSiteSetting(locale: Locale = "th") {
+  return safeFetch(() => getSiteSetting(locale), mockSiteSetting);
 }
 
-// ─── Safe wrappers (return ApiResult with fallback) ──────────────────
-
-export async function safeGetSiteSetting(locale = "th") {
-  return safeFetch(() => getSiteSetting(locale), null);
+export async function safeGetGlobalSetting(locale: Locale = "th") {
+  return safeFetch(() => getGlobalSetting(locale), mockGlobalSetting);
 }
 
-export async function safeGetGlobalSetting(locale = "th") {
-  return safeFetch(() => getGlobalSetting(locale), null);
+export async function safeGetFooterSetting(locale: Locale = "th") {
+  return safeFetch(() => getFooterSetting(locale), mockFooterSetting);
 }
 
-export async function safeGetFooterSetting(locale = "th") {
-  return safeFetch(() => getFooterSetting(locale), null);
+export async function safeGetCompanyInfo(locale: Locale = "th") {
+  return safeFetch(() => getCompanyInfo(locale), mockCompanyInfo);
 }
 
-export async function safeGetFeaturedProducts(locale = "th") {
-  return safeFetch(() => getFeaturedProducts(locale), [] as Product[]);
+export async function safeGetAboutPage(locale: Locale = "th") {
+  return safeFetch(() => getAboutPage(locale), mockAboutPage);
 }
 
-export async function safeGetCompanyInfo(locale = "th") {
-  return safeFetch(() => getCompanyInfo(locale), null);
+export async function safeGetContactPage(locale: Locale = "th") {
+  return safeFetch(() => getContactPage(locale), mockContactPage);
 }
 
-export async function safeGetProducts(locale = "th", page = 1, pageSize = 12) {
+export async function safeGetFreeTrial(locale: Locale = "th") {
   return safeFetch(
-    () => getProducts(locale, page, pageSize),
-    { data: [] as Product[], meta: null }
+    () => getFreeTrial(locale),
+    null as FreeTrial | null,
   );
 }
 
-export async function safeGetCategories(locale = "th") {
-  return safeFetch(() => getCategories(locale), [] as Category[]);
+export async function safeGetPrivacyPolicy(locale: Locale = "th") {
+  return safeFetch(() => getPrivacyPolicy(locale), mockPrivacyPolicy);
 }
 
-export async function safeGetArticles(locale = "th", page = 1, pageSize = 12) {
+export async function safeGetTermsOfService(locale: Locale = "th") {
+  return safeFetch(() => getTermsOfService(locale), mockTermsOfService);
+}
+
+export async function safeGetCookiePolicy(locale: Locale = "th") {
+  return safeFetch(() => getCookiePolicy(locale), mockCookiePolicy);
+}
+
+export async function safeGetPdpaSetting(locale: Locale = "th") {
+  return safeFetch(() => getPdpaSetting(locale), mockPdpaSetting);
+}
+
+export async function safeGetFeaturedProducts(locale: Locale = "th") {
   return safeFetch(
-    () => getArticles(locale, page, pageSize),
-    { data: [] as Article[], meta: null }
+    async () => {
+      const data = await getFeaturedProducts(locale);
+      if (!data || data.length === 0) {
+        return mockProducts.filter((p) => p.is_featured);
+      }
+      return data;
+    },
+    mockProducts.filter((p) => p.is_featured),
   );
 }
 
-export async function safeGetProductBySlug(slug: string, locale = "th") {
-  return safeFetch(() => getProductBySlug(slug, locale), null);
-}
-
-export async function safeGetArticleBySlug(slug: string, locale = "th") {
-  return safeFetch(() => getArticleBySlug(slug, locale), null);
-}
-
-export async function safeGetPageBySlug(slug: string, locale = "th") {
-  return safeFetch(() => getPageBySlug(slug, locale), null);
-}
-
-export async function safeGetPrivacyPolicy(locale = "th") {
-  return safeFetch(() => getPrivacyPolicy(locale), null);
-}
-
-export async function safeGetPdpaSetting(locale = "th") {
-  return safeFetch(() => getPdpaSetting(locale), null);
-}
-
-export async function getTermsOfService(locale = "th") {
-  const res = await fetchAPI<StrapiSingleResponse<TermsOfService>>(
-    "/terms-of-service",
-    { locale, populate: "*" }
+export async function safeGetProducts(
+  locale: Locale = "th",
+  page = 1,
+  pageSize = 12,
+) {
+  return safeFetch(
+    async () => {
+      const result = await getProducts(locale, page, pageSize);
+      if (!result.data || result.data.length === 0) {
+        return {
+          data: mockProducts,
+          meta: {
+            pagination: {
+              page: 1,
+              pageSize,
+              pageCount: 1,
+              total: mockProducts.length,
+            },
+          },
+        };
+      }
+      return result;
+    },
+    {
+      data: mockProducts,
+      meta: {
+        pagination: {
+          page: 1,
+          pageSize,
+          pageCount: 1,
+          total: mockProducts.length,
+        },
+      },
+    },
   );
-  return res.data;
 }
 
-export async function safeGetTermsOfService(locale = "th") {
-  return safeFetch(() => getTermsOfService(locale), null);
-}
-
-export async function getCookiePolicy(locale = "th") {
-  const res = await fetchAPI<StrapiSingleResponse<CookiePolicy>>(
-    "/cookie-policy",
-    { locale, populate: "*" }
+export async function safeGetCategories(locale: Locale = "th") {
+  return safeFetch(
+    async () => {
+      const data = await getCategories(locale);
+      if (!data || data.length === 0) return mockCategories;
+      return data;
+    },
+    mockCategories,
   );
-  return res.data;
 }
 
-export async function getCookieCategories(locale = "th") {
-  const res = await fetchAPI<StrapiResponse<CookieCategory[]>>(
-    "/cookie-categories",
-    { locale, populate: "*", sort: "sort_order:asc" }
+export async function safeGetArticles(
+  locale: Locale = "th",
+  page = 1,
+  pageSize = 12,
+) {
+  return safeFetch(
+    async () => {
+      const result = await getArticles(locale, page, pageSize);
+      if (!result.data || result.data.length === 0) {
+        return {
+          data: mockArticles,
+          meta: {
+            pagination: {
+              page: 1,
+              pageSize,
+              pageCount: 1,
+              total: mockArticles.length,
+            },
+          },
+        };
+      }
+      return result;
+    },
+    {
+      data: mockArticles,
+      meta: {
+        pagination: {
+          page: 1,
+          pageSize,
+          pageCount: 1,
+          total: mockArticles.length,
+        },
+      },
+    },
   );
-  return res.data;
 }
 
-export async function safeGetCookieCategories(locale = "th") {
-  return safeFetch(() => getCookieCategories(locale), [] as CookieCategory[]);
+export async function safeGetProductBySlug(
+  slug: string,
+  locale: Locale = "th",
+) {
+  return safeFetch(
+    async () => {
+      const data = await getProductBySlug(slug, locale);
+      if (!data) return mockProducts.find((p) => p.slug === slug) || null;
+      return data;
+    },
+    mockProducts.find((p) => p.slug === slug) || null,
+  );
 }
 
-export { getStrapiMedia, STRAPI_URL };
+export async function safeGetArticleBySlug(
+  slug: string,
+  locale: Locale = "th",
+) {
+  return safeFetch(
+    async () => {
+      const data = await getArticleBySlug(slug, locale);
+      if (!data) return mockArticles.find((a) => a.slug === slug) || null;
+      return data;
+    },
+    mockArticles.find((a) => a.slug === slug) || null,
+  );
+}
+
+export async function safeGetCookieCategories(locale: Locale = "th") {
+  return safeFetch(
+    async () => {
+      const data = await getCookieCategories(locale);
+      if (!data || data.length === 0) return mockCookieCategories;
+      return data;
+    },
+    mockCookieCategories,
+  );
+}
+
+export async function safeGetFaq(locale: Locale = "th") {
+  return safeFetch(
+    () => getFaq(locale),
+    [] as Faq[],
+  );
+}

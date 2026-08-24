@@ -1,0 +1,59 @@
+{
+  "collectionName": "components_shared_seo_config",
+  "info": {
+    "displayName": "SEO Config",
+    "description": "Site-wide SEO defaults, social profiles, and analytics (used only in Global Setting)"
+  },
+  "attributes": {
+    "site_url": {
+      "type": "string",
+      "description": "Canonical site URL (e.g. https://ryhts.com)"
+    },
+    "site_name": {
+      "type": "string",
+      "description": "Site name for structured data and OG"
+    },
+    "default_title": {
+      "type": "string",
+      "description": "Default meta title when pages do not provide one"
+    },
+    "default_description": {
+      "type": "text",
+      "description": "Default meta description when pages do not provide one"
+    },
+    "default_og_image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"],
+      "description": "Fallback OG image when pages do not provide one"
+    },
+    "brand_name": {
+      "type": "string",
+      "description": "Brand name for structured data"
+    },
+    "facebook_url": {
+      "type": "string",
+      "description": "Facebook profile URL"
+    },
+    "line_url": {
+      "type": "string",
+      "description": "LINE Official Account URL"
+    },
+    "twitter_url": {
+      "type": "string",
+      "description": "Twitter profile URL"
+    },
+    "google_analytics_id": {
+      "type": "string",
+      "description": "Google Analytics measurement ID"
+    },
+    "facebook_pixel_id": {
+      "type": "string",
+      "description": "Facebook Pixel ID"
+    },
+    "twitter_handle": {
+      "type": "string",
+      "description": "Twitter handle for cards"
+    }
+  }
+}

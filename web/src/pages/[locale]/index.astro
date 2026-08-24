@@ -1,0 +1,94 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { safeGetFeaturedProducts, safeGetCompanyInfo, safeGetGlobalSetting, getStrapiAbsoluteImageUrl } from "../../lib/api";
+import OfflineNotice from "../../components/OfflineNotice.astro";
+import SkeletonCard from "../../components/SkeletonCard.astro";
+import ProductCard from "../../components/ProductCard.astro";
+import HeroSection from "../../components/HeroSection.astro";
+import FeaturesSection from "../../components/FeaturesSection.astro";
+import NewsletterCTA from "../../components/NewsletterCTA.astro";
+import { isValidLocale, DEFAULT_LOCALE, type Locale } from "../../lib/i18n";
+
+const lang = (Astro.params.locale as Locale) || DEFAULT_LOCALE;
+if (!isValidLocale(lang)) return Astro.redirect(`/${DEFAULT_LOCALE}/`);
+
+const productsResult = await safeGetFeaturedProducts(lang);
+const companyResult = await safeGetCompanyInfo(lang);
+const globalResult = await safeGetGlobalSetting(lang);
+
+const products = productsResult.data;
+const companyInfo = companyResult.data;
+const globalSetting = globalResult.data;
+const isOffline = productsResult.isOffline;
+
+const seoConfig = globalSetting?.seoConfig;
+---
+
+<BaseLayout
+  title={seoConfig?.default_title || "RYHTS - Ryhts Ribbon"}
+  description={seoConfig?.default_description || "Premier Ribbons for Premier Printing"}
+  ogImage={getStrapiAbsoluteImageUrl(seoConfig?.default_og_image) || undefined}
+  keywords={[]}
+  locale={lang}
+  jsonLd={{
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Ryhts Ribbon",
+    url: Astro.url.origin,
+    description: "Premier Ribbons for Premier Printing",
+    publisher: {
+      "@type": "Organization",
+      name: "Ryhts Ribbon",
+      logo: {
+        "@type": "ImageObject",
+        url: `${Astro.url.origin}/favicon.svg`,
+      },
+    },
+  }}
+>
+  <HeroSection customerCount={companyInfo?.customer_count || 100} />
+
+  <section class="section">
+    <div class="container">
+      <div class="text-center" style="margin-bottom: 48px;">
+        <h2 class="section-title">รายการสินค้าขายดีของ Ryhts Ribbon</h2>
+        <p class="section-subtitle">สินค้าริบบอนคุณภาพสูง นำเข้ามาตรฐาน พร้อมให้บริการ</p>
+      </div>
+
+      {isOffline && products.length === 0 ? (
+        <div>
+          <SkeletonCard count={3} variant="product" />
+          <OfflineNotice title="ไม่สามารถโหลดสินค้าได้" message="Unable to load products." />
+        </div>
+      ) : products.length > 0 ? (
+        <div class="product-grid">
+          {products.map((product) => (
+            <ProductCard product={product} />
+          ))}
+        </div>
+      ) : (
+        <div class="empty-state">
+          <i class="fas fa-box-open" style="font-size: 48px; color: var(--color-primary);"></i>
+          <p>สินค้ากำลังจะมาเร็วๆ นี้</p>
+        </div>
+      )}
+
+      <div class="text-center" style="margin-top: 40px;">
+        <a href={`/${lang}/products`} class="btn btn-outline">ดูสินค้าทั้งหมด →</a>
+      </div>
+    </div>
+  </section>
+
+  <FeaturesSection />
+  <NewsletterCTA />
+</BaseLayout>
+
+<style>
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+  }
+  @media (max-width: 1024px) { .product-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 768px) { .product-grid { grid-template-columns: 1fr; } }
+</style>

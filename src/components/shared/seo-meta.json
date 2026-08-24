@@ -2,13 +2,13 @@
   "collectionName": "components_shared_seo_meta",
   "info": {
     "displayName": "SEO Meta",
-    "description": "Search engine optimization and social media meta fields"
+    "description": "Page-level SEO metadata for search engines and social sharing"
   },
   "attributes": {
     "meta_title": {
       "type": "string",
-      "maxLength": 60,
-      "description": "Page title for search engines (max 60 chars)"
+      "maxLength": 70,
+      "description": "Page title for search engines (max 70 chars)"
     },
     "meta_description": {
       "type": "text",
@@ -17,11 +17,11 @@
     },
     "keywords": {
       "type": "text",
-      "description": "Comma-separated keywords for SEO"
+      "description": "Localized keyword text (comma-separated)"
     },
     "canonical_url": {
       "type": "string",
-      "description": "Canonical URL override (leave empty to auto-generate)"
+      "description": "Canonical URL override (only when needed; most pages auto-generate)"
     },
     "og_title": {
       "type": "string",
@@ -37,6 +37,12 @@
       "allowedTypes": ["images"],
       "description": "Open Graph image for social sharing"
     },
+    "og_type": {
+      "type": "enumeration",
+      "enum": ["website", "article", "product"],
+      "default": "website",
+      "description": "Open Graph type"
+    },
     "twitter_title": {
       "type": "string",
       "description": "Twitter Card title"
@@ -51,10 +57,46 @@
       "allowedTypes": ["images"],
       "description": "Twitter Card image"
     },
-    "robots": {
+    "noindex": {
+      "type": "boolean",
+      "default": false,
+      "description": "If true, page will not be indexed by search engines"
+    },
+    "nofollow": {
+      "type": "boolean",
+      "default": false,
+      "description": "If true, links on this page will not be followed"
+    },
+    "noarchive": {
+      "type": "boolean",
+      "default": false,
+      "description": "If true, search engines will not cache this page"
+    },
+    "nosnippet": {
+      "type": "boolean",
+      "default": false,
+      "description": "If true, search engines will not show a snippet"
+    },
+    "max_snippet": {
+      "type": "integer",
+      "description": "Maximum snippet length in characters (-1 for no limit)"
+    },
+    "max_image_preview": {
+      "type": "enumeration",
+      "enum": ["none", "standard", "large"],
+      "description": "Maximum image preview size"
+    },
+    "max_video_preview": {
+      "type": "integer",
+      "description": "Maximum video preview in seconds (-1 for no limit)"
+    },
+    "schema_type": {
       "type": "string",
-      "default": "index, follow",
-      "description": "Robots directive (e.g. index, follow / noindex, nofollow)"
+      "description": "Structured data type (e.g. WebPage, AboutPage, FAQPage, ProductPage, Article)"
+    },
+    "alternate_languages": {
+      "type": "json",
+      "description": "JSON object for exceptional hreflang overrides"
     }
   }
 }

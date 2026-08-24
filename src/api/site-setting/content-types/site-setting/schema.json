@@ -4,7 +4,7 @@
   "info": {
     "singularName": "site-setting",
     "pluralName": "site-settings",
-    "displayName": "Site Setting",
+    "displayName": "Site - Settings",
     "description": "General site settings - company name, logo, description"
   },
   "options": {
@@ -33,6 +33,12 @@
     "site_description": {
       "type": "text"
     },
+    "stats": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.stat-item",
+      "description": "Key site statistics (e.g. customers, products, years)"
+    },
     "currency": {
       "type": "string",
       "default": "THB"
@@ -46,7 +52,8 @@
     "og_image": {
       "type": "media",
       "multiple": false,
-      "allowedTypes": ["images"]
+      "allowedTypes": ["images"],
+      "description": "Default Open Graph image for the site"
     }
   }
 }

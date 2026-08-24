@@ -1,5 +1,5 @@
 ---
-import { safeGetSiteSetting, safeGetFooterSetting, getStrapiMedia } from "../lib/api";
+import { safeGetSiteSetting, safeGetFooterSetting, safeGetGlobalSetting, getStrapiMedia } from "../lib/api";
 import { detectLocale, type Locale } from "../lib/i18n";
 import ErrorBanner from "../components/ErrorBanner.astro";
 import CookieConsent from "../components/CookieConsent.astro";
@@ -73,18 +73,21 @@ const {
   jsonLd,
 } = Astro.props;
 
-// Detect locale: prop > cookie > Accept-Language > default
+// Detect locale from URL path: /th/about → "th", /en/about → "en"
+const urlLocale = Astro.params.locale as string;
 const cookieHeader = Astro.request.headers.get("cookie") || undefined;
 const acceptLanguage = Astro.request.headers.get("accept-language") || undefined;
 const detectedLocale = detectLocale(cookieHeader, acceptLanguage);
-const locale = propLocale || detectedLocale;
+const locale = propLocale || urlLocale || detectedLocale;
 
 const siteResult = await safeGetSiteSetting(locale);
 const footerResult = await safeGetFooterSetting(locale);
+const globalResult = await safeGetGlobalSetting(locale);
 
 const siteSetting = siteResult.data;
 const footerSetting = footerResult.data;
-const isOffline = siteResult.isOffline || footerResult.isOffline;
+const globalSetting = globalResult.data;
+const isOffline = siteResult.isOffline || footerResult.isOffline || globalResult.isOffline;
 
 const siteName = siteSetting?.site_name || "RYHTS";
 const siteDescription = siteSetting?.site_description || "Premier Ribbons for Premier Printing";
@@ -92,16 +95,17 @@ const pageTitle = title ? `${title} | ${siteName}` : siteName;
 const metaDescription = description || siteDescription;
 const logoUrl = getStrapiMedia(siteSetting?.site_logo?.url);
 
-// Default OG image from site settings if not provided by page
-const defaultOgImage = siteSetting?.og_image?.url || siteSetting?.site_logo?.url || "/og-default.svg";
+// Default OG image priority: page prop > global SEO config > site logo > static fallback
+const globalOgImage = getStrapiMedia(globalResult.data?.seoConfig?.default_og_image?.url);
+const defaultOgImage = globalOgImage || siteSetting?.og_image?.url || siteSetting?.site_logo?.url || "/og-default.svg";
 const resolvedOgImage = ogImage || defaultOgImage;
 
 const navItems = [
-  { label: "Home", href: "/" },
-  { label: "About us", href: "/about" },
-  { label: "Products", href: "/products" },
-  { label: "Articles", href: "/articles" },
-  { label: "Contact us", href: "/contact" },
+  { label: "Home", href: `/${locale}/` },
+  { label: "About us", href: `/${locale}/about` },
+  { label: "Products", href: `/${locale}/products` },
+  { label: "Articles", href: `/${locale}/articles` },
+  { label: "Contact us", href: `/${locale}/contact` },
 ];
 
 const socialLinks = footerSetting?.social_links || {};
@@ -114,13 +118,9 @@ const siteOrigin = Astro.url.origin;
 
 // Helper to build language-specific URL
 function getLanguageUrl(lang: string): string {
-  // For now, since we only have th locale, en would be a future implementation
-  // This structure allows easy expansion when en locale is added
-  if (lang === "en") {
-    // Future: return `${siteOrigin}/en${currentPath}`;
-    return `${siteOrigin}${currentPath}`; // Fallback to current for now
-  }
-  return `${siteOrigin}${currentPath}`;
+  // Replace current locale prefix with target locale
+  const pathWithoutLocale = currentPath.replace(/^\/(th|en)/, "") || "/";
+  return `${siteOrigin}/${lang}${pathWithoutLocale === "/" ? "/" : pathWithoutLocale}`;
 }
 
 // Default hreflangs if not provided by page
@@ -264,9 +264,9 @@ const resolvedHreflangs = hreflangs || defaultHreflangs;
               {navItems.map((item) => (
                 <li><a href={item.href}>{item.label}</a></li>
               ))}
-              <li><a href="/privacy-policy">Privacy Policy</a></li>
-              <li><a href="/pdpa">PDPA</a></li>
-              <li><a href="/terms-of-service">Terms of Service</a></li>
+              <li><a href={`/${locale}/privacy-policy`}>Privacy Policy</a></li>
+              <li><a href={`/${locale}/pdpa`}>PDPA</a></li>
+              <li><a href={`/${locale}/terms-of-service`}>Terms of Service</a></li>
               <li><a href="#" data-cookie-manage>Manage Cookies</a></li>
             </ul>
           </div>
