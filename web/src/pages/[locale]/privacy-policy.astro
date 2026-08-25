@@ -1,0 +1,47 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { safeGetPrivacyPolicy, getStrapiAbsoluteImageUrl } from "../../lib/api";
+import { isValidLocale, DEFAULT_LOCALE, type Locale } from "../../lib/i18n";
+import OfflineNotice from "../../components/OfflineNotice.astro";
+import PrivacyPolicyContent from "../../components/PrivacyPolicyContent.astro";
+
+const lang = (Astro.params.locale as Locale) || DEFAULT_LOCALE;
+if (!isValidLocale(lang)) return Astro.redirect(`/${DEFAULT_LOCALE}/privacy-policy`);
+
+const policyResult = await safeGetPrivacyPolicy(lang);
+const policy = policyResult.data;
+
+const seo = policy?.seo;
+const isOffline = policyResult.isOffline;
+
+const siteUrl = Astro.url.origin;
+---
+
+<BaseLayout
+  title={seo?.meta_title || policy?.title || (lang === "en" ? "Privacy Policy" : "นโยบายความเป็นส่วนตัว")}
+  description={seo?.meta_description || policy?.description || ""}
+  ogImage={getStrapiAbsoluteImageUrl(seo?.og_image) || undefined}
+  robots={seo?.robots}
+  keywords={seo?.keywords?.split(",").map((k: string) => k.trim()) || []}
+  locale={lang}
+  hreflangs={[
+    { lang: "th", href: `${siteUrl}/th/privacy-policy` },
+    { lang: "en", href: `${siteUrl}/en/privacy-policy` },
+    { lang: "x-default", href: `${siteUrl}/th/privacy-policy` },
+  ]}
+  jsonLd={{
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name: policy?.title || "Privacy Policy",
+    description: seo?.meta_description || "",
+  }}
+>
+  {isOffline && !policy ? (
+    <OfflineNotice
+      title={lang === "en" ? "Unable to load" : "ไม่สามารถโหลดได้"}
+      message={lang === "en" ? "Privacy policy may be unavailable." : "Privacy policy may be unavailable."}
+    />
+  ) : (
+    <PrivacyPolicyContent lang={lang} policy={policy} />
+  )}
+</BaseLayout>

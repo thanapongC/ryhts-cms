@@ -1,0 +1,12 @@
+{
+  "collectionName": "components_pricing_plan_feature",
+  "info": {
+    "displayName": "Plan Feature",
+    "description": "Links a pricing feature to a plan with an included/not-included status"
+  },
+  "attributes": {
+    "feature": { "type": "relation", "relation": "manyToOne", "target": "api::faq.faq" },
+    "included": { "type": "boolean", "default": true },
+    "note": { "type": "string", "localized": true }
+  }
+}

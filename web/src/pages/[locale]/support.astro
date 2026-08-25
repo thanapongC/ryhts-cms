@@ -1,0 +1,45 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { safeGetSupportPage, getStrapiAbsoluteImageUrl } from "../../lib/api";
+import { isValidLocale, DEFAULT_LOCALE, type Locale } from "../../lib/i18n";
+import OfflineNotice from "../../components/OfflineNotice.astro";
+import SupportContent from "../../components/SupportContent.astro";
+
+const lang = (Astro.params.locale as Locale) || DEFAULT_LOCALE;
+if (!isValidLocale(lang)) return Astro.redirect(`/${DEFAULT_LOCALE}/support`);
+
+const supportResult = await safeGetSupportPage(lang);
+const supportPage = supportResult.data;
+
+const seo = supportPage?.seo;
+const siteUrl = Astro.url.origin;
+---
+
+<BaseLayout
+  title={seo?.meta_title || (lang === "en" ? "Support" : "ศูนย์ช่วยเหลือ")}
+  description={seo?.meta_description || (lang === "en" ? "Get help with Ryhts Ribbon products" : "รับความช่วยเหลือเกี่ยวกับสินค้า Ryhts Ribbon")}
+  ogImage={getStrapiAbsoluteImageUrl(seo?.og_image) || undefined}
+  robots={seo?.robots}
+  keywords={seo?.keywords?.split(",").map((k: string) => k.trim()) || []}
+  locale={lang}
+  hreflangs={[
+    { lang: "th", href: `${siteUrl}/th/support` },
+    { lang: "en", href: `${siteUrl}/en/support` },
+    { lang: "x-default", href: `${siteUrl}/th/support` },
+  ]}
+  jsonLd={{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    name: seo?.meta_title || "Support",
+    description: seo?.meta_description || "",
+  }}
+>
+  {supportResult.isOffline && supportPage === null ? (
+    <OfflineNotice
+      title={lang === "en" ? "Unable to load page" : "ไม่สามารถโหลดหน้าได้"}
+      message={lang === "en" ? "Please check your connection and try again." : "กรุณาตรวจสอบการเชื่อมต่อและลองอีกครั้ง"}
+    />
+  ) : (
+    <SupportContent lang={lang} page={supportPage} />
+  )}
+</BaseLayout>

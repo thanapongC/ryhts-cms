@@ -1,0 +1,13 @@
+{
+  "collectionName": "components_privacy_request_type_option",
+  "info": {
+    "displayName": "Privacy Request Type Option",
+    "description": "Selectable request type option for the Privacy Request form"
+  },
+  "attributes": {
+    "value": { "type": "enumeration", "enum": ["access", "correction", "deletion", "restriction", "objection", "withdrawal"], "required": true },
+    "label": { "type": "string", "localized": true },
+    "isActive": { "type": "boolean", "default": true },
+    "sortOrder": { "type": "integer", "default": 0 }
+  }
+}

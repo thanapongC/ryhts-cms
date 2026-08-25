@@ -1,0 +1,511 @@
+---
+/**
+ * FreeTrialContent — Renders the Free Trial page with CMS data + fallback.
+ *
+ * CMS data: hero, trust items, form labels, trial features, testimonials, CTA, SEO.
+ * Rules: integate-rule.md §18 Free Trial
+ *
+ * Props:
+ *   lang: Locale
+ *   page: FreeTrial | null
+ */
+import { getStrapiMedia, getStrapiAbsoluteImageUrl, filterAndSort, type FreeTrial } from "../lib/api";
+
+interface Props {
+  lang: "th" | "en";
+  page: FreeTrial | null;
+}
+
+const { lang, page } = Astro.props;
+
+const fallbackTitle = lang === "en" ? "Try Ryhts Express for Free" : "ทดลองใช้ Ryhts Express ฟรี";
+const fallbackSubtitle = lang === "en"
+  ? "Experience premium thermal transfer ribbons with a free trial account"
+  : "สัมผัสริบบอนคุณภาพสูงพร้อมบัญชีทดลองใช้ฟรี";
+
+const title = page?.title || fallbackTitle;
+const subtitle = page?.subtitle || fallbackSubtitle;
+const featuredImage = page?.featured_image ? getStrapiAbsoluteImageUrl(page.featured_image) : "";
+
+const trustItems = filterAndSort(page?.trust_items);
+const trialFeatures = filterAndSort(page?.trial_features);
+const testimonials = page?.testimonials
+  ?.filter((t) => t.is_active !== false)
+  ?.sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0)) || [];
+
+// Build form labels with fallbacks
+const labels = page?.form_labels?.[0] || {} as any;
+const formLabelMap = {
+  fullName: labels.full_name_label || (lang === "en" ? "Full Name" : "ชื่อ-นามสกุล"),
+  fullNamePlaceholder: labels.full_name_placeholder || (lang === "en" ? "Enter your full name" : "กรอกชื่อ-นามสกุล"),
+  position: labels.position_label || (lang === "en" ? "Position" : "ตำแหน่ง"),
+  positionPlaceholder: labels.position_placeholder || (lang === "en" ? "Enter your position" : "กรอกตำแหน่ง"),
+  email: labels.email_label || "Email",
+  emailPlaceholder: labels.email_placeholder || (lang === "en" ? "Enter your email" : "กรอกอีเมล"),
+  phone: labels.phone_label || (lang === "en" ? "Phone" : "โทรศัพท์"),
+  phonePlaceholder: labels.phone_placeholder || (lang === "en" ? "Enter your phone" : "กรอกเบอร์โทรศัพท์"),
+  address: labels.address_label || (lang === "en" ? "Address" : "ที่อยู่"),
+  addressPlaceholder: labels.address_placeholder || (lang === "en" ? "Enter your address" : "กรอกที่อยู่"),
+  company: labels.company_label || (lang === "en" ? "Company" : "บริษัท"),
+  companyPlaceholder: labels.company_placeholder || (lang === "en" ? "Enter your company name" : "กรอกชื่อบริษัท"),
+  businessDetails: labels.business_details_label || (lang === "en" ? "Business Details" : "รายละเอียดธุรกิจ"),
+  businessDetailsPlaceholder: labels.business_details_placeholder || (lang === "en" ? "Describe your business needs" : "อธิบายความต้องการทางธุรกิจ"),
+  privacyConsentPrefix: labels.privacy_consent_prefix || (lang === "en" ? "I agree to the " : "ฉันยอมรับ"),
+  privacyPolicyLabel: labels.privacy_policy_label || (lang === "en" ? "Privacy Policy" : "นโยบายความเป็นส่วนตัว"),
+  privacyConsentSuffix: labels.privacy_consent_suffix || "",
+  marketingConsentLabel: labels.marketing_consent_label || (lang === "en" ? "I agree to receive marketing communications" : "ฉันยินยอมรับข้อมูลการตลาด"),
+  marketingConsentDescription: labels.marketing_consent_description || "",
+  submitLabel: labels.submit_label || (lang === "en" ? "Start Free Trial" : "เริ่มทดลองใช้ฟรี"),
+  successTitle: labels.success_title || (lang === "en" ? "Registration Successful!" : "ลงทะเบียนสำเร็จ!"),
+  successMessage: labels.success_message || (lang === "en" ? "We will contact you shortly." : "เราจะติดต่อคุณโดยเร็วที่สุด"),
+};
+
+const fallbackTrustItems = [
+  { label: lang === "en" ? "No credit card required" : "ไม่ต้องใช้บัตรเครดิต" },
+  { label: lang === "en" ? "14-day free trial" : "ทดลองใช้ฟรี 14 วัน" },
+  { label: lang === "en" ? "Cancel anytime" : "ยกเลิกเมื่อไหร่ก็ได้" },
+  { label: lang === "en" ? "Full feature access" : "เข้าถึงฟีเจอร์ทั้งหมด" },
+];
+
+const displayTrustItems = trustItems.length > 0 ? trustItems : fallbackTrustItems;
+---
+
+<!-- Hero Section -->
+<section class="ft-hero">
+  <div class="container">
+    <div class="ft-hero-content">
+      <div class="ft-hero-text">
+        {page?.trust_items && trustItems.length > 0 && (
+          <div class="ft-trust-bar">
+            {trustItems.map((item) => (
+              <span class="ft-trust-badge">
+                <i class="fas fa-check-circle"></i>
+                {item.label}
+              </span>
+            ))}
+          </div>
+        )}
+        <h1>{title}</h1>
+        <p class="ft-hero-subtitle">{subtitle}</p>
+        {page?.content && (
+          <div class="ft-hero-content-rich" set:html={page.content} />
+        )}
+      </div>
+      {featuredImage && (
+        <div class="ft-hero-image">
+          <img src={featuredImage} alt={title} />
+        </div>
+      )}
+    </div>
+  </div>
+</section>
+
+<!-- Trust Bar (if no hero badges) -->
+{trustItems.length === 0 && displayTrustItems.length > 0 && (
+  <section class="ft-trust-section">
+    <div class="container">
+      <div class="ft-trust-items">
+        {displayTrustItems.map((item) => (
+          <div class="ft-trust-item">
+            <i class="fas fa-shield-alt"></i>
+            <span>{item.label}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+)}
+
+<!-- Trial Features -->
+{trialFeatures.length > 0 && (
+  <section class="section">
+    <div class="container">
+      <div class="text-center" style="margin-bottom: 48px;">
+        <h2 class="section-title">
+          {lang === "en" ? "What You Get" : "สิ่งที่คุณจะได้รับ"}
+        </h2>
+      </div>
+      <div class="ft-features-grid">
+        {trialFeatures.map((feature) => (
+          <div class="ft-feature-card">
+            {feature.icon && <div class="ft-feature-icon"><i class={`fas fa-${feature.icon}`}></i></div>}
+            <h3>{feature.title}</h3>
+            {feature.description && <p>{feature.description}</p>}
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+)}
+
+<!-- Registration Form -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="ft-form-wrapper">
+      <div class="ft-form-header">
+        <span class="badge badge-primary">{lang === "en" ? "Free Trial" : "ทดลองใช้ฟรี"}</span>
+        <h2>{lang === "en" ? "Start Your Free Trial" : "เริ่มทดลองใช้ฟรี"}</h2>
+        <p>{lang === "en" ? "Fill in the form below to get started" : "กรอกข้อมูลด้านล่างเพื่อเริ่มต้นใช้งาน"}</p>
+      </div>
+
+      <form class="ft-form" action="#" method="POST">
+        <div class="ft-form-grid">
+          <div class="form-group">
+            <label for="fullName">{formLabelMap.fullName} *</label>
+            <input type="text" id="fullName" name="fullName" required placeholder={formLabelMap.fullNamePlaceholder} />
+          </div>
+          <div class="form-group">
+            <label for="position">{formLabelMap.position}</label>
+            <input type="text" id="position" name="position" placeholder={formLabelMap.positionPlaceholder} />
+          </div>
+          <div class="form-group">
+            <label for="email">{formLabelMap.email} *</label>
+            <input type="email" id="email" name="email" required placeholder={formLabelMap.emailPlaceholder} />
+          </div>
+          <div class="form-group">
+            <label for="phone">{formLabelMap.phone}</label>
+            <input type="tel" id="phone" name="phone" placeholder={formLabelMap.phonePlaceholder} />
+          </div>
+          <div class="form-group">
+            <label for="company">{formLabelMap.company}</label>
+            <input type="text" id="company" name="company" placeholder={formLabelMap.companyPlaceholder} />
+          </div>
+          <div class="form-group">
+            <label for="address">{formLabelMap.address}</label>
+            <input type="text" id="address" name="address" placeholder={formLabelMap.addressPlaceholder} />
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 16px;">
+          <label for="businessDetails">{formLabelMap.businessDetails}</label>
+          <textarea id="businessDetails" name="businessDetails" rows="3" placeholder={formLabelMap.businessDetailsPlaceholder}></textarea>
+        </div>
+
+        <div class="ft-consent">
+          <label class="ft-checkbox">
+            <input type="checkbox" name="privacyConsent" required />
+            <span>{formLabelMap.privacyConsentPrefix}<a href={`/${lang}/privacy-policy`}>{formLabelMap.privacyPolicyLabel}</a>{formLabelMap.privacyConsentSuffix}</span>
+          </label>
+          <label class="ft-checkbox">
+            <input type="checkbox" name="marketingConsent" />
+            <span>{formLabelMap.marketingConsentLabel}</span>
+          </label>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-lg ft-submit">{formLabelMap.submitLabel}</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials -->
+{testimonials.length > 0 && (
+  <section class="section">
+    <div class="container">
+      <div class="text-center" style="margin-bottom: 48px;">
+        <h2 class="section-title">
+          {lang === "en" ? "What Our Customers Say" : "ลูกค้าของเราพูดว่าอะไร"}
+        </h2>
+      </div>
+      <div class="ft-testimonials-grid">
+        {testimonials.map((t) => (
+          <div class="ft-testimonial-card">
+            <div class="ft-testimonial-quote">
+              <i class="fas fa-quote-left"></i>
+              <p>{t.quote}</p>
+            </div>
+            <div class="ft-testimonial-author">
+              {t.avatar && (
+                <img src={getStrapiAbsoluteImageUrl(t.avatar, "small")} alt={t.name} />
+              )}
+              <div>
+                <strong>{t.name}</strong>
+                {t.position && <span>{t.position}{t.company ? `, ${t.company}` : ""}</span>}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+)}
+
+<style>
+  /* Hero */
+  .ft-hero {
+    background: linear-gradient(135deg, #f8fbff 0%, #e8f4fd 100%);
+    padding: 140px 0 80px;
+  }
+
+  .ft-hero-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+  }
+
+  .ft-hero-text h1 {
+    font-size: 40px;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+
+  .ft-hero-subtitle {
+    font-size: 18px;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin-bottom: 24px;
+  }
+
+  .ft-hero-image {
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+
+  .ft-hero-image img {
+    width: 100%;
+    max-height: 400px;
+    object-fit: cover;
+  }
+
+  .ft-trust-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .ft-trust-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    background: #dcfce7;
+    color: #166534;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .ft-trust-badge i {
+    color: #16a34a;
+    font-size: 12px;
+  }
+
+  /* Trust Section */
+  .ft-trust-section {
+    background: var(--color-bg-light);
+    padding: 32px 0;
+  }
+
+  .ft-trust-items {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+
+  .ft-trust-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+    color: var(--color-text-secondary);
+  }
+
+  .ft-trust-item i {
+    color: var(--color-primary);
+  }
+
+  /* Features */
+  .ft-features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .ft-feature-card {
+    background: #fff;
+    padding: 32px;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    text-align: center;
+  }
+
+  .ft-feature-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--color-primary-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+  }
+
+  .ft-feature-icon i {
+    font-size: 24px;
+    color: var(--color-primary);
+  }
+
+  .ft-feature-card h3 {
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+
+  .ft-feature-card p {
+    font-size: 14px;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+  }
+
+  /* Form */
+  .ft-form-wrapper {
+    max-width: 700px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 48px;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+  }
+
+  .ft-form-header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .ft-form-header h2 {
+    font-size: 28px;
+    margin: 12px 0 8px;
+  }
+
+  .ft-form-header p {
+    color: var(--color-text-secondary);
+  }
+
+  .ft-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .ft-form .form-group label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 6px;
+  }
+
+  .ft-form .form-group input,
+  .ft-form .form-group textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    font-family: var(--font-family);
+    font-size: 15px;
+    transition: border-color var(--transition);
+  }
+
+  .ft-form .form-group input:focus,
+  .ft-form .form-group textarea:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(1, 127, 228, 0.1);
+  }
+
+  .ft-consent {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .ft-checkbox {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+  }
+
+  .ft-checkbox input {
+    margin-top: 3px;
+  }
+
+  .ft-checkbox a {
+    color: var(--color-primary);
+    text-decoration: underline;
+  }
+
+  .ft-submit {
+    width: 100%;
+    margin-top: 24px;
+  }
+
+  /* Testimonials */
+  .ft-testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .ft-testimonial-card {
+    background: #fff;
+    border-radius: var(--radius-lg);
+    padding: 32px;
+    box-shadow: var(--shadow);
+  }
+
+  .ft-testimonial-quote {
+    margin-bottom: 20px;
+  }
+
+  .ft-testimonial-quote i {
+    color: var(--color-primary);
+    font-size: 20px;
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .ft-testimonial-quote p {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--color-text-secondary);
+    font-style: italic;
+  }
+
+  .ft-testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .ft-testimonial-author img {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .ft-testimonial-author strong {
+    display: block;
+    font-size: 14px;
+  }
+
+  .ft-testimonial-author span {
+    font-size: 13px;
+    color: var(--color-text-light);
+  }
+
+  @media (max-width: 768px) {
+    .ft-hero { padding: 120px 0 48px; }
+    .ft-hero-content { grid-template-columns: 1fr; }
+    .ft-hero-text h1 { font-size: 28px; }
+    .ft-features-grid { grid-template-columns: 1fr; }
+    .ft-form-grid { grid-template-columns: 1fr; }
+    .ft-form-wrapper { padding: 24px; }
+    .ft-testimonials-grid { grid-template-columns: 1fr; }
+  }
+</style>

@@ -1,0 +1,11 @@
+{
+  "collectionName": "components_downloads_release_change",
+  "info": {
+    "displayName": "Release Change",
+    "description": "A single change item in a release notes entry"
+  },
+  "attributes": {
+    "text": { "type": "string", "required": true, "localized": true },
+    "sortOrder": { "type": "integer", "default": 0 }
+  }
+}

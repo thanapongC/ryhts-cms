@@ -1,0 +1,13 @@
+{
+  "collectionName": "components_privacy_request_tip",
+  "info": {
+    "displayName": "Privacy Request Tip",
+    "description": "Before-submit checklist item for the Privacy Request page"
+  },
+  "attributes": {
+    "text": { "type": "text", "localized": true },
+    "accent": { "type": "enumeration", "enum": ["red", "orange"] },
+    "isActive": { "type": "boolean", "default": true },
+    "sortOrder": { "type": "integer", "default": 0 }
+  }
+}

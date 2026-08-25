@@ -281,6 +281,50 @@ export interface FaqItem {
   is_active?: boolean;
 }
 
+/** support.hero-section */
+export interface SupportHeroSection {
+  badge?: string;
+  title: string;
+  subtitle?: string;
+  faq_cta_label?: string;
+  manual_cta_label?: string;
+  contact_cta_label?: string;
+}
+
+/** support.status-card */
+export interface SupportStatusCard {
+  kicker?: string;
+  title?: string;
+  hours?: string;
+  status_label?: string;
+}
+
+/** support.faq-section */
+export interface SupportFaqSection {
+  badge?: string;
+  title: string;
+  subtitle?: string;
+  empty_prompt?: string;
+  contact_cta_label?: string;
+}
+
+/** support.help-center-section */
+export interface SupportHelpCenterSection {
+  badge?: string;
+  title: string;
+  subtitle?: string;
+}
+
+/** support.contact-section */
+export interface SupportContactSection {
+  badge?: string;
+  title: string;
+  address_label?: string;
+  business_hours_label?: string;
+  phone_label?: string;
+  email_label?: string;
+}
+
 // ─── Content Type Interfaces ────────────────────────────────────────
 
 /** api::about-page.about-page */
@@ -609,6 +653,19 @@ export interface TimelineMilestone {
   about_page?: AboutPage | null;
   sort_order?: number;
   is_active?: boolean;
+}
+
+/** api::support-page.support-page */
+export interface SupportPage {
+  hero_section?: SupportHeroSection;
+  status_card?: SupportStatusCard;
+  faq_section?: SupportFaqSection;
+  faqs?: Faq[];
+  help_center_section?: SupportHelpCenterSection;
+  help_resources?: Faq[];
+  contact_section?: SupportContactSection;
+  contact_settings?: GlobalSetting | null;
+  seo?: SeoMeta | null;
 }
 
 // ─── Fetch Engine ───────────────────────────────────────────────────

@@ -1,0 +1,13 @@
+{
+  "collectionName": "components_support_status_card",
+  "info": {
+    "displayName": "Support Status Card",
+    "description": "Support team availability card shown beside the hero"
+  },
+  "attributes": {
+    "kicker": { "type": "string", "localized": true },
+    "title": { "type": "string", "localized": true },
+    "hours": { "type": "string", "localized": true },
+    "statusLabel": { "type": "string", "localized": true }
+  }
+}

@@ -1,0 +1,45 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { safeGetFreeTrial, getStrapiAbsoluteImageUrl } from "../../lib/api";
+import { isValidLocale, DEFAULT_LOCALE, type Locale } from "../../lib/i18n";
+import OfflineNotice from "../../components/OfflineNotice.astro";
+import FreeTrialContent from "../../components/FreeTrialContent.astro";
+
+const lang = (Astro.params.locale as Locale) || DEFAULT_LOCALE;
+if (!isValidLocale(lang)) return Astro.redirect(`/${DEFAULT_LOCALE}/free-trial`);
+
+const trialResult = await safeGetFreeTrial(lang);
+const trial = trialResult.data;
+
+const seo = trial?.seo;
+const siteUrl = Astro.url.origin;
+---
+
+<BaseLayout
+  title={seo?.meta_title || (lang === "en" ? "Free Trial" : "ทดลองใช้ฟรี")}
+  description={seo?.meta_description || (lang === "en" ? "Try Ryhts Express thermal ribbon software for free" : "ทดลองใช้ซอฟต์แวร์ริบบอน Ryhts Express ฟรี")}
+  ogImage={getStrapiAbsoluteImageUrl(seo?.og_image) || undefined}
+  robots={seo?.robots}
+  keywords={seo?.keywords?.split(",").map((k: string) => k.trim()) || []}
+  locale={lang}
+  hreflangs={[
+    { lang: "th", href: `${siteUrl}/th/free-trial` },
+    { lang: "en", href: `${siteUrl}/en/free-trial` },
+    { lang: "x-default", href: `${siteUrl}/th/free-trial` },
+  ]}
+  jsonLd={{
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name: seo?.meta_title || "Free Trial",
+    description: seo?.meta_description || "",
+  }}
+>
+  {trialResult.isOffline && trial === null ? (
+    <OfflineNotice
+      title={lang === "en" ? "Unable to load page" : "ไม่สามารถโหลดหน้าได้"}
+      message={lang === "en" ? "Please check your connection and try again." : "กรุณาตรวจสอบการเชื่อมต่อและลองอีกครั้ง"}
+    />
+  ) : (
+    <FreeTrialContent lang={lang} page={trial} />
+  )}
+</BaseLayout>

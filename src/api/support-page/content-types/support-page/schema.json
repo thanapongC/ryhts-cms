@@ -1,0 +1,61 @@
+{
+  "kind": "singleType",
+  "collectionName": "support_pages",
+  "info": {
+    "singularName": "support-page",
+    "pluralName": "support-pages",
+    "displayName": "Page - Support",
+    "description": "Support page content: hero, FAQ, help center, contact"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "hero_section": {
+      "type": "component",
+      "component": "support.hero-section"
+    },
+    "status_card": {
+      "type": "component",
+      "component": "support.status-card"
+    },
+    "faq_section": {
+      "type": "component",
+      "component": "support.faq-section"
+    },
+    "faqs": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::faq.faq"
+    },
+    "help_center_section": {
+      "type": "component",
+      "component": "support.help-center-section"
+    },
+    "help_resources": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::faq.faq",
+      "mappedBy": "about_page"
+    },
+    "contact_section": {
+      "type": "component",
+      "component": "support.contact-section"
+    },
+    "contact_settings": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::global-setting.global-setting",
+      "inversedBy": "contact_settings"
+    },
+    "seo": {
+      "type": "component",
+      "component": "shared.seo-meta"
+    }
+  }
+}

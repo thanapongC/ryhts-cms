@@ -1,0 +1,317 @@
+---
+/**
+ * AboutContent — Renders the About page with CMS data + fallback.
+ *
+ * CMS data: page copy, stats, team members, partners, timeline milestones, contact info, SEO.
+ * Rules: integate-rule.md §18 About Us
+ *
+ * Props:
+ *   lang: Locale
+ *   page: AboutPage | null (CMS data)
+ *   companyInfo: CompanyInfo | null
+ */
+import { getStrapiMedia, getStrapiAbsoluteImageUrl, filterAndSort, type AboutPage, type CompanyInfo } from "../lib/api";
+
+interface Props {
+  lang: "th" | "en";
+  page: AboutPage | null;
+  companyInfo: CompanyInfo | null;
+}
+
+const { lang, page, companyInfo } = Astro.props;
+
+const pageTitle = page?.title || (lang === "en" ? "About Ryhts" : "เกี่ยวกับ Ryhts");
+const featuredImage = page?.featured_image ? getStrapiAbsoluteImageUrl(page.featured_image) : "";
+const stats = filterAndSort(page?.stats);
+const teamMembers = filterAndSort(page?.team_members);
+const partners = filterAndSort(page?.partners);
+const milestones = filterAndSort(page?.timeline_milestones);
+
+const fallbackContent = lang === "en"
+  ? "Ryhts is a premier distributor of thermal transfer ribbons for barcode printers."
+  : "ไรต์ส (Ryhts) เราคือผู้จำหน่ายริบบอนสำหรับเครื่องพิมพ์บาร์โค้ดทุกขนาด นำเข้าสินค้าคุณภาพสูงจากแบรนด์ชั้นนำทั่วโลก";
+---
+
+<!-- Hero Image -->
+{featuredImage && (
+  <div class="about-hero-image">
+    <img src={featuredImage} alt={page?.title || ""} />
+  </div>
+)}
+
+<!-- Page Content or Fallback -->
+{page?.content ? (
+  <div class="rich-text about-content" set:html={page.content} />
+) : (
+  <div class="about-default">
+    <div class="about-grid">
+      <div class="about-text">
+        <h2>{page?.title || (lang === "en" ? "About Ryhts" : "เกี่ยวกับ Ryhts")}</h2>
+        {page?.subtitle && <p class="about-subtitle">{page.subtitle}</p>}
+        <p>{fallbackContent}</p>
+      </div>
+      {(stats.length > 0 || companyInfo?.customer_count) && (
+        <div class="about-stats">
+          {stats.map((stat) => (
+            <div class="stat-item">
+              <span class="stat-number">{stat.value}</span>
+              <span class="stat-label">{stat.label}</span>
+            </div>
+          ))}
+          {!stats.length && companyInfo?.customer_count && (
+            <div class="stat-item">
+              <span class="stat-number">{companyInfo.customer_count}+</span>
+              <span class="stat-label">{lang === "en" ? "Trusted Customers" : "ลูกค้าที่ไว้วางใจ"}</span>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  </div>
+)}
+
+<!-- Team Members -->
+{teamMembers.length > 0 && (
+  <div class="team-section">
+    <h2>{lang === "en" ? "Our Team" : "ทีมงานของเรา"}</h2>
+    <div class="team-grid">
+      {teamMembers.map((member) => (
+        <div class="team-card">
+          {member.avatar && (
+            <img src={getStrapiMedia(member.avatar.url)} alt={member.name} />
+          )}
+          <h3>{member.name}</h3>
+          {member.position && <p class="team-position">{member.position}</p>}
+          {member.bio && <p class="team-bio">{member.bio}</p>}
+        </div>
+      ))}
+    </div>
+  </div>
+)}
+
+<!-- Partners -->
+{partners.length > 0 && (
+  <div class="partners-section">
+    <h2>{lang === "en" ? "Our Partners" : "พันธมิตรของเรา"}</h2>
+    <div class="partners-grid">
+      {partners.map((partner) => (
+        <a class="partner-card" href={partner.website_url || "#"} target={partner.website_url ? "_blank" : undefined} rel={partner.website_url ? "noopener noreferrer" : undefined}>
+          {partner.logo && (
+            <img src={getStrapiMedia(partner.logo.url)} alt={partner.name} />
+          )}
+          <p>{partner.name}</p>
+        </a>
+      ))}
+    </div>
+  </div>
+)}
+
+<!-- Timeline / History -->
+{milestones.length > 0 && (
+  <div class="timeline-section">
+    <h2>{lang === "en" ? "Our History" : "ประวัติบริษัท"}</h2>
+    <div class="timeline">
+      {milestones.map((m) => (
+        <div class="timeline-item">
+          <div class="timeline-marker" />
+          <div class="timeline-content">
+            {m.milestone_date && <span class="timeline-date">{m.milestone_date}</span>}
+            <h3>{m.title}</h3>
+            {m.description && <p>{m.description}</p>}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+)}
+
+<style>
+  .about-hero-image {
+    margin-bottom: 40px;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+  .about-hero-image img {
+    width: 100%;
+    max-height: 400px;
+    object-fit: cover;
+  }
+
+  .about-content {
+    max-width: 800px;
+  }
+
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 60px;
+    align-items: start;
+  }
+
+  .about-text h2 {
+    font-size: 28px;
+    margin-bottom: 12px;
+  }
+
+  .about-subtitle {
+    font-size: 16px;
+    color: var(--color-text-secondary);
+    margin-bottom: 16px;
+  }
+
+  .about-text p {
+    font-size: 16px;
+    color: var(--color-text-secondary);
+    line-height: 1.8;
+  }
+
+  .stat-item {
+    background: var(--color-bg-light);
+    padding: 24px;
+    border-radius: var(--radius-lg);
+    text-align: center;
+    margin-bottom: 16px;
+  }
+
+  .stat-number {
+    display: block;
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--color-primary);
+  }
+
+  .stat-label {
+    display: block;
+    font-size: 14px;
+    color: var(--color-text-secondary);
+    margin-top: 8px;
+  }
+
+  .team-section,
+  .partners-section,
+  .timeline-section {
+    margin-top: 60px;
+  }
+
+  .team-section h2,
+  .partners-section h2,
+  .timeline-section h2 {
+    font-size: 24px;
+    margin-bottom: 24px;
+  }
+
+  .team-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .team-card {
+    background: var(--color-bg-light);
+    padding: 24px;
+    border-radius: var(--radius-lg);
+    text-align: center;
+  }
+
+  .team-card img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 12px;
+  }
+
+  .team-card h3 {
+    font-size: 18px;
+    margin-bottom: 4px;
+  }
+
+  .team-position {
+    font-size: 14px;
+    color: var(--color-primary);
+    margin-bottom: 8px;
+  }
+
+  .team-bio {
+    font-size: 14px;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+  }
+
+  .partners-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+
+  .partner-card {
+    text-align: center;
+    padding: 16px;
+    background: var(--color-bg-light);
+    border-radius: var(--radius);
+    transition: all var(--transition);
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .partner-card:hover {
+    box-shadow: var(--shadow);
+    transform: translateY(-2px);
+  }
+
+  .partner-card img {
+    max-height: 60px;
+    object-fit: contain;
+    margin-bottom: 8px;
+  }
+
+  .partner-card p {
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .timeline {
+    border-left: 3px solid var(--color-primary);
+    padding-left: 24px;
+  }
+
+  .timeline-item {
+    position: relative;
+    margin-bottom: 32px;
+  }
+
+  .timeline-marker {
+    position: absolute;
+    left: -30px;
+    top: 4px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 3px var(--color-primary-light);
+  }
+
+  .timeline-date {
+    font-size: 14px;
+    color: var(--color-primary);
+    font-weight: 600;
+  }
+
+  .timeline-content h3 {
+    font-size: 18px;
+    margin: 4px 0 8px;
+  }
+
+  .timeline-content p {
+    font-size: 15px;
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+  }
+
+  @media (max-width: 768px) {
+    .about-grid { grid-template-columns: 1fr; }
+    .team-grid { grid-template-columns: 1fr; }
+    .partners-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>

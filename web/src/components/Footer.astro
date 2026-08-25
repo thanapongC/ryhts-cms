@@ -1,0 +1,493 @@
+---
+/**
+ * Footer — CMS-driven site footer with CTA, stats, sections, legal links.
+ *
+ * Rules: integate-rule.md §18 Footer
+ * - Prefer product relation URL over manual URL
+ * - Render all active footer sections
+ * - Sort links and sections
+ * - Normalize CTA and legal URLs
+ *
+ * Props:
+ *   locale: string
+ *   footerSetting: FooterSetting | null
+ *   siteSetting: SiteSetting | null
+ *   logoUrl: string
+ *   siteName: string
+ *   siteDescription: string
+ */
+import { getStrapiMedia, getLinkUrl, normalizeInternalUrl, filterAndSort, type FooterSetting, type SiteSetting } from "../lib/api";
+
+interface Props {
+  locale: string;
+  footerSetting: FooterSetting | null;
+  siteSetting: SiteSetting | null;
+  logoUrl: string;
+  siteName: string;
+  siteDescription: string;
+}
+
+const { locale, footerSetting, siteSetting, logoUrl, siteName, siteDescription } = Astro.props;
+const t = { home: `/${locale}/` };
+
+// Process CMS data with fallbacks (integate-rule.md §7)
+const stats = filterAndSort(footerSetting?.stats);
+const footerSections = filterAndSort(footerSetting?.footer_sections);
+const legalLinks = filterAndSort(footerSetting?.legal_links);
+const socialLinks = footerSetting?.social_links || {};
+const copyrightText = footerSetting?.copyright || `© ${new Date().getFullYear()} ${siteName}. All rights reserved.`;
+
+// CTA section
+const ctaBadge = footerSetting?.cta_badge || "";
+const ctaTitle = footerSetting?.cta_title || (locale === "en" ? "Ready to Get Started?" : "พร้อมเริ่มต้นหรือยัง?");
+const ctaDescription = footerSetting?.cta_description || (locale === "en"
+  ? "Contact our sales team for a custom quote"
+  : "ติดต่อทีมขายเพื่อขอใบเสนอราคา");
+const primaryCtaLabel = footerSetting?.primary_cta_label || (locale === "en" ? "Contact Sales" : "ติดต่อฝ่ายขาย");
+const primaryCtaUrl = normalizeInternalUrl(footerSetting?.primary_cta_url, t.home) || `${locale === "en" ? "/en" : ""}/contact`;
+const secondaryCtaLabel = footerSetting?.secondary_cta_label || (locale === "en" ? "View Products" : "ดูสินค้า");
+const secondaryCtaUrl = normalizeInternalUrl(footerSetting?.secondary_cta_url, t.home) || `${locale === "en" ? "/en" : ""}/products`;
+
+// Fallback nav links
+const fallbackNavLinks = [
+  { label: locale === "en" ? "Home" : "หน้าแรก", href: `${t.home}` },
+  { label: locale === "en" ? "About us" : "เกี่ยวกับเรา", href: `${t.home}about` },
+  { label: locale === "en" ? "Products" : "สินค้า", href: `${t.home}products` },
+  { label: locale === "en" ? "Articles" : "บทความ", href: `${t.home}articles` },
+  { label: locale === "en" ? "Contact us" : "ติดต่อเรา", href: `${t.home}contact` },
+];
+
+// Fallback legal links
+const fallbackLegalLinks = [
+  { label: locale === "en" ? "Privacy Policy" : "นโยบายความเป็นส่วนตัว", href: `${t.home}privacy-policy` },
+  { label: "PDPA", href: `${t.home}pdpa` },
+  { label: locale === "en" ? "Terms of Service" : "ข้อกำหนดการใช้งาน", href: `${t.home}terms-of-service` },
+  { label: locale === "en" ? "Cookie Policy" : "นโยบายคุกกี้", href: `${t.home}cookie-policy` },
+];
+---
+
+<!-- CTA Section -->
+{ctaTitle && (
+  <section class="footer-cta">
+    <div class="container">
+      <div class="footer-cta-inner">
+        {ctaBadge && <span class="badge badge-primary">{ctaBadge}</span>}
+        <h2>{ctaTitle}</h2>
+        <p>{ctaDescription}</p>
+        <div class="footer-cta-buttons">
+          <a href={primaryCtaUrl} class="btn btn-white">{primaryCtaLabel}</a>
+          <a href={secondaryCtaUrl} class="btn btn-outline footer-cta-secondary">{secondaryCtaLabel}</a>
+        </div>
+      </div>
+    </div>
+  </section>
+)}
+
+<!-- Stats Section -->
+{stats.length > 0 && (
+  <section class="footer-stats">
+    <div class="container">
+      <div class="footer-stats-grid">
+        {stats.map((stat) => (
+          <div class="footer-stat">
+            <span class="footer-stat-value">{stat.value}</span>
+            <span class="footer-stat-label">{stat.label}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+)}
+
+<!-- Main Footer -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <!-- Company Info Column -->
+      <div class="footer-col">
+        <h4>{siteName}</h4>
+        <div class="footer-about">
+          {logoUrl && <img src={logoUrl} alt={siteName} class="footer-logo" height="50" />}
+          <p>{footerSetting?.company_description || siteDescription}</p>
+        </div>
+        <div class="footer-contact">
+          {siteSetting?.phone && (
+            <p><a href={`tel:${siteSetting.phone}`}><i class="fas fa-phone"></i> {siteSetting.phone}</a></p>
+          )}
+          {siteSetting?.email && (
+            <p><a href={`mailto:${siteSetting.email}`}><i class="fas fa-envelope"></i> {siteSetting.email}</a></p>
+          )}
+        </div>
+      </div>
+
+      {/* CMS-driven footer sections or fallback nav */}
+      {footerSections.length > 0 ? (
+        footerSections.map((section) => (
+          <div class="footer-col">
+            <h4>{section.title}</h4>
+            <ul class="footer-links">
+              {section.links
+                ?.filter((link) => link.is_active !== false)
+                ?.sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0))
+                .map((link) => (
+                  <li>
+                    <a
+                      href={getLinkUrl(link, t.home)}
+                      target={link.target || "_self"}
+                      rel={link.target === "_blank" ? "noopener noreferrer" : undefined}
+                    >
+                      {link.label}
+                    </a>
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+        ))
+      ) : (
+        <div class="footer-col">
+          <h4>{locale === "en" ? "Links" : "ลิงก์"}</h4>
+          <ul class="footer-links">
+            {fallbackNavLinks.map((link) => (
+              <li><a href={link.href}>{link.label}</a></li>
+            ))}
+            <li><a href="#" data-cookie-manage>{locale === "en" ? "Manage Cookies" : "จัดการคุกกี้"}</a></li>
+          </ul>
+        </div>
+      )}
+    </div>
+  </div>
+
+  <!-- Bottom Bar -->
+  <div class="footer-bottom">
+    <div class="container footer-bottom-inner">
+      <div class="footer-bottom-left">
+        {/* Social Links */}
+        <div class="social-links">
+          {socialLinks.facebook && (
+            <a href={socialLinks.facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+              <i class="fab fa-facebook-f"></i>
+            </a>
+          )}
+          {socialLinks.line && (
+            <a href={socialLinks.line} target="_blank" rel="noopener noreferrer" aria-label="Line">
+              <i class="fab fa-line"></i>
+            </a>
+          )}
+          {socialLinks.linkedin && (
+            <a href={socialLinks.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+              <i class="fab fa-linkedin-in"></i>
+            </a>
+          )}
+          {socialLinks.youtube && (
+            <a href={socialLinks.youtube} target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+              <i class="fab fa-youtube"></i>
+            </a>
+          )}
+        </div>
+
+        {/* Legal Links */}
+        {legalLinks.length > 0 ? (
+          <div class="footer-legal">
+            {legalLinks.map((link) => (
+              <a
+                href={normalizeInternalUrl(link.url, t.home)}
+                target={link.target || "_self"}
+                rel={link.target === "_blank" ? "noopener noreferrer" : undefined}
+              >
+                {link.label}
+              </a>
+            ))}
+          </div>
+        ) : (
+          <div class="footer-legal">
+            {fallbackLegalLinks.map((link) => (
+              <a href={link.href}>{link.label}</a>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <p class="copyright">{copyrightText}</p>
+    </div>
+  </div>
+
+  <!-- Back to top -->
+  <a href="#" class="back-to-top" id="back-to-top" aria-label="Back to top">
+    <i class="fas fa-chevron-up"></i>
+  </a>
+</footer>
+
+<style>
+  /* ─── CTA Section ──────────────────────────────────────────────── */
+  .footer-cta {
+    background: linear-gradient(135deg, var(--color-primary) 0%, #0160b0 100%);
+    padding: 80px 0;
+  }
+
+  .footer-cta-inner {
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .footer-cta-inner .badge {
+    margin-bottom: 16px;
+  }
+
+  .footer-cta-inner h2 {
+    font-size: 32px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 12px;
+  }
+
+  .footer-cta-inner p {
+    font-size: 17px;
+    color: rgba(255, 255, 255, 0.85);
+    margin-bottom: 28px;
+  }
+
+  .footer-cta-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .footer-cta-secondary {
+    border-color: rgba(255, 255, 255, 0.5);
+    color: #fff;
+  }
+
+  .footer-cta-secondary:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: #fff;
+    color: #fff;
+  }
+
+  /* ─── Stats Section ────────────────────────────────────────────── */
+  .footer-stats {
+    background: var(--color-bg-light);
+    padding: 48px 0;
+    border-bottom: 1px solid var(--color-border-light);
+  }
+
+  .footer-stats-grid {
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+    flex-wrap: wrap;
+  }
+
+  .footer-stat {
+    text-align: center;
+  }
+
+  .footer-stat-value {
+    display: block;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--color-primary);
+  }
+
+  .footer-stat-label {
+    display: block;
+    font-size: 14px;
+    color: var(--color-text-secondary);
+    margin-top: 4px;
+  }
+
+  /* ─── Main Footer ──────────────────────────────────────────────── */
+  .site-footer {
+    background: #1a1a2e;
+    color: #ccc;
+    padding-top: 60px;
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 1.5fr repeat(auto-fit, minmax(180px, 1fr));
+    gap: 40px;
+    padding-bottom: 40px;
+  }
+
+  .footer-col h4 {
+    color: #fff;
+    font-size: 16px;
+    margin-bottom: 20px;
+  }
+
+  .footer-about {
+    margin-bottom: 20px;
+  }
+
+  .footer-about p {
+    font-size: 14px;
+    line-height: 1.7;
+    color: #999;
+  }
+
+  .footer-logo {
+    margin-bottom: 16px;
+    filter: brightness(0) invert(1);
+    opacity: 0.8;
+  }
+
+  .footer-contact p {
+    margin-bottom: 10px;
+  }
+
+  .footer-contact a {
+    color: #ccc;
+    text-decoration: none;
+    transition: color var(--transition);
+  }
+
+  .footer-contact a:hover {
+    color: var(--color-primary);
+  }
+
+  .footer-contact i {
+    color: var(--color-primary);
+    width: 20px;
+    margin-right: 8px;
+  }
+
+  .footer-links li {
+    margin-bottom: 8px;
+  }
+
+  .footer-links a {
+    color: #ccc;
+    text-decoration: none;
+    font-size: 14px;
+    transition: color var(--transition);
+  }
+
+  .footer-links a:hover {
+    color: var(--color-primary);
+  }
+
+  /* ─── Bottom Bar ───────────────────────────────────────────────── */
+  .footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 20px 0;
+  }
+
+  .footer-bottom-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .footer-bottom-left {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .social-links {
+    display: flex;
+    gap: 12px;
+  }
+
+  .social-links a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    color: #ccc;
+    font-size: 14px;
+    transition: all var(--transition);
+  }
+
+  .social-links a:hover {
+    background: var(--color-primary);
+    color: #fff;
+  }
+
+  .footer-legal {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .footer-legal a {
+    color: #999;
+    font-size: 13px;
+    text-decoration: none;
+    transition: color var(--transition);
+  }
+
+  .footer-legal a:hover {
+    color: var(--color-primary);
+  }
+
+  .copyright {
+    font-size: 13px;
+    color: #888;
+  }
+
+  /* ─── Back to Top ──────────────────────────────────────────────── */
+  .back-to-top {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    box-shadow: 0 4px 12px rgba(1, 127, 228, 0.3);
+    opacity: 0;
+    pointer-events: none;
+    transition: all var(--transition);
+    z-index: 999;
+  }
+
+  .back-to-top.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .back-to-top:hover {
+    background: var(--color-primary-dark);
+    transform: translateY(-2px);
+    color: #fff;
+  }
+
+  /* ─── Responsive ───────────────────────────────────────────────── */
+  @media (max-width: 768px) {
+    .footer-cta { padding: 48px 0; }
+    .footer-cta-inner h2 { font-size: 24px; }
+    .footer-stats-grid { gap: 32px; }
+    .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+    .footer-bottom-inner { flex-direction: column; gap: 12px; text-align: center; }
+    .footer-bottom-left { flex-direction: column; gap: 12px; }
+    .footer-legal { justify-content: center; }
+  }
+</style>
+
+<script>
+  // Back to top visibility
+  const backToTop = document.getElementById("back-to-top");
+  window.addEventListener("scroll", () => {
+    if (window.scrollY > 400) {
+      backToTop?.classList.add("visible");
+    } else {
+      backToTop?.classList.remove("visible");
+    }
+  });
+  backToTop?.addEventListener("click", (e) => {
+    e.preventDefault();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+</script>

@@ -1,0 +1,13 @@
+{
+  "collectionName": "components_shared_page_section_item",
+  "info": {
+    "displayName": "Page Section Item",
+    "description": "A single section with title, content, and optional image for product pages"
+  },
+  "attributes": {
+    "title": { "type": "string", "required": true, "localized": true },
+    "content": { "type": "blocks", "localized": true },
+    "image": { "type": "media", "multiple": false, "allowedTypes": ["images"] },
+    "sortOrder": { "type": "integer", "default": 0 }
+  }
+}

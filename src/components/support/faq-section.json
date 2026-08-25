@@ -1,0 +1,14 @@
+{
+  "collectionName": "components_support_faq_section",
+  "info": {
+    "displayName": "Support FAQ Section",
+    "description": "FAQ section headings and fallback CTA copy"
+  },
+  "attributes": {
+    "badge": { "type": "string", "localized": true },
+    "title": { "type": "string", "required": true, "localized": true },
+    "subtitle": { "type": "text", "localized": true },
+    "emptyPrompt": { "type": "string", "localized": true },
+    "contactCtaLabel": { "type": "string", "localized": true }
+  }
+}

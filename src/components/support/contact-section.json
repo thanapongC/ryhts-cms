@@ -1,0 +1,15 @@
+{
+  "collectionName": "components_support_contact_section",
+  "info": {
+    "displayName": "Support Contact Section",
+    "description": "Contact section heading and field labels"
+  },
+  "attributes": {
+    "badge": { "type": "string", "localized": true },
+    "title": { "type": "string", "required": true, "localized": true },
+    "addressLabel": { "type": "string", "localized": true },
+    "businessHoursLabel": { "type": "string", "localized": true },
+    "phoneLabel": { "type": "string", "localized": true },
+    "emailLabel": { "type": "string", "localized": true }
+  }
+}

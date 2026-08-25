@@ -41,10 +41,16 @@ import {
   type PrivacyPolicy,
   type Product,
   type SiteSetting,
+  type SupportPage,
   type TeamMember,
   type TermsOfService,
   type Testimonial,
   type TimelineMilestone,
+  type SupportHeroSection,
+  type SupportStatusCard,
+  type SupportFaqSection,
+  type SupportHelpCenterSection,
+  type SupportContactSection,
   // Components
   type SeoMeta,
   type SeoConfig,
@@ -65,6 +71,12 @@ import {
   type NavChildItem,
   type FooterLabels,
   type ButtonLabels,
+  type SupportPage,
+  type SupportHeroSection,
+  type SupportStatusCard,
+  type SupportFaqSection,
+  type SupportHelpCenterSection,
+  type SupportContactSection,
 } from "./strapi";
 
 import {
@@ -141,6 +153,12 @@ export {
   type CookieSetting,
   type ContactFloating,
   type Navigation,
+  type SupportPage,
+  type SupportHeroSection,
+  type SupportStatusCard,
+  type SupportFaqSection,
+  type SupportHelpCenterSection,
+  type SupportContactSection,
 };
 
 // ─── Populate Lists (integate-rule.md §3) ───────────────────────────
@@ -225,6 +243,20 @@ const POPULATE = {
   teamMember: ["avatar", "about_page"],
   partner: ["logo", "about_page"],
   timelineMilestone: ["image", "about_page"],
+  supportPage: [
+    "hero_section",
+    "status_card",
+    "faq_section",
+    "faqs",
+    "faqs.items",
+    "help_center_section",
+    "help_resources",
+    "contact_section",
+    "contact_settings",
+    "contact_settings.contact_info",
+    "seo",
+    "seo.og_image",
+  ],
 } as const;
 
 // ─── Page Fetch Functions ───────────────────────────────────────────
@@ -327,6 +359,14 @@ export async function getContactFloating(locale: Locale = "th") {
   const res = await fetchStrapiSingle<ContactFloating>("contact-floating", {
     locale,
     populate: ["actions"],
+  });
+  return res.data;
+}
+
+export async function getSupportPage(locale: Locale = "th") {
+  const res = await fetchStrapiSingle<SupportPage>("support-page", {
+    locale,
+    populate: [...POPULATE.supportPage],
   });
   return res.data;
 }
@@ -652,6 +692,10 @@ export async function safeGetCookieSetting(locale: Locale = "th") {
 
 export async function safeGetContactFloating(locale: Locale = "th") {
   return safeFetch(() => getContactFloating(locale), mockContactFloating);
+}
+
+export async function safeGetSupportPage(locale: Locale = "th") {
+  return safeFetch(() => getSupportPage(locale), null as SupportPage | null);
 }
 
 export async function safeGetNavigation(locale: Locale = "th") {

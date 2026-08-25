@@ -1,0 +1,597 @@
+---
+/**
+ * SupportContent — Renders the Support page with CMS data + fallback.
+ *
+ * CMS data: hero section, status card, FAQ section, FAQ relations,
+ *           help center section, help resource relations, contact section,
+ *           global contact settings relation, SEO.
+ * Rules: integate-rule.md §18 Support
+ *
+ * Props:
+ *   lang: Locale
+ *   page: SupportPage | null
+ */
+import { filterAndSort, type SupportPage } from "../lib/api";
+
+interface Props {
+  lang: "th" | "en";
+  page: SupportPage | null;
+}
+
+const { lang, page } = Astro.props;
+
+// Section data with fallbacks (integate-rule.md §7)
+const hero = page?.hero_section;
+const statusCard = page?.status_card;
+const faqSection = page?.faq_section;
+const helpCenter = page?.help_center_section;
+const contactSection = page?.contact_section;
+const contactSettings = page?.contact_settings;
+
+const faqs = filterAndSort(page?.faqs);
+const helpResources = filterAndSort(page?.help_resources);
+
+const fallbackHero = {
+  badge: lang === "en" ? "Support" : "ศูนย์ช่วยเหลือ",
+  title: lang === "en" ? "How Can We Help?" : "เราช่วยคุณได้อย่างไร?",
+  subtitle: lang === "en"
+    ? "Find answers to common questions or reach out to our support team"
+    : "ค้นหาคำตอบสำหรับคำถามที่พบบ่อย หรือติดต่อทีมสนับสนุนของเรา",
+  faq_cta_label: lang === "en" ? "Browse FAQ" : "ดูคำถามที่พบบ่อย",
+  manual_cta_label: lang === "en" ? "Read Manuals" : "อ่านคู่มือ",
+  contact_cta_label: lang === "en" ? "Contact Support" : "ติดต่อฝ่ายสนับสนุน",
+};
+
+const fallbackFaqSection = {
+  badge: lang === "en" ? "FAQ" : "คำถามที่พบบ่อย",
+  title: lang === "en" ? "Frequently Asked Questions" : "คำถามที่พบบ่อย",
+  subtitle: lang === "en"
+    ? "Quick answers to the most common questions"
+    : "คำตอบรวดเร็วสำหรับคำถามที่พบบ่อยที่สุด",
+  empty_prompt: lang === "en" ? "No FAQs available yet." : "ยังไม่มีคำถามที่พบบ่อย",
+  contact_cta_label: lang === "en" ? "Ask a Question" : "ถามคำถาม",
+};
+
+const fallbackHelpCenter = {
+  badge: lang === "en" ? "Resources" : "แหล่งข้อมูล",
+  title: lang === "en" ? "Help Center" : "ศูนย์ช่วยเหลือ",
+  subtitle: lang === "en"
+    ? "Manuals, guides, and troubleshooting"
+    : "คู่มือ แนวทางการแก้ปัญหา",
+};
+
+const fallbackContactSection = {
+  badge: lang === "en" ? "Contact" : "ติดต่อ",
+  title: lang === "en" ? "Get in Touch" : "ติดต่อเรา",
+  address_label: lang === "en" ? "Address" : "ที่อยู่",
+  business_hours_label: lang === "en" ? "Business Hours" : "เวลาทำการ",
+  phone_label: lang === "en" ? "Phone" : "โทรศัพท์",
+  email_label: lang === "en" ? "Email" : "อีเมล",
+};
+
+const displayHero = hero || fallbackHero;
+const displayFaqSection = faqSection || fallbackFaqSection;
+const displayHelpCenter = helpCenter || fallbackHelpCenter;
+const displayContactSection = contactSection || fallbackContactSection;
+
+// Quick help links (static fallback)
+const quickHelpLinks = [
+  { icon: "box", label: lang === "en" ? "Product Catalog" : "แคตตาล็อกสินค้า", url: `/${lang}/products` },
+  { icon: "file-alt", label: lang === "en" ? "Privacy Policy" : "นโยบายความเป็นส่วนตัว", url: `/${lang}/privacy-policy` },
+  { icon: "shield-alt", label: "PDPA", url: `/${lang}/pdpa` },
+  { icon: "file-contract", label: lang === "en" ? "Terms of Service" : "ข้อกำหนดการใช้งาน", url: `/${lang}/terms-of-service` },
+];
+---
+
+<!-- Hero -->
+<section class="sup-hero">
+  <div class="container">
+    <div class="sup-hero-content">
+      <div class="sup-hero-text">
+        {displayHero.badge && <span class="badge badge-primary">{displayHero.badge}</span>}
+        <h1>{displayHero.title}</h1>
+        {displayHero.subtitle && <p>{displayHero.subtitle}</p>}
+        <div class="sup-hero-ctas">
+          <a href="#faq-section" class="btn btn-primary">
+            <i class="fas fa-question-circle"></i>
+            {displayHero.faq_cta_label || fallbackHero.faq_cta_label}
+          </a>
+          <a href="#contact-section" class="btn btn-outline">
+            <i class="fas fa-headset"></i>
+            {displayHero.contact_cta_label || fallbackHero.contact_cta_label}
+          </a>
+        </div>
+      </div>
+
+      {/* Status Card */}
+      {statusCard && (
+        <div class="sup-status-card">
+          {statusCard.kicker && <span class="sup-status-kicker">{statusCard.kicker}</span>}
+          {statusCard.title && <h3>{statusCard.title}</h3>}
+          {statusCard.hours && <p class="sup-status-hours"><i class="fas fa-clock"></i> {statusCard.hours}</p>}
+          {statusCard.status_label && (
+            <div class="sup-status-badge">
+              <span class="sup-status-dot"></span>
+              {statusCard.status_label}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  </div>
+</section>
+
+<!-- Quick Help Links -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="sup-quick-links">
+      {quickHelpLinks.map((link) => (
+        <a href={link.url} class="sup-quick-link">
+          <div class="sup-quick-icon"><i class={`fas fa-${link.icon}`}></i></div>
+          <span>{link.label}</span>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="section" id="faq-section">
+  <div class="container">
+    <div class="sup-section-header">
+      {displayFaqSection.badge && <span class="badge badge-primary">{displayFaqSection.badge}</span>}
+      <h2>{displayFaqSection.title}</h2>
+      {displayFaqSection.subtitle && <p>{displayFaqSection.subtitle}</p>}
+    </div>
+
+    {faqs.length > 0 ? (
+      <div class="sup-faq-list">
+        {faqs.map((faq) => (
+          <details class="sup-faq-item">
+            <summary class="sup-faq-question">
+              {faq.title}
+              <i class="fas fa-chevron-down"></i>
+            </summary>
+            <div class="sup-faq-answer">
+              {faq.items && faq.items.length > 0 ? (
+                faq.items.filter(item => item.is_active !== false).sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0)).map((item) => (
+                  <div class="sup-faq-qa">
+                    <strong>{item.question}</strong>
+                    <div class="rich-text" set:html={item.answer} />
+                  </div>
+                ))
+              ) : (
+                <div class="rich-text" set:html={faq.description} />
+              )}
+            </div>
+          </details>
+        ))}
+      </div>
+    ) : (
+      <div class="sup-empty">
+        <i class="fas fa-search"></i>
+        <p>{displayFaqSection.empty_prompt}</p>
+        <a href="#contact-section" class="btn btn-outline btn-sm">
+          {displayFaqSection.contact_cta_label}
+        </a>
+      </div>
+    )}
+  </div>
+</section>
+
+<!-- Help Center -->
+{helpResources.length > 0 && (
+  <section class="section section-alt">
+    <div class="container">
+      <div class="sup-section-header">
+        {displayHelpCenter.badge && <span class="badge badge-primary">{displayHelpCenter.badge}</span>}
+        <h2>{displayHelpCenter.title}</h2>
+        {displayHelpCenter.subtitle && <p>{displayHelpCenter.subtitle}</p>}
+      </div>
+
+      <div class="sup-help-grid">
+        {helpResources.map((resource) => (
+          <div class="sup-help-card">
+            <h3>{resource.title}</h3>
+            {resource.description && <p>{resource.description}</p>}
+            {resource.items && resource.items.length > 0 && (
+              <ul class="sup-help-items">
+                {resource.items.filter(item => item.is_active !== false).slice(0, 5).map((item) => (
+                  <li>{item.question}</li>
+                ))}
+              </ul>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+)}
+
+<!-- Contact Section -->
+<section class="section" id="contact-section">
+  <div class="container">
+    <div class="sup-section-header">
+      {displayContactSection.badge && <span class="badge badge-primary">{displayContactSection.badge}</span>}
+      <h2>{displayContactSection.title}</h2>
+    </div>
+
+    <div class="sup-contact-grid">
+      {contactSettings?.contact_info && contactSettings.contact_info.length > 0 ? (
+        contactSettings.contact_info.map((item) => (
+          <div class="sup-contact-item">
+            {item.icon && <div class="sup-contact-icon"><i class={`fas fa-${item.icon}`}></i></div>}
+            <div>
+              {item.label && <strong>{item.label}</strong>}
+              <span>{item.value}</span>
+            </div>
+          </div>
+        ))
+      ) : (
+        <>
+          <div class="sup-contact-item">
+            <div class="sup-contact-icon"><i class="fas fa-map-marker-alt"></i></div>
+            <div>
+              <strong>{displayContactSection.address_label}</strong>
+              <span>{lang === "en" ? "Ryhts Ribbon Co., Ltd." : "บริษัท ไรต์ส ริบบอน จำกัด"}</span>
+            </div>
+          </div>
+          <div class="sup-contact-item">
+            <div class="sup-contact-icon"><i class="fas fa-phone"></i></div>
+            <div>
+              <strong>{displayContactSection.phone_label}</strong>
+              <span><a href="tel:02-123-4567">02-123-4567</a></span>
+            </div>
+          </div>
+          <div class="sup-contact-item">
+            <div class="sup-contact-icon"><i class="fas fa-envelope"></i></div>
+            <div>
+              <strong>{displayContactSection.email_label}</strong>
+              <span><a href="mailto:support@ryhts.co.th">support@ryhts.co.th</a></span>
+            </div>
+          </div>
+          <div class="sup-contact-item">
+            <div class="sup-contact-icon"><i class="fas fa-clock"></i></div>
+            <div>
+              <strong>{displayContactSection.business_hours_label}</strong>
+              <span>{lang === "en" ? "Mon - Fri, 8:30 AM - 5:30 PM" : "จันทร์ - ศุกร์, 08:30 - 17:30 น."}</span>
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Hero */
+  .sup-hero {
+    background: linear-gradient(135deg, #f8fbff 0%, #e8f4fd 100%);
+    padding: 140px 0 80px;
+  }
+
+  .sup-hero-content {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 60px;
+    align-items: center;
+  }
+
+  .sup-hero-text .badge {
+    margin-bottom: 16px;
+  }
+
+  .sup-hero-text h1 {
+    font-size: 40px;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+
+  .sup-hero-text p {
+    font-size: 18px;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin-bottom: 24px;
+  }
+
+  .sup-hero-ctas {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  /* Status Card */
+  .sup-status-card {
+    background: #fff;
+    border-radius: var(--radius-lg);
+    padding: 32px;
+    box-shadow: var(--shadow-lg);
+    text-align: center;
+  }
+
+  .sup-status-kicker {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--color-text-light);
+  }
+
+  .sup-status-card h3 {
+    font-size: 22px;
+    margin: 8px 0;
+  }
+
+  .sup-status-hours {
+    font-size: 14px;
+    color: var(--color-text-secondary);
+    margin-bottom: 16px;
+  }
+
+  .sup-status-hours i {
+    color: var(--color-primary);
+    margin-right: 4px;
+  }
+
+  .sup-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: #dcfce7;
+    color: #166534;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .sup-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #16a34a;
+  }
+
+  /* Quick Links */
+  .sup-quick-links {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+
+  .sup-quick-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 20px;
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    text-decoration: none;
+    color: var(--color-text);
+    transition: all var(--transition);
+  }
+
+  .sup-quick-link:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+    color: var(--color-primary);
+  }
+
+  .sup-quick-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius);
+    background: var(--color-primary-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .sup-quick-icon i {
+    color: var(--color-primary);
+    font-size: 16px;
+  }
+
+  .sup-quick-link span {
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  /* Section Headers */
+  .sup-section-header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .sup-section-header .badge {
+    margin-bottom: 12px;
+  }
+
+  .sup-section-header h2 {
+    font-size: 28px;
+    margin-bottom: 8px;
+  }
+
+  .sup-section-header p {
+    font-size: 16px;
+    color: var(--color-text-secondary);
+  }
+
+  /* FAQ */
+  .sup-faq-list {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .sup-faq-item {
+    background: #fff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    margin-bottom: 12px;
+    overflow: hidden;
+    transition: box-shadow var(--transition);
+  }
+
+  .sup-faq-item[open] {
+    box-shadow: var(--shadow);
+  }
+
+  .sup-faq-question {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 16px;
+    list-style: none;
+  }
+
+  .sup-faq-question::-webkit-details-marker {
+    display: none;
+  }
+
+  .sup-faq-question i {
+    color: var(--color-text-light);
+    transition: transform var(--transition);
+  }
+
+  .sup-faq-item[open] .sup-faq-question i {
+    transform: rotate(180deg);
+  }
+
+  .sup-faq-answer {
+    padding: 0 24px 20px;
+  }
+
+  .sup-faq-qa {
+    margin-bottom: 16px;
+  }
+
+  .sup-faq-qa:last-child {
+    margin-bottom: 0;
+  }
+
+  .sup-faq-qa strong {
+    display: block;
+    font-size: 15px;
+    margin-bottom: 6px;
+  }
+
+  .sup-empty {
+    text-align: center;
+    padding: 48px 20px;
+  }
+
+  .sup-empty i {
+    font-size: 48px;
+    color: var(--color-text-light);
+    margin-bottom: 16px;
+  }
+
+  .sup-empty p {
+    font-size: 16px;
+    color: var(--color-text-secondary);
+    margin-bottom: 16px;
+  }
+
+  /* Help Center */
+  .sup-help-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+
+  .sup-help-card {
+    background: #fff;
+    border-radius: var(--radius-lg);
+    padding: 32px;
+    box-shadow: var(--shadow);
+  }
+
+  .sup-help-card h3 {
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+
+  .sup-help-card > p {
+    font-size: 14px;
+    color: var(--color-text-secondary);
+    margin-bottom: 16px;
+  }
+
+  .sup-help-items {
+    list-style: none;
+    padding: 0;
+  }
+
+  .sup-help-items li {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--color-border-light);
+    font-size: 14px;
+    color: var(--color-text-secondary);
+  }
+
+  .sup-help-items li:last-child {
+    border-bottom: none;
+  }
+
+  /* Contact Section */
+  .sup-contact-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .sup-contact-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 24px;
+    background: var(--color-bg-light);
+    border-radius: var(--radius);
+  }
+
+  .sup-contact-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--color-primary-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .sup-contact-icon i {
+    color: var(--color-primary);
+    font-size: 18px;
+  }
+
+  .sup-contact-item strong {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+
+  .sup-contact-item span {
+    font-size: 14px;
+    color: var(--color-text-secondary);
+  }
+
+  .sup-contact-item a {
+    color: var(--color-primary);
+  }
+
+  @media (max-width: 768px) {
+    .sup-hero { padding: 120px 0 48px; }
+    .sup-hero-content { grid-template-columns: 1fr; }
+    .sup-hero-text h1 { font-size: 28px; }
+    .sup-quick-links { grid-template-columns: repeat(2, 1fr); }
+    .sup-help-grid { grid-template-columns: 1fr; }
+    .sup-contact-grid { grid-template-columns: 1fr; }
+  }
+</style>

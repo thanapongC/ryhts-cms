@@ -1,0 +1,67 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { safeGetAboutPage, safeGetCompanyInfo, getStrapiAbsoluteImageUrl } from "../../lib/api";
+import { isValidLocale, DEFAULT_LOCALE, type Locale } from "../../lib/i18n";
+import OfflineNotice from "../../components/OfflineNotice.astro";
+import AboutContent from "../../components/AboutContent.astro";
+
+const lang = (Astro.params.locale as Locale) || DEFAULT_LOCALE;
+if (!isValidLocale(lang)) return Astro.redirect(`/${DEFAULT_LOCALE}/about`);
+
+const pageResult = await safeGetAboutPage(lang);
+const companyResult = await safeGetCompanyInfo(lang);
+
+const page = pageResult.data;
+const companyInfo = companyResult.data;
+
+const seo = page?.seo;
+const isOffline = pageResult.isOffline || companyResult.isOffline;
+
+const siteUrl = Astro.url.origin;
+---
+
+<BaseLayout
+  title={seo?.meta_title || page?.title || (lang === "en" ? "About Ryhts" : "เกี่ยวกับ Ryhts")}
+  description={seo?.meta_description || ""}
+  ogImage={getStrapiAbsoluteImageUrl(seo?.og_image) || getStrapiAbsoluteImageUrl(page?.featured_image) || undefined}
+  robots={seo?.robots}
+  keywords={seo?.keywords?.split(",").map((k: string) => k.trim()) || []}
+  locale={lang}
+  hreflangs={[
+    { lang: "th", href: `${siteUrl}/th/about` },
+    { lang: "en", href: `${siteUrl}/en/about` },
+    { lang: "x-default", href: `${siteUrl}/th/about` },
+  ]}
+  jsonLd={{
+    "@context": "https://schema.org",
+    "@type": "AboutPage",
+    name: page?.title || "About Ryhts",
+    description: seo?.meta_description || "",
+  }}
+>
+  <div class="page-header">
+    <div class="container">
+      <h1>{page?.title || (lang === "en" ? "About Ryhts" : "เกี่ยวกับ Ryhts")}</h1>
+      {page?.subtitle && <p>{page.subtitle}</p>}
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="container">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href={`/${lang}/`}>{lang === "en" ? "Home" : "หน้าแรก"}</a>
+        <span>/</span>
+        <span>{page?.title || (lang === "en" ? "About Us" : "เกี่ยวกับเรา")}</span>
+      </nav>
+
+      {isOffline && (
+        <OfflineNotice
+          title={lang === "en" ? "Some content unavailable" : "部分内容不可用"}
+          message={lang === "en" ? "Some content may be unavailable." : "Some content may be unavailable."}
+        />
+      )}
+
+      <AboutContent lang={lang} page={page} companyInfo={companyInfo} />
+    </div>
+  </section>
+</BaseLayout>

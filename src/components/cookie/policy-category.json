@@ -1,0 +1,15 @@
+{
+  "collectionName": "components_cookie_policy_category",
+  "info": {
+    "displayName": "Cookie Policy Category",
+    "description": "Cookie category card for the Cookie Policy page"
+  },
+  "attributes": {
+    "title": { "type": "string", "localized": true },
+    "description": { "type": "text", "localized": true },
+    "icon": { "type": "enumeration", "enum": ["shield", "settings", "analytics", "marketing"] },
+    "accent": { "type": "enumeration", "enum": ["red", "orange"] },
+    "isActive": { "type": "boolean", "default": true },
+    "sortOrder": { "type": "integer", "default": 0 }
+  }
+}
