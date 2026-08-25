@@ -1,0 +1,66 @@
+{
+  "kind": "collectionType",
+  "collectionName": "testimonials",
+  "info": {
+    "singularName": "testimonial",
+    "pluralName": "testimonials",
+    "displayName": "Testimonial",
+    "description": "Customer testimonials for Free Trial page"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "description": "Customer or company name"
+    },
+    "position": {
+      "type": "string",
+      "description": "Job title or position"
+    },
+    "company": {
+      "type": "string",
+      "description": "Company name"
+    },
+    "quote": {
+      "type": "text",
+      "required": true,
+      "description": "Testimonial quote or review text"
+    },
+    "rating": {
+      "type": "integer",
+      "min": 1,
+      "max": 5,
+      "description": "Star rating from 1 to 5"
+    },
+    "avatar": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"],
+      "description": "Customer or company logo image"
+    },
+    "free_trial_pages": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::free-trial.free-trial",
+      "mappedBy": "testimonials"
+    },
+    "sort_order": {
+      "type": "integer",
+      "default": 0,
+      "description": "Display order (lower number appears first)"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Show or hide this testimonial on frontend"
+    }
+  }
+}

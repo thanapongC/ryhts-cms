@@ -1,0 +1,89 @@
+---
+/**
+ * ContactForm — Contact form component.
+ *
+ * Props:
+ *   title?: string — Form section title
+ */
+interface Props {
+  title?: string;
+}
+
+const { title = "ส่งข้อความถึงเรา" } = Astro.props;
+---
+
+<div class="contact-form-wrapper">
+  <h2>{title}</h2>
+  <form class="contact-form" action="#" method="POST">
+    <div class="form-group">
+      <label for="name">ชื่อ *</label>
+      <input type="text" id="name" name="name" required placeholder="กรอกชื่อของคุณ" />
+    </div>
+    <div class="form-group">
+      <label for="email">อีเมล *</label>
+      <input type="email" id="email" name="email" required placeholder="กรอกอีเมลของคุณ" />
+    </div>
+    <div class="form-group">
+      <label for="phone">โทรศัพท์</label>
+      <input type="tel" id="phone" name="phone" placeholder="กรอกเบอร์โทรศัพท์" />
+    </div>
+    <div class="form-group">
+      <label for="subject">หัวข้อ *</label>
+      <input type="text" id="subject" name="subject" required placeholder="กรอกหัวข้อ" />
+    </div>
+    <div class="form-group">
+      <label for="message">ข้อความ *</label>
+      <textarea id="message" name="message" rows="5" required placeholder="กรอกข้อความของคุณ"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary btn-lg">ส่งข้อความ</button>
+  </form>
+</div>
+
+<style>
+  .contact-form-wrapper h2 {
+    font-size: 24px;
+    margin-bottom: 28px;
+  }
+
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .form-group label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text);
+  }
+
+  .form-group input,
+  .form-group textarea {
+    padding: 12px 16px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    font-family: var(--font-family);
+    font-size: 15px;
+    color: var(--color-text);
+    background: #fff;
+    transition: border-color var(--transition);
+  }
+
+  .form-group input:focus,
+  .form-group textarea:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(1, 127, 228, 0.1);
+  }
+
+  .form-group textarea {
+    resize: vertical;
+    min-height: 120px;
+  }
+</style>

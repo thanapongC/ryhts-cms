@@ -1,0 +1,66 @@
+{
+  "kind": "singleType",
+  "collectionName": "free_trials",
+  "info": {
+    "singularName": "free-trial",
+    "pluralName": "free-trials",
+    "displayName": "Page - Free Trial",
+    "description": "Free trial page content and form configuration"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "default": "ทดลองใช้ฟรี"
+    },
+    "subtitle": {
+      "type": "string",
+      "description": "Short tagline or subtitle"
+    },
+    "featured_image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"],
+      "description": "Hero or featured image"
+    },
+    "trust_items": {
+      "type": "component",
+      "repeatable": true,
+      "component": "free-trial.trust-item",
+      "description": "Trust signals (e.g. No credit card required)"
+    },
+    "content": {
+      "type": "richtext",
+      "description": "Main page content (rich text)"
+    },
+    "trial_features": {
+      "type": "component",
+      "repeatable": true,
+      "component": "free-trial.trial-feature",
+      "description": "Feature highlights for the trial"
+    },
+    "form_labels": {
+      "type": "component",
+      "repeatable": true,
+      "component": "free-trial.form-labels",
+      "description": "Localized form field labels"
+    },
+    "testimonials": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::testimonial.testimonial"
+    },
+    "seo": {
+      "type": "component",
+      "component": "shared.seo-meta"
+    }
+  }
+}

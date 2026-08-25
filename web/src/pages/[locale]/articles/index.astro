@@ -1,0 +1,57 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { safeGetArticles } from "../../../lib/api";
+import { isValidLocale, DEFAULT_LOCALE, type Locale } from "../../../lib/i18n";
+import OfflineNotice from "../../../components/OfflineNotice.astro";
+import PageHeader from "../../../components/PageHeader.astro";
+import Breadcrumb from "../../../components/Breadcrumb.astro";
+import ArticleCard from "../../../components/ArticleCard.astro";
+
+const lang = (Astro.params.locale as Locale) || DEFAULT_LOCALE;
+if (!isValidLocale(lang)) return Astro.redirect(`/${DEFAULT_LOCALE}/articles`);
+
+const articlesResult = await safeGetArticles(lang, 1, 24);
+const articles = articlesResult.data?.data || [];
+const isOffline = articlesResult.isOffline;
+
+const siteUrl = Astro.url.origin;
+---
+
+<BaseLayout
+  title="Articles"
+  description="ติดตามข่าวสารและบทความเกี่ยวกับริบบอน"
+  locale={lang}
+  hreflangs={[
+    { lang: "th", href: `${siteUrl}/th/articles` },
+    { lang: "en", href: `${siteUrl}/en/articles` },
+    { lang: "x-default", href: `${siteUrl}/th/articles` },
+  ]}
+  jsonLd={{ "@context": "https://schema.org", "@type": "CollectionPage", name: "Articles" }}
+>
+  <PageHeader title="บทความและข่าวสาร" description="ติดตามข่าวสารและบทความเกี่ยวกับริบบอน" />
+
+  <section class="section">
+    <div class="container">
+      <Breadcrumb items={[{ label: "Articles" }]} />
+
+      {isOffline && articles.length === 0 ? (
+        <OfflineNotice title="ไม่สามารถโหลดบทความได้" message="Unable to load articles." />
+      ) : articles.length > 0 ? (
+        <div class="articles-grid">
+          {articles.map((article) => <ArticleCard article={article} />)}
+        </div>
+      ) : (
+        <div class="empty-state">
+          <i class="fas fa-newspaper" style="font-size: 48px; color: var(--color-primary);"></i>
+          <p>ยังไม่มีบทความในขณะนี้</p>
+        </div>
+      )}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .articles-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+  @media (max-width: 1024px) { .articles-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 768px) { .articles-grid { grid-template-columns: 1fr; } }
+</style>

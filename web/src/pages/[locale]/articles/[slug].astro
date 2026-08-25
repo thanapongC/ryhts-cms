@@ -1,0 +1,103 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { safeGetArticleBySlug, getStrapiMedia, getStrapiAbsoluteImageUrl } from "../../../lib/api";
+import { isValidLocale, DEFAULT_LOCALE, type Locale } from "../../../lib/i18n";
+import { getOgImageUrl } from "../../../lib/og";
+import { formatDate } from "../../../lib/constants";
+import OfflineNotice from "../../../components/OfflineNotice.astro";
+import PageHeader from "../../../components/PageHeader.astro";
+import Breadcrumb from "../../../components/Breadcrumb.astro";
+
+const lang = (Astro.params.locale as Locale) || DEFAULT_LOCALE;
+if (!isValidLocale(lang)) return Astro.redirect(`/${DEFAULT_LOCALE}/articles/${Astro.params.slug}`);
+
+const { slug } = Astro.params;
+const articleResult = await safeGetArticleBySlug(slug as string, lang);
+const article = articleResult.data;
+
+if (!article) return Astro.redirect(`/${lang}/articles`);
+
+const featuredImage = getStrapiMedia(article.featured_image?.url);
+const seo = article.seo;
+const categoryName = typeof article.category === 'string' ? article.category : article.category?.name || "";
+
+const dynamicOgImage = getOgImageUrl({
+  baseUrl: Astro.url.origin,
+  title: article.title,
+  subtitle: article.excerpt || article.author || "",
+  type: "article",
+  brand: "Ryhts Ribbon",
+  category: categoryName,
+});
+
+const siteUrl = Astro.url.origin;
+---
+
+<BaseLayout
+  title={seo?.meta_title || article.title}
+  description={seo?.meta_description || article.excerpt}
+  ogImage={getStrapiAbsoluteImageUrl(seo?.og_image) || dynamicOgImage}
+  robots={seo?.robots}
+  keywords={seo?.keywords?.split(",").map(k => k.trim()) || []}
+  locale={lang}
+  ogType="article"
+  author={article.author}
+  hreflangs={[
+    { lang: "th", href: `${siteUrl}/th/articles/${slug}` },
+    { lang: "en", href: `${siteUrl}/en/articles/${slug}` },
+    { lang: "x-default", href: `${siteUrl}/th/articles/${slug}` },
+  ]}
+  article={{ publishedTime: article.publishedAt, author: article.author, section: categoryName, tags: article.tags }}
+  jsonLd={{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: article.title,
+    description: article.excerpt,
+    image: featuredImage || undefined,
+    author: article.author ? { "@type": "Person", name: article.author } : undefined,
+    datePublished: article.publishedAt || undefined,
+  }}
+>
+  <PageHeader title={article.title} />
+
+  <section class="section">
+    <div class="container">
+      <Breadcrumb items={[{ label: "Articles", href: `/${lang}/articles` }, { label: article.title }]} />
+
+      {articleResult.isOffline && <OfflineNotice title="部分内容不可用" message="Some details may be unavailable." />}
+
+      <article class="article-detail">
+        <div class="article-meta-bar">
+          {article.author && <span class="meta-item"><i class="fas fa-user"></i> {article.author}</span>}
+          {article.publishedAt && <span class="meta-item"><i class="fas fa-calendar"></i> {formatDate(article.publishedAt)}</span>}
+        </div>
+
+        {featuredImage && <div class="article-featured-image"><img src={featuredImage} alt={article.title} /></div>}
+
+        {article.content && <div class="rich-text article-content" set:html={article.content} />}
+
+        {article.tags?.length > 0 && (
+          <div class="article-tags">
+            <i class="fas fa-tags"></i>
+            {article.tags.map((tag) => <span class="tag">{tag}</span>)}
+          </div>
+        )}
+      </article>
+
+      <div class="article-nav">
+        <a href={`/${lang}/articles`} class="btn btn-outline">← กลับไปบทความทั้งหมด</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .article-detail { max-width: 800px; margin: 0 auto; }
+  .article-meta-bar { display: flex; gap: 24px; margin-bottom: 24px; font-size: 14px; color: var(--color-text-secondary); }
+  .meta-item i { color: var(--color-primary); margin-right: 6px; }
+  .article-featured-image { border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 32px; }
+  .article-featured-image img { width: 100%; max-height: 480px; object-fit: cover; }
+  .article-tags { display: flex; gap: 8px; flex-wrap: wrap; padding-top: 24px; border-top: 1px solid var(--color-border); }
+  .tag { padding: 4px 12px; background: var(--color-bg-light); border-radius: 16px; font-size: 13px; color: var(--color-text-secondary); }
+  .article-nav { margin-top: 40px; text-align: center; }
+</style>

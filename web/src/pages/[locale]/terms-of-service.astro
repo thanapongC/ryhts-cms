@@ -1,0 +1,48 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { safeGetTermsOfService, getStrapiAbsoluteImageUrl } from "../../lib/api";
+import { isValidLocale, DEFAULT_LOCALE, type Locale } from "../../lib/i18n";
+import OfflineNotice from "../../components/OfflineNotice.astro";
+
+const lang = (Astro.params.locale as Locale) || DEFAULT_LOCALE;
+if (!isValidLocale(lang)) return Astro.redirect(`/${DEFAULT_LOCALE}/terms-of-service`);
+
+const tosResult = await safeGetTermsOfService(lang);
+const tos = tosResult.data;
+const seo = tos?.seo;
+
+const siteUrl = Astro.url.origin;
+---
+
+<BaseLayout
+  title={seo?.meta_title || tos?.title || "Terms of Service"}
+  description={seo?.meta_description || tos?.description || ""}
+  ogImage={getStrapiAbsoluteImageUrl(seo?.og_image) || undefined}
+  robots={seo?.robots}
+  locale={lang}
+  hreflangs={[
+    { lang: "th", href: `${siteUrl}/th/terms-of-service` },
+    { lang: "en", href: `${siteUrl}/en/terms-of-service` },
+    { lang: "x-default", href: `${siteUrl}/th/terms-of-service` },
+  ]}
+>
+  <div class="page-header">
+    <div class="container"><h1>{tos?.title || "Terms of Service"}</h1></div>
+  </div>
+
+  <section class="section">
+    <div class="container">
+      <div class="breadcrumb"><a href={`/${lang}/`}>Home</a><span>/</span><span>Terms of Service</span></div>
+      {tosResult.isOffline && <OfflineNotice title="部分内容不可用" message="Terms may be unavailable." />}
+      <div class="policy-content">
+        {tos?.description && <p class="policy-summary">{tos.description}</p>}
+        {tos?.content ? <div class="rich-text" set:html={tos.content} /> : <p>Terms content not yet available.</p>}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .policy-content { max-width: 800px; }
+  .policy-summary { font-size: 17px; color: var(--color-text-secondary); line-height: 1.8; margin-bottom: 32px; padding: 20px; background: var(--color-bg-light); border-radius: var(--radius); }
+</style>

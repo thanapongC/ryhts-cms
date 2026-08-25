@@ -1,0 +1,124 @@
+---
+/**
+ * FeaturesSection — "Why Choose Us" feature cards section.
+ *
+ * Props:
+ *   features?: Array<{ icon: string; title: string; description: string }>
+ */
+interface Feature {
+  icon: string;
+  title: string;
+  description: string;
+}
+
+interface Props {
+  features?: Feature[];
+}
+
+const defaultFeatures: Feature[] = [
+  {
+    icon: "fas fa-award",
+    title: "คุณภาพมาตรฐาน",
+    description: "สินค้านำเข้าที่ได้มาตรฐาน ผ่านการทดสอบคุณภาพทุกชิ้น",
+  },
+  {
+    icon: "fas fa-truck-fast",
+    title: "จัดส่งรวดเร็ว",
+    description: "บริการจัดส่งทั่วประเทศ สะดวกและรวดเร็ว",
+  },
+  {
+    icon: "fas fa-headset",
+    title: "บริการหลังการขาย",
+    description: "ทีมงานพร้อมให้คำปรึกษาและช่วยเหลือทุกปัญหา",
+  },
+  {
+    icon: "fas fa-tags",
+    title: "ราคาคุ้มค่า",
+    description: "ราคาโรงงาน พร้อมส่วนลดสำหรับลูกค้าองค์กร",
+  },
+];
+
+const { features = defaultFeatures } = Astro.props;
+---
+
+<section class="section section-alt">
+  <div class="container">
+    <div class="text-center" style="margin-bottom: 48px;">
+      <h2 class="section-title">ทำไมต้องเลือก Ryhts</h2>
+      <p class="section-subtitle">มุ่งมั่นพัฒนาสินค้านำเข้าที่ได้มาตรฐาน และให้บริการที่ตอบโจทย์</p>
+    </div>
+
+    <div class="features-grid">
+      {features.map((feature) => (
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class={feature.icon}></i>
+          </div>
+          <h3>{feature.title}</h3>
+          <p>{feature.description}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+
+  .feature-card {
+    text-align: center;
+    padding: 32px 24px;
+    background: #fff;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    transition: all var(--transition);
+  }
+
+  .feature-card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-4px);
+  }
+
+  .feature-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--color-primary-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+  }
+
+  .feature-icon i {
+    font-size: 24px;
+    color: var(--color-primary);
+  }
+
+  .feature-card h3 {
+    font-size: 17px;
+    margin-bottom: 10px;
+  }
+
+  .feature-card p {
+    font-size: 14px;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+  }
+
+  @media (max-width: 1024px) {
+    .features-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .features-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

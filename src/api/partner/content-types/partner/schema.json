@@ -1,0 +1,55 @@
+{
+  "kind": "collectionType",
+  "collectionName": "partners",
+  "info": {
+    "singularName": "partner",
+    "pluralName": "partners",
+    "displayName": "Partner",
+    "description": "Business partners for About page"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "description": "Partner company name"
+    },
+    "website_url": {
+      "type": "string",
+      "description": "Partner website URL"
+    },
+    "description": {
+      "type": "text",
+      "description": "Brief description of the partnership"
+    },
+    "logo": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"],
+      "description": "Partner logo image"
+    },
+    "about_page": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::about-page.about-page",
+      "inversedBy": "partners"
+    },
+    "sort_order": {
+      "type": "integer",
+      "default": 0,
+      "description": "Display order (lower number appears first)"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Show or hide this partner on frontend"
+    }
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "kind": "collectionType",
+  "collectionName": "faqs",
+  "info": {
+    "singularName": "faq",
+    "pluralName": "faqs",
+    "displayName": "FAQ",
+    "description": "Frequently asked questions"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "description": "FAQ group or page title"
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "title"
+    },
+    "description": {
+      "type": "text",
+      "description": "Brief description of this FAQ group"
+    },
+    "items": {
+      "type": "component",
+      "repeatable": true,
+      "component": "faq.faq-item",
+      "description": "FAQ question and answer pairs"
+    },
+    "sort_order": {
+      "type": "integer",
+      "default": 0,
+      "description": "Display order (lower number appears first)"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Show or hide this FAQ group on frontend"
+    },
+    "seo": {
+      "type": "component",
+      "component": "shared.seo-meta"
+    }
+  }
+}

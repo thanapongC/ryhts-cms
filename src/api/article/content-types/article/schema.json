@@ -4,7 +4,7 @@
   "info": {
     "singularName": "article",
     "pluralName": "articles",
-    "displayName": "Article",
+    "displayName": "Blog - Post",
     "description": "Blog posts and news articles"
   },
   "options": {
@@ -24,43 +24,45 @@
       "type": "uid",
       "targetField": "title"
     },
-    "content": {
-      "type": "richtext"
-    },
     "excerpt": {
       "type": "text",
-      "maxLength": 500
+      "maxLength": 500,
+      "description": "Short summary for cards"
     },
-    "featured_image": {
-      "type": "media",
-      "multiple": false,
-      "allowedTypes": ["images"]
+    "content": {
+      "type": "richtext",
+      "description": "Full article content"
     },
     "author": {
       "type": "string"
     },
     "article_date": {
-      "type": "datetime"
+      "type": "date",
+      "description": "Publication date"
     },
     "tags": {
-      "type": "json"
+      "type": "json",
+      "description": "Article tags as JSON array"
     },
     "views": {
       "type": "integer",
       "default": 0,
       "min": 0
     },
-    "meta_title": {
-      "type": "string"
-    },
-    "meta_description": {
-      "type": "text",
-      "maxLength": 160
-    },
-    "og_image": {
+    "featured_image": {
       "type": "media",
       "multiple": false,
       "allowedTypes": ["images"]
+    },
+    "category": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::category.category",
+      "inversedBy": "articles"
+    },
+    "seo": {
+      "type": "component",
+      "component": "shared.seo-meta"
     }
   }
 }

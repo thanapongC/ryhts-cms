@@ -32,23 +32,15 @@
     "description": {
       "type": "text"
     },
-    "meta_title": {
-      "type": "string"
-    },
-    "meta_description": {
-      "type": "text",
-      "maxLength": 160
-    },
-    "og_image": {
-      "type": "media",
-      "multiple": false,
-      "allowedTypes": ["images"]
-    },
     "products": {
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::product.product",
       "mappedBy": "brand"
+    },
+    "seo": {
+      "type": "component",
+      "component": "shared.seo-meta"
     }
   }
 }

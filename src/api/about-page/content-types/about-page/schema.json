@@ -1,0 +1,67 @@
+{
+  "kind": "singleType",
+  "collectionName": "about_pages",
+  "info": {
+    "singularName": "about-page",
+    "pluralName": "about-pages",
+    "displayName": "Page - About Us",
+    "description": "About Ryhts page content"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "default": "เกี่ยวกับ Ryhts"
+    },
+    "subtitle": {
+      "type": "string",
+      "description": "Short tagline or subtitle"
+    },
+    "featured_image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"],
+      "description": "Hero or featured image"
+    },
+    "stats": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.stat-item",
+      "description": "Key statistics (e.g. years, customers, products)"
+    },
+    "content": {
+      "type": "richtext",
+      "description": "Main page content (rich text)"
+    },
+    "team_members": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::team-member.team-member",
+      "mappedBy": "about_page"
+    },
+    "partners": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::partner.partner",
+      "mappedBy": "about_page"
+    },
+    "timeline_milestones": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::timeline-milestone.timeline-milestone",
+      "mappedBy": "about_page"
+    },
+    "seo": {
+      "type": "component",
+      "component": "shared.seo-meta"
+    }
+  }
+}

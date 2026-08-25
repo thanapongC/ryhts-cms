@@ -1,0 +1,5 @@
+allowBuilds:
+  '@swc/core': false
+  better-sqlite3: false
+  core-js-pure: false
+  esbuild: false

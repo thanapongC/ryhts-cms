@@ -1,0 +1,63 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { safeGetProducts, safeGetCategories } from "../../../lib/api";
+import { isValidLocale, DEFAULT_LOCALE, type Locale } from "../../../lib/i18n";
+import OfflineNotice from "../../../components/OfflineNotice.astro";
+import PageHeader from "../../../components/PageHeader.astro";
+import Breadcrumb from "../../../components/Breadcrumb.astro";
+import ProductCard from "../../../components/ProductCard.astro";
+import CategoryFilters from "../../../components/CategoryFilters.astro";
+
+const lang = (Astro.params.locale as Locale) || DEFAULT_LOCALE;
+if (!isValidLocale(lang)) return Astro.redirect(`/${DEFAULT_LOCALE}/products`);
+
+const productsResult = await safeGetProducts(lang, 1, 12);
+const categoriesResult = await safeGetCategories(lang);
+
+const products = productsResult.data?.data || [];
+const categories = categoriesResult.data || [];
+const isOffline = productsResult.isOffline;
+const activeCategory = Astro.url.searchParams.get("category") || undefined;
+
+const siteUrl = Astro.url.origin;
+---
+
+<BaseLayout
+  title="Products"
+  description="สินค้าริบบอนสำหรับเครื่องพิมพ์บาร์โค้ดทุกขนาด"
+  locale={lang}
+  hreflangs={[
+    { lang: "th", href: `${siteUrl}/th/products` },
+    { lang: "en", href: `${siteUrl}/en/products` },
+    { lang: "x-default", href: `${siteUrl}/th/products` },
+  ]}
+  jsonLd={{ "@context": "https://schema.org", "@type": "CollectionPage", name: "Products" }}
+>
+  <PageHeader title="สินค้าของเรา" description="ริบบอนสำหรับเครื่องพิมพ์บาร์โค้ดทุกขนาด" />
+
+  <section class="section">
+    <div class="container">
+      <Breadcrumb items={[{ label: "Products" }]} />
+      <CategoryFilters categories={categories} activeSlug={activeCategory} />
+
+      {isOffline && products.length === 0 ? (
+        <OfflineNotice title="ไม่สามารถโหลดสินค้าได้" message="Unable to load products." />
+      ) : products.length > 0 ? (
+        <div class="products-grid">
+          {products.map((product) => <ProductCard product={product} />)}
+        </div>
+      ) : (
+        <div class="empty-state">
+          <i class="fas fa-box-open" style="font-size: 48px; color: var(--color-primary);"></i>
+          <p>ยังไม่มีสินค้าในขณะนี้</p>
+        </div>
+      )}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .products-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+  @media (max-width: 1024px) { .products-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 768px) { .products-grid { grid-template-columns: 1fr; } }
+</style>

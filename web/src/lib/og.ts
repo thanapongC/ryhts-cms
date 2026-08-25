@@ -4,7 +4,8 @@
  */
 
 import satori from "satori";
-import { resvg } from "@resvg/resvg-js";
+import resvgJs from "@resvg/resvg-js";
+const { resvg } = resvgJs as any;
 
 interface OgImageOptions {
   title: string;

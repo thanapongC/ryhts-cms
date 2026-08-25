@@ -4,7 +4,7 @@
   "info": {
     "singularName": "terms-of-service",
     "pluralName": "terms-of-services",
-    "displayName": "Terms of Service",
+    "displayName": "Page - Terms of Service",
     "description": "Terms of Service page content"
   },
   "options": {
@@ -25,20 +25,27 @@
       "type": "text",
       "description": "Short summary of the terms"
     },
+    "featured_image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"],
+      "description": "Hero or featured image"
+    },
     "content": {
       "type": "richtext",
       "description": "Full terms of service content"
     },
+    "effective_date": {
+      "type": "date",
+      "description": "Date the terms took effect"
+    },
     "last_updated": {
-      "type": "datetime",
+      "type": "date",
       "description": "When the terms were last updated"
     },
-    "meta_title": {
-      "type": "string"
-    },
-    "meta_description": {
-      "type": "text",
-      "maxLength": 160
+    "seo": {
+      "type": "component",
+      "component": "shared.seo-meta"
     }
   }
 }

@@ -1,0 +1,68 @@
+---
+/**
+ * NewsletterCTA — Newsletter call-to-action section.
+ *
+ * Props:
+ *   title?: string
+ *   description?: string
+ *   buttonText?: string
+ *   buttonHref?: string
+ */
+interface Props {
+  title?: string;
+  description?: string;
+  buttonText?: string;
+  buttonHref?: string;
+}
+
+const {
+  title = "กดรับสมัครข่าวสารจากเรา",
+  description = "สมัครรับข่าวสารและติดตามสินค้าออกใหม่",
+  buttonText = "ติดต่อเรา",
+  buttonHref = "/contact",
+} = Astro.props;
+---
+
+<section class="newsletter-section">
+  <div class="container newsletter-inner">
+    <div class="newsletter-content">
+      <h2>{title}</h2>
+      <p>{description}</p>
+    </div>
+    <div class="newsletter-cta">
+      <a href={buttonHref} class="btn btn-white btn-lg">{buttonText}</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .newsletter-section {
+    background: var(--color-primary);
+    padding: 60px 0;
+  }
+
+  .newsletter-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+  }
+
+  .newsletter-content h2 {
+    font-size: 28px;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+
+  .newsletter-content p {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 16px;
+  }
+
+  @media (max-width: 768px) {
+    .newsletter-inner {
+      flex-direction: column;
+      text-align: center;
+    }
+  }
+</style>

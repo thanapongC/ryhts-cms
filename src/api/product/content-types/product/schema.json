@@ -24,12 +24,14 @@
       "type": "uid",
       "targetField": "title"
     },
-    "description": {
-      "type": "richtext"
-    },
     "short_description": {
       "type": "text",
-      "maxLength": 500
+      "maxLength": 500,
+      "description": "Brief product summary"
+    },
+    "description": {
+      "type": "richtext",
+      "description": "Full product description"
     },
     "price": {
       "type": "decimal",
@@ -41,10 +43,12 @@
       "required": true
     },
     "sizes": {
-      "type": "json"
+      "type": "json",
+      "description": "Available sizes as JSON array"
     },
     "compatibility": {
-      "type": "text"
+      "type": "text",
+      "description": "Compatible printer models"
     },
     "is_featured": {
       "type": "boolean",
@@ -55,27 +59,33 @@
       "multiple": true,
       "allowedTypes": ["images"]
     },
-    "meta_title": {
-      "type": "string"
-    },
-    "meta_description": {
-      "type": "text",
-      "maxLength": 160
-    },
-    "og_image": {
-      "type": "media",
-      "multiple": false,
-      "allowedTypes": ["images"]
-    },
     "brand": {
       "type": "relation",
       "relation": "manyToOne",
-      "target": "api::brand.brand"
+      "target": "api::brand.brand",
+      "inversedBy": "products"
     },
     "categories": {
       "type": "relation",
       "relation": "manyToMany",
-      "target": "api::category.category"
+      "target": "api::category.category",
+      "inversedBy": "products"
+    },
+    "privacy_applied_in": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::privacy-policy.privacy-policy",
+      "mappedBy": "applies_to_products"
+    },
+    "pdpa_applied_in": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::pdpa-setting.pdpa-setting",
+      "mappedBy": "applies_to_products"
+    },
+    "seo": {
+      "type": "component",
+      "component": "shared.seo-meta"
     }
   }
 }

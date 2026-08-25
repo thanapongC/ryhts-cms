@@ -171,3 +171,13 @@ export function detectLocale(
   // 3. Fallback to default
   return DEFAULT_LOCALE;
 }
+
+/**
+ * Get locale from an Astro page's request.
+ * Use in page frontmatter: const lang = getPageLocale(Astro);
+ */
+export function getPageLocale(request: { headers: Headers }): Locale {
+  const cookieHeader = request.headers.get("cookie") || undefined;
+  const acceptLanguage = request.headers.get("accept-language") || undefined;
+  return detectLocale(cookieHeader, acceptLanguage);
+}

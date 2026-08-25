@@ -4,7 +4,7 @@
   "info": {
     "singularName": "company-info",
     "pluralName": "company-infos",
-    "displayName": "Company Info",
+    "displayName": "Site - Company Info",
     "description": "Company contact information - address, phone, hours"
   },
   "options": {
@@ -18,33 +18,44 @@
   "attributes": {
     "company_name": {
       "type": "string",
-      "required": true
+      "required": true,
+      "description": "Company name in Thai"
     },
     "company_name_en": {
-      "type": "string"
+      "type": "string",
+      "description": "Company name in English"
     },
     "address": {
-      "type": "text"
+      "type": "text",
+      "description": "Full address"
     },
     "phone": {
-      "type": "string"
+      "type": "string",
+      "description": "Main phone number"
     },
     "email": {
-      "type": "email"
-    },
-    "map_link": {
-      "type": "string"
+      "type": "email",
+      "description": "Main email address"
     },
     "business_hours": {
-      "type": "text"
+      "type": "text",
+      "description": "Business operating hours"
+    },
+    "map_link": {
+      "type": "string",
+      "description": "Google Maps embed URL"
     },
     "customer_count": {
       "type": "integer",
       "default": 0,
-      "min": 0
+      "min": 0,
+      "description": "Number of customers (for display)"
     },
-    "contact_form_title": {
-      "type": "string"
+    "contact_info": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.contact-info",
+      "description": "Structured contact items with icons"
     }
   }
 }

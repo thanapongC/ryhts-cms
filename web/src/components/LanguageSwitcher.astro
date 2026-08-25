@@ -14,7 +14,7 @@ const { currentLocale = "th" } = Astro.props;
 
 const languages: { code: Locale; disabled?: boolean }[] = [
   { code: "th" },
-  { code: "en", disabled: true },
+  { code: "en" },
 ];
 
 const currentPath = Astro.url.pathname;
@@ -209,26 +209,27 @@ const currentPath = Astro.url.pathname;
     switcher?.classList.remove("open");
   });
 
-  // Prevent dropdown clicks from closing
   dropdown?.addEventListener("click", (e) => {
     e.stopPropagation();
   });
 
-  // Handle language selection
+  // Handle language selection — redirect to locale URL
   const langOptions = dropdown?.querySelectorAll(".lang-option");
   langOptions?.forEach((option) => {
     option.addEventListener("click", () => {
       const locale = option.getAttribute("data-locale") as Locale;
       const isDisabled = option.getAttribute("data-disabled") === "true";
-      
       if (isDisabled || !locale) return;
-      
-      // Set cookie
+
+      // Build new URL: replace current locale prefix with new one
+      const currentPath = window.location.pathname;
+      // Remove current locale prefix (e.g. /th/about → /about)
+      let path = currentPath.replace(/^\/(th|en)/, "") || "/";
+      // Add new locale prefix
+      const newPath = `/${locale}${path === "/" ? "/" : path}`;
+
       setLocaleCookie(locale);
-      
-      // Reload page to apply language change
-      // In future, this could redirect to /en/... path
-      window.location.reload();
+      window.location.href = newPath;
     });
   });
 </script>

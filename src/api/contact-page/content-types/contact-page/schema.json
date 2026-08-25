@@ -1,0 +1,43 @@
+{
+  "kind": "singleType",
+  "collectionName": "contact_pages",
+  "info": {
+    "singularName": "contact-page",
+    "pluralName": "contact-pages",
+    "displayName": "Page - Contact Us",
+    "description": "Contact us page content"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "default": "ติดต่อเรา"
+    },
+    "subtitle": {
+      "type": "string",
+      "description": "Short tagline or subtitle"
+    },
+    "featured_image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"],
+      "description": "Hero or featured image"
+    },
+    "content": {
+      "type": "richtext",
+      "description": "Main page content (rich text)"
+    },
+    "seo": {
+      "type": "component",
+      "component": "shared.seo-meta"
+    }
+  }
+}

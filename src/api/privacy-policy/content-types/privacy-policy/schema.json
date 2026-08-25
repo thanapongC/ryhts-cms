@@ -4,7 +4,7 @@
   "info": {
     "singularName": "privacy-policy",
     "pluralName": "privacy-policies",
-    "displayName": "Privacy Policy",
+    "displayName": "Page - Privacy Policy",
     "description": "Privacy policy page content - PDPA-compliant privacy disclosure"
   },
   "options": {
@@ -25,29 +25,51 @@
       "type": "text",
       "description": "Short summary of the privacy policy"
     },
+    "featured_image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"],
+      "description": "Hero or featured image"
+    },
     "content": {
       "type": "richtext",
-      "description": "Full privacy policy content (PDPA-compliant sections)"
+      "description": "Full privacy policy content (PDPA-compliant)"
+    },
+    "policy_sections": {
+      "type": "component",
+      "repeatable": true,
+      "component": "privacy.policy-section",
+      "description": "Structured policy sections with headings"
     },
     "effective_date": {
-      "type": "datetime",
+      "type": "date",
       "description": "Date the privacy policy took effect"
     },
     "last_updated": {
-      "type": "datetime",
+      "type": "date",
       "description": "When the privacy policy was last updated"
     },
-    "meta_title": {
-      "type": "string"
+    "applies_to_products": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::product.product",
+      "inversedBy": "privacy_applied_in"
     },
-    "meta_description": {
-      "type": "text",
-      "maxLength": 160
+    "related_links": {
+      "type": "component",
+      "repeatable": true,
+      "component": "privacy.related-link",
+      "description": "Related links (e.g. product-specific policies)"
     },
-    "og_image": {
-      "type": "media",
-      "multiple": false,
-      "allowedTypes": ["images"]
+    "contact_info": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.contact-info",
+      "description": "Contact information for privacy inquiries"
+    },
+    "seo": {
+      "type": "component",
+      "component": "shared.seo-meta"
     }
   }
 }

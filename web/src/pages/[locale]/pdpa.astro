@@ -1,0 +1,52 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { safeGetPdpaSetting, getStrapiAbsoluteImageUrl } from "../../lib/api";
+import { isValidLocale, DEFAULT_LOCALE, type Locale } from "../../lib/i18n";
+import OfflineNotice from "../../components/OfflineNotice.astro";
+
+const lang = (Astro.params.locale as Locale) || DEFAULT_LOCALE;
+if (!isValidLocale(lang)) return Astro.redirect(`/${DEFAULT_LOCALE}/pdpa`);
+
+const pdpaResult = await safeGetPdpaSetting(lang);
+const pdpa = pdpaResult.data;
+const seo = pdpa?.seo;
+
+const siteUrl = Astro.url.origin;
+---
+
+<BaseLayout
+  title={seo?.meta_title || pdpa?.company_name || "PDPA"}
+  description={seo?.meta_description || "PDPA compliance policy"}
+  ogImage={getStrapiAbsoluteImageUrl(seo?.og_image) || undefined}
+  robots={seo?.robots}
+  locale={lang}
+  hreflangs={[
+    { lang: "th", href: `${siteUrl}/th/pdpa` },
+    { lang: "en", href: `${siteUrl}/en/pdpa` },
+    { lang: "x-default", href: `${siteUrl}/th/pdpa` },
+  ]}
+>
+  <div class="page-header">
+    <div class="container"><h1>{pdpa?.company_name || "PDPA"}</h1></div>
+  </div>
+
+  <section class="section">
+    <div class="container">
+      <div class="breadcrumb"><a href={`/${lang}/`}>Home</a><span>/</span><span>PDPA</span></div>
+      {pdpaResult.isOffline && <OfflineNotice title="部分内容不可用" message="PDPA content may be unavailable." />}
+      <div class="policy-content">
+        {pdpa?.rights_text && <div class="policy-section"><h2>สิทธิของท่าน</h2><div class="rich-text" set:html={pdpa.rights_text} /></div>}
+        {pdpa?.third_parties_text && <div class="policy-section"><h2>การเปิดเผยข้อมูล</h2><div class="rich-text" set:html={pdpa.third_parties_text} /></div>}
+        {pdpa?.dpo_name && <div class="dpo-info"><h2>ติดต่อ DPO</h2><p>{pdpa.dpo_name} ({pdpa.dpo_position})</p>{pdpa.dpo_email && <p>Email: {pdpa.dpo_email}</p>}</div>}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .policy-content { max-width: 800px; }
+  .policy-section { margin-bottom: 32px; }
+  .policy-section h2 { font-size: 20px; margin-bottom: 12px; }
+  .dpo-info { margin-top: 32px; padding: 20px; background: var(--color-bg-light); border-radius: var(--radius); }
+  .dpo-info h2 { font-size: 20px; margin-bottom: 12px; }
+</style>

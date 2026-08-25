@@ -1,0 +1,128 @@
+---
+/**
+ * ContactInfo — Company contact information display.
+ *
+ * Props:
+ *   companyInfo: CompanyInfo
+ *   phone?: string — Additional phone number (e.g. sales)
+ */
+import type { CompanyInfo, SiteSetting } from "../lib/api";
+
+interface Props {
+  companyInfo: CompanyInfo;
+  siteSetting?: SiteSetting | null;
+}
+
+const { companyInfo, siteSetting } = Astro.props;
+---
+
+<div class="contact-info">
+  <h2>ข้อมูลการติดต่อ</h2>
+
+  {companyInfo.company_name && (
+    <div class="info-item">
+      <div class="info-icon"><i class="fas fa-building"></i></div>
+      <div>
+        <h4>{companyInfo.company_name}</h4>
+        {companyInfo.company_name_en && <p>{companyInfo.company_name_en}</p>}
+      </div>
+    </div>
+  )}
+
+  {companyInfo.address && (
+    <div class="info-item">
+      <div class="info-icon"><i class="fas fa-map-marker-alt"></i></div>
+      <div>
+        <h4>ที่อยู่</h4>
+        <p>{companyInfo.address}</p>
+      </div>
+    </div>
+  )}
+
+  {companyInfo.phone && (
+    <div class="info-item">
+      <div class="info-icon"><i class="fas fa-phone"></i></div>
+      <div>
+        <h4>โทรศัพท์</h4>
+        <p><a href={`tel:${companyInfo.phone}`}>{companyInfo.phone}</a></p>
+      </div>
+    </div>
+  )}
+
+  {companyInfo.email && (
+    <div class="info-item">
+      <div class="info-icon"><i class="fas fa-envelope"></i></div>
+      <div>
+        <h4>อีเมล</h4>
+        <p><a href={`mailto:${companyInfo.email}`}>{companyInfo.email}</a></p>
+      </div>
+    </div>
+  )}
+
+  {companyInfo.business_hours && (
+    <div class="info-item">
+      <div class="info-icon"><i class="fas fa-clock"></i></div>
+      <div>
+        <h4>เวลาทำการ</h4>
+        <p>{companyInfo.business_hours}</p>
+      </div>
+    </div>
+  )}
+
+  {siteSetting?.phone && (
+    <div class="info-item">
+      <div class="info-icon"><i class="fas fa-headset"></i></div>
+      <div>
+        <h4>ฝ่ายขาย</h4>
+        <p><a href={`tel:${siteSetting.phone}`}>{siteSetting.phone}</a></p>
+      </div>
+    </div>
+  )}
+</div>
+
+<style>
+  .contact-info h2 {
+    font-size: 24px;
+    margin-bottom: 28px;
+  }
+
+  .info-item {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .info-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--color-primary-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .info-icon i {
+    color: var(--color-primary);
+    font-size: 18px;
+  }
+
+  .info-item h4 {
+    font-size: 15px;
+    margin-bottom: 4px;
+  }
+
+  .info-item p {
+    font-size: 14px;
+    color: var(--color-text-secondary);
+  }
+
+  .info-item a {
+    color: var(--color-text-secondary);
+  }
+
+  .info-item a:hover {
+    color: var(--color-primary);
+  }
+</style>

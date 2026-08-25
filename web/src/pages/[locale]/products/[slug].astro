@@ -1,0 +1,114 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { safeGetProductBySlug, getStrapiMedia, getStrapiAbsoluteImageUrl } from "../../../lib/api";
+import { isValidLocale, DEFAULT_LOCALE, type Locale } from "../../../lib/i18n";
+import { getOgImageUrl } from "../../../lib/og";
+import { RIBBON_TYPE_LABELS } from "../../../lib/constants";
+import OfflineNotice from "../../../components/OfflineNotice.astro";
+import PageHeader from "../../../components/PageHeader.astro";
+import Breadcrumb from "../../../components/Breadcrumb.astro";
+
+const lang = (Astro.params.locale as Locale) || DEFAULT_LOCALE;
+if (!isValidLocale(lang)) return Astro.redirect(`/${DEFAULT_LOCALE}/products/${Astro.params.slug}`);
+
+const { slug } = Astro.params;
+const productResult = await safeGetProductBySlug(slug as string, lang);
+const product = productResult.data;
+
+if (!product) return Astro.redirect(`/${lang}/products`);
+
+const mainImage = getStrapiMedia(product.images?.[0]?.url);
+const seo = product.seo;
+
+const dynamicOgImage = getOgImageUrl({
+  baseUrl: Astro.url.origin,
+  title: product.title,
+  subtitle: product.short_description || product.brand?.name || "",
+  type: "product",
+  brand: product.brand?.name || "Ryhts Ribbon",
+  category: RIBBON_TYPE_LABELS[product.ribbon_type] || product.ribbon_type,
+});
+
+const siteUrl = Astro.url.origin;
+---
+
+<BaseLayout
+  title={seo?.meta_title || product.title}
+  description={seo?.meta_description || product.short_description}
+  ogImage={getStrapiAbsoluteImageUrl(seo?.og_image) || dynamicOgImage}
+  robots={seo?.robots}
+  keywords={seo?.keywords?.split(",").map(k => k.trim()) || []}
+  locale={lang}
+  ogType="product"
+  hreflangs={[
+    { lang: "th", href: `${siteUrl}/th/products/${slug}` },
+    { lang: "en", href: `${siteUrl}/en/products/${slug}` },
+    { lang: "x-default", href: `${siteUrl}/th/products/${slug}` },
+  ]}
+  product={{ price: product.price?.toString(), currency: 'THB', availability: 'InStock', brand: product.brand?.name }}
+  jsonLd={{
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.title,
+    description: product.short_description,
+    image: mainImage || undefined,
+    brand: product.brand ? { "@type": "Brand", name: product.brand.name } : undefined,
+  }}
+>
+  <PageHeader title={product.title} description={product.short_description} />
+
+  <section class="section">
+    <div class="container">
+      <Breadcrumb items={[{ label: "Products", href: `/${lang}/products` }, { label: product.title }]} />
+
+      {productResult.isOffline && <OfflineNotice title="部分内容不可用" message="Some details may be unavailable." />}
+
+      <div class="product-detail">
+        <div class="product-gallery">
+          {mainImage && <div class="gallery-main"><img src={mainImage} alt={product.title} /></div>}
+        </div>
+
+        <div class="product-info">
+          <div class="product-meta">
+            <span class={`badge badge-${product.ribbon_type}`}>{RIBBON_TYPE_LABELS[product.ribbon_type]}</span>
+            {product.brand && <span class="product-brand-name">{product.brand.name}</span>}
+          </div>
+
+          <h2 class="product-title">{product.title}</h2>
+
+          {product.price > 0 && <div class="product-price"><span class="price-value">฿{product.price.toLocaleString()}</span></div>}
+          {product.short_description && <p class="product-desc">{product.short_description}</p>}
+
+          <div class="product-actions">
+            <a href={`/${lang}/contact`} class="btn btn-primary btn-lg">ติดต่อสอบถาม</a>
+            <a href="tel:0946246649" class="btn btn-outline btn-lg"><i class="fas fa-phone"></i> โทรเลย</a>
+          </div>
+        </div>
+      </div>
+
+      {product.description && (
+        <div class="product-full-desc">
+          <h3>รายละเอียดสินค้า</h3>
+          <div class="rich-text" set:html={product.description} />
+        </div>
+      )}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .product-detail { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+  .gallery-main { border-radius: var(--radius-lg); overflow: hidden; }
+  .gallery-main img { width: 100%; aspect-ratio: 4/3; object-fit: cover; }
+  .product-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
+  .badge-wax { background: #fef3c7; color: #b45309; }
+  .badge-wax_resin { background: #dbeafe; color: #1e40af; }
+  .badge-resin { background: #dcfce7; color: #166534; }
+  .product-brand-name { font-size: 14px; color: var(--color-text-light); }
+  .product-title { font-size: 28px; font-weight: 700; margin-bottom: 16px; }
+  .price-value { font-size: 28px; font-weight: 700; color: var(--color-primary); }
+  .product-desc { font-size: 16px; color: var(--color-text-secondary); line-height: 1.8; margin-bottom: 24px; }
+  .product-actions { display: flex; gap: 12px; margin-top: 32px; }
+  .product-full-desc { border-top: 1px solid var(--color-border); padding-top: 40px; }
+  @media (max-width: 768px) { .product-detail { grid-template-columns: 1fr; } .product-actions { flex-direction: column; } }
+</style>

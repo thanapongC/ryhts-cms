@@ -1,0 +1,55 @@
+{
+  "kind": "collectionType",
+  "collectionName": "team_members",
+  "info": {
+    "singularName": "team-member",
+    "pluralName": "team-members",
+    "displayName": "Team Member",
+    "description": "Company team members for About page"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "description": "Full name of the team member"
+    },
+    "position": {
+      "type": "string",
+      "description": "Job title or position"
+    },
+    "bio": {
+      "type": "text",
+      "description": "Short biography or description"
+    },
+    "avatar": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"],
+      "description": "Profile photo"
+    },
+    "about_page": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::about-page.about-page",
+      "inversedBy": "team_members"
+    },
+    "sort_order": {
+      "type": "integer",
+      "default": 0,
+      "description": "Display order (lower number appears first)"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Show or hide this team member on frontend"
+    }
+  }
+}

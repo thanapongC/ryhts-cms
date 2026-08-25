@@ -1,0 +1,132 @@
+---
+/**
+ * ProductCard — Reusable product card for listing pages.
+ *
+ * Props:
+ *   product: Product — The product data from Strapi
+ *   baseUrl?: string — Optional base URL prefix (default: "/products")
+ */
+import { getStrapiMedia, type Product } from "../lib/api";
+import { RIBBON_TYPE_LABELS, RIBBON_TYPE_BADGE_CLASS } from "../lib/constants";
+
+interface Props {
+  product: Product;
+  baseUrl?: string;
+}
+
+const { product, baseUrl = "/products" } = Astro.props;
+const imageUrl = getStrapiMedia(product.images?.[0]?.url);
+---
+
+<a href={`${baseUrl}/${product.slug}`} class="product-card">
+  {imageUrl && (
+    <div class="product-card-image">
+      <img src={imageUrl} alt={product.title} loading="lazy" />
+    </div>
+  )}
+  <div class="product-card-body">
+    <div class="product-card-meta">
+      <span class={`badge ${RIBBON_TYPE_BADGE_CLASS[product.ribbon_type] || "badge-primary"}`}>
+        {RIBBON_TYPE_LABELS[product.ribbon_type] || product.ribbon_type}
+      </span>
+      {product.brand && <span class="product-brand">{product.brand.name}</span>}
+    </div>
+    <h3>{product.title}</h3>
+    <p class="product-excerpt">{product.short_description}</p>
+    <span class="product-link">อ่านรายละเอียด →</span>
+  </div>
+</a>
+
+<style>
+  .product-card {
+    background: #fff;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: all var(--transition);
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .product-card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-4px);
+  }
+
+  .product-card-image {
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+  }
+
+  .product-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+
+  .product-card:hover .product-card-image img {
+    transform: scale(1.05);
+  }
+
+  .product-card-body {
+    padding: 24px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .product-card-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .badge-wax {
+    background: #fef3c7;
+    color: #b45309;
+  }
+
+  .badge-wax-resin {
+    background: #dbeafe;
+    color: #1e40af;
+  }
+
+  .badge-resin {
+    background: #dcfce7;
+    color: #166534;
+  }
+
+  .product-brand {
+    font-size: 12px;
+    color: var(--color-text-light);
+  }
+
+  .product-card h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .product-excerpt {
+    font-size: 14px;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    flex: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .product-link {
+    display: inline-block;
+    margin-top: 16px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-primary);
+  }
+</style>

@@ -4,7 +4,7 @@
   "info": {
     "singularName": "cookie-policy",
     "pluralName": "cookie-policies",
-    "displayName": "Cookie Policy",
+    "displayName": "Page - Cookie Policy",
     "description": "Cookie policy page content - detailed cookie information"
   },
   "options": {
@@ -25,20 +25,23 @@
       "type": "text",
       "description": "Short summary of the cookie policy"
     },
+    "featured_image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"],
+      "description": "Hero or featured image"
+    },
     "content": {
       "type": "richtext",
       "description": "Full cookie policy content"
     },
     "last_updated": {
-      "type": "datetime",
+      "type": "date",
       "description": "When the cookie policy was last updated"
     },
-    "meta_title": {
-      "type": "string"
-    },
-    "meta_description": {
-      "type": "text",
-      "maxLength": 160
+    "seo": {
+      "type": "component",
+      "component": "shared.seo-meta"
     }
   }
 }

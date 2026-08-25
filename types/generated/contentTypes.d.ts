@@ -667,6 +667,48 @@ export interface ApiCompanyInfoCompanyInfo extends Struct.SingleTypeSchema {
   };
 }
 
+export interface ApiContactFloatingContactFloating
+  extends Struct.SingleTypeSchema {
+  collectionName: 'contact_floatings';
+  info: {
+    description: 'Floating contact widget settings';
+    displayName: 'Site - Contact Floating';
+    pluralName: 'contact-floatings';
+    singularName: 'contact-floating';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
+  attributes: {
+    actions: Schema.Attribute.Component<
+      'contact-floating.contact-action',
+      true
+    >;
+    button_label: Schema.Attribute.String;
+    close_label: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    is_enabled: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    locale: Schema.Attribute.String;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::contact-floating.contact-floating'
+    >;
+    panel_description: Schema.Attribute.Text;
+    panel_title: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiContactPageContactPage extends Struct.SingleTypeSchema {
   collectionName: 'contact_pages';
   info: {
@@ -789,6 +831,42 @@ export interface ApiCookiePolicyCookiePolicy extends Struct.SingleTypeSchema {
   };
 }
 
+export interface ApiCookieSettingCookieSetting extends Struct.SingleTypeSchema {
+  collectionName: 'cookie_settings';
+  info: {
+    description: 'Cookie consent banner labels and preference copy';
+    displayName: 'Site - Cookie Settings';
+    pluralName: 'cookie-settings';
+    singularName: 'cookie-setting';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::cookie-setting.cookie-setting'
+    >;
+    publishedAt: Schema.Attribute.DateTime;
+    settings: Schema.Attribute.Component<
+      'shared.cookie-consent-settings',
+      false
+    >;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiFaqFaq extends Struct.CollectionTypeSchema {
   collectionName: 'faqs';
   info: {
@@ -828,7 +906,7 @@ export interface ApiFaqFaq extends Struct.CollectionTypeSchema {
 export interface ApiFooterSettingFooterSetting extends Struct.SingleTypeSchema {
   collectionName: 'footer_settings';
   info: {
-    description: 'Footer configuration - copyright, social links, navigation';
+    description: 'Footer CTA, statistics, navigation, legal links, and copyright';
     displayName: 'Site - Footer Settings';
     pluralName: 'footer-settings';
     singularName: 'footer-setting';
@@ -842,10 +920,14 @@ export interface ApiFooterSettingFooterSetting extends Struct.SingleTypeSchema {
     };
   };
   attributes: {
-    copyright_text: Schema.Attribute.String;
+    company_description: Schema.Attribute.Text;
+    copyright: Schema.Attribute.Text;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    cta_badge: Schema.Attribute.String;
+    cta_description: Schema.Attribute.Text;
+    cta_title: Schema.Attribute.String;
     footer_sections: Schema.Attribute.Component<'footer.footer-section', true>;
     legal_links: Schema.Attribute.Component<'footer.legal-link', true>;
     locale: Schema.Attribute.String;
@@ -853,9 +935,13 @@ export interface ApiFooterSettingFooterSetting extends Struct.SingleTypeSchema {
       'oneToMany',
       'api::footer-setting.footer-setting'
     >;
-    newsletter_text: Schema.Attribute.Text;
+    primary_cta_label: Schema.Attribute.String;
+    primary_cta_url: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
+    secondary_cta_label: Schema.Attribute.String;
+    secondary_cta_url: Schema.Attribute.String;
     social_links: Schema.Attribute.JSON;
+    stats: Schema.Attribute.Component<'shared.stat-item', true>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -914,7 +1000,7 @@ export interface ApiFreeTrialFreeTrial extends Struct.SingleTypeSchema {
 export interface ApiGlobalSettingGlobalSetting extends Struct.SingleTypeSchema {
   collectionName: 'global_settings';
   info: {
-    description: 'Global SEO and analytics settings';
+    description: 'Site-wide settings: header, footer contact, stats, and SEO defaults';
     displayName: 'Site - Global Settings';
     pluralName: 'global-settings';
     singularName: 'global-setting';
@@ -928,19 +1014,61 @@ export interface ApiGlobalSettingGlobalSetting extends Struct.SingleTypeSchema {
     };
   };
   attributes: {
+    contact_info: Schema.Attribute.Component<'shared.contact-info', true>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    facebook_pixel_id: Schema.Attribute.String;
-    google_analytics_id: Schema.Attribute.String;
     locale: Schema.Attribute.String;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::global-setting.global-setting'
     >;
     publishedAt: Schema.Attribute.DateTime;
-    seo: Schema.Attribute.Component<'shared.seo-meta', false>;
-    twitter_handle: Schema.Attribute.String;
+    seoConfig: Schema.Attribute.Component<'shared.seo-config', false>;
+    site_logo: Schema.Attribute.Media<'images'>;
+    site_name: Schema.Attribute.String & Schema.Attribute.Required;
+    stats: Schema.Attribute.Component<'shared.stat-item', true>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiNavigationNavigation extends Struct.SingleTypeSchema {
+  collectionName: 'navigations';
+  info: {
+    description: 'Site navigation menus and shared navigation labels';
+    displayName: 'Site - Navigation';
+    pluralName: 'navigations';
+    singularName: 'navigation';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
+  attributes: {
+    button_labels: Schema.Attribute.Component<'shared.button-labels', false>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    footer_labels: Schema.Attribute.Component<'shared.footer-labels', false>;
+    footer_sections: Schema.Attribute.Component<
+      'navigation.footer-section',
+      true
+    >;
+    header_items: Schema.Attribute.Component<'navigation.nav-item', true>;
+    locale: Schema.Attribute.String;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::navigation.navigation'
+    >;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    product_names: Schema.Attribute.Component<'navigation.product-name', true>;
+    publishedAt: Schema.Attribute.DateTime;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1198,6 +1326,7 @@ export interface ApiSiteSettingSiteSetting extends Struct.SingleTypeSchema {
       'oneToMany',
       'api::site-setting.site-setting'
     >;
+    og_image: Schema.Attribute.Media<'images'>;
     phone: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
     site_description: Schema.Attribute.Text;
@@ -1905,13 +2034,16 @@ declare module '@strapi/strapi' {
       'api::brand.brand': ApiBrandBrand;
       'api::category.category': ApiCategoryCategory;
       'api::company-info.company-info': ApiCompanyInfoCompanyInfo;
+      'api::contact-floating.contact-floating': ApiContactFloatingContactFloating;
       'api::contact-page.contact-page': ApiContactPageContactPage;
       'api::cookie-category.cookie-category': ApiCookieCategoryCookieCategory;
       'api::cookie-policy.cookie-policy': ApiCookiePolicyCookiePolicy;
+      'api::cookie-setting.cookie-setting': ApiCookieSettingCookieSetting;
       'api::faq.faq': ApiFaqFaq;
       'api::footer-setting.footer-setting': ApiFooterSettingFooterSetting;
       'api::free-trial.free-trial': ApiFreeTrialFreeTrial;
       'api::global-setting.global-setting': ApiGlobalSettingGlobalSetting;
+      'api::navigation.navigation': ApiNavigationNavigation;
       'api::partner.partner': ApiPartnerPartner;
       'api::pdpa-setting.pdpa-setting': ApiPdpaSettingPdpaSetting;
       'api::privacy-policy.privacy-policy': ApiPrivacyPolicyPrivacyPolicy;

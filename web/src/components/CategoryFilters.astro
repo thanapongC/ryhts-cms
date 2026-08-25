@@ -1,0 +1,64 @@
+---
+/**
+ * CategoryFilters — Product category filter buttons.
+ *
+ * Props:
+ *   categories: Array<{ name: string; slug: string }>
+ *   activeSlug?: string — Currently active category slug
+ *   baseUrl?: string — Base URL for filter links (default: "/products")
+ */
+import type { Category } from "../lib/api";
+
+interface Props {
+  categories: Category[];
+  activeSlug?: string;
+  baseUrl?: string;
+}
+
+const { categories, activeSlug, baseUrl = "/products" } = Astro.props;
+---
+
+{categories.length > 0 && (
+  <div class="category-filters">
+    <a
+      href={baseUrl}
+      class:list={["filter-btn", { active: !activeSlug }]}
+    >
+      ทั้งหมด
+    </a>
+    {categories.map((cat) => (
+      <a
+        href={`${baseUrl}?category=${cat.slug}`}
+        class:list={["filter-btn", { active: activeSlug === cat.slug }]}
+      >
+        {cat.name}
+      </a>
+    ))}
+  </div>
+)}
+
+<style>
+  .category-filters {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 32px;
+  }
+
+  .filter-btn {
+    padding: 8px 20px;
+    border-radius: 24px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    background: var(--color-bg-light);
+    text-decoration: none;
+    transition: all var(--transition);
+  }
+
+  .filter-btn:hover,
+  .filter-btn.active {
+    background: var(--color-primary);
+    color: #fff;
+  }
+</style>
