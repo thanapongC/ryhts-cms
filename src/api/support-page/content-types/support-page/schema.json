@@ -39,9 +39,8 @@
     },
     "help_resources": {
       "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::faq.faq",
-      "mappedBy": "about_page"
+      "relation": "manyToMany",
+      "target": "api::faq.faq"
     },
     "contact_section": {
       "type": "component",
@@ -50,8 +49,7 @@
     "contact_settings": {
       "type": "relation",
       "relation": "manyToOne",
-      "target": "api::global-setting.global-setting",
-      "inversedBy": "contact_settings"
+      "target": "api::global-setting.global-setting"
     },
     "seo": {
       "type": "component",
