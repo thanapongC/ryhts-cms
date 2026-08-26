@@ -15,12 +15,12 @@
       "required": true,
       "description": "The answer content"
     },
-    "sort_order": {
+    "sortOrder": {
       "type": "integer",
       "default": 0,
       "description": "Display order (lower number appears first)"
     },
-    "is_active": {
+    "isActive": {
       "type": "boolean",
       "default": true,
       "description": "Show or hide this FAQ item"

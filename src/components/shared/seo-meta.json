@@ -5,12 +5,12 @@
     "description": "Page-level SEO metadata for search engines and social sharing"
   },
   "attributes": {
-    "meta_title": {
+    "metaTitle": {
       "type": "string",
       "maxLength": 70,
       "description": "Page title for search engines (max 70 chars)"
     },
-    "meta_description": {
+    "metaDescription": {
       "type": "text",
       "maxLength": 160,
       "description": "Page description for search engines (max 160 chars)"
@@ -19,39 +19,39 @@
       "type": "text",
       "description": "Localized keyword text (comma-separated)"
     },
-    "canonical_url": {
+    "canonicalUrl": {
       "type": "string",
       "description": "Canonical URL override (only when needed; most pages auto-generate)"
     },
-    "og_title": {
+    "ogTitle": {
       "type": "string",
       "description": "Open Graph title for social sharing"
     },
-    "og_description": {
+    "ogDescription": {
       "type": "text",
       "description": "Open Graph description for social sharing"
     },
-    "og_image": {
+    "ogImage": {
       "type": "media",
       "multiple": false,
       "allowedTypes": ["images"],
       "description": "Open Graph image for social sharing"
     },
-    "og_type": {
+    "ogType": {
       "type": "enumeration",
       "enum": ["website", "article", "product"],
       "default": "website",
       "description": "Open Graph type"
     },
-    "twitter_title": {
+    "twitterTitle": {
       "type": "string",
       "description": "Twitter Card title"
     },
-    "twitter_description": {
+    "twitterDescription": {
       "type": "text",
       "description": "Twitter Card description"
     },
-    "twitter_image": {
+    "twitterImage": {
       "type": "media",
       "multiple": false,
       "allowedTypes": ["images"],
@@ -77,24 +77,24 @@
       "default": false,
       "description": "If true, search engines will not show a snippet"
     },
-    "max_snippet": {
+    "maxSnippet": {
       "type": "integer",
       "description": "Maximum snippet length in characters (-1 for no limit)"
     },
-    "max_image_preview": {
+    "maxImagePreview": {
       "type": "enumeration",
       "enum": ["none", "standard", "large"],
       "description": "Maximum image preview size"
     },
-    "max_video_preview": {
+    "maxVideoPreview": {
       "type": "integer",
       "description": "Maximum video preview in seconds (-1 for no limit)"
     },
-    "schema_type": {
+    "schemaType": {
       "type": "string",
       "description": "Structured data type (e.g. WebPage, AboutPage, FAQPage, ProductPage, Article)"
     },
-    "alternate_languages": {
+    "alternateLanguages": {
       "type": "json",
       "description": "JSON object for exceptional hreflang overrides"
     }

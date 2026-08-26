@@ -25,7 +25,7 @@
       "type": "string",
       "description": "Short tagline or subtitle"
     },
-    "featured_image": {
+    "featuredImage": {
       "type": "media",
       "multiple": false,
       "allowedTypes": ["images"],
@@ -41,27 +41,33 @@
       "type": "richtext",
       "description": "Main page content (rich text)"
     },
-    "team_members": {
+    "teamMembers": {
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::team-member.team-member",
-      "mappedBy": "about_page"
+      "mappedBy": "aboutPage"
     },
     "partners": {
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::partner.partner",
-      "mappedBy": "about_page"
+      "mappedBy": "aboutPage"
     },
-    "timeline_milestones": {
+    "timelineMilestones": {
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::timeline-milestone.timeline-milestone",
-      "mappedBy": "about_page"
+      "mappedBy": "aboutPage"
     },
     "seo": {
       "type": "component",
-      "component": "shared.seo-meta"
+      "repeatable": false,
+      "component": "shared.seo-meta",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     }
   }
 }

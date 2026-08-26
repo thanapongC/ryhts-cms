@@ -4,7 +4,7 @@
   "info": {
     "singularName": "privacy-policy",
     "pluralName": "privacy-policies",
-    "displayName": "Page - Privacy Policy",
+    "displayName": "Page - Privacy Settings",
     "description": "Privacy policy page content - PDPA-compliant privacy disclosure"
   },
   "options": {
@@ -25,7 +25,7 @@
       "type": "text",
       "description": "Short summary of the privacy policy"
     },
-    "featured_image": {
+    "featuredImage": {
       "type": "media",
       "multiple": false,
       "allowedTypes": ["images"],
@@ -35,33 +35,33 @@
       "type": "richtext",
       "description": "Full privacy policy content (PDPA-compliant)"
     },
-    "policy_sections": {
+    "policySections": {
       "type": "component",
       "repeatable": true,
       "component": "privacy.policy-section",
       "description": "Structured policy sections with headings"
     },
-    "effective_date": {
+    "effectiveDate": {
       "type": "date",
       "description": "Date the privacy policy took effect"
     },
-    "last_updated": {
+    "lastUpdated": {
       "type": "date",
       "description": "When the privacy policy was last updated"
     },
-    "applies_to_products": {
+    "appliesToProducts": {
       "type": "relation",
       "relation": "manyToMany",
       "target": "api::product.product",
-      "inversedBy": "privacy_applied_in"
+      "inversedBy": "privacyAppliedIn"
     },
-    "related_links": {
+    "relatedLinks": {
       "type": "component",
       "repeatable": true,
       "component": "privacy.related-link",
       "description": "Related links (e.g. product-specific policies)"
     },
-    "contact_info": {
+    "contactInfo": {
       "type": "component",
       "repeatable": true,
       "component": "shared.contact-info",
@@ -69,7 +69,13 @@
     },
     "seo": {
       "type": "component",
-      "component": "shared.seo-meta"
+      "repeatable": false,
+      "component": "shared.seo-meta",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     }
   }
 }

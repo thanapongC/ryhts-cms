@@ -21,7 +21,7 @@
       "required": true,
       "description": "Milestone title"
     },
-    "milestone_date": {
+    "milestoneDate": {
       "type": "date",
       "description": "Date of the milestone"
     },
@@ -35,18 +35,18 @@
       "allowedTypes": ["images"],
       "description": "Optional image for this milestone"
     },
-    "about_page": {
+    "aboutPage": {
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::about-page.about-page",
-      "inversedBy": "timeline_milestones"
+      "inversedBy": "timelineMilestones"
     },
-    "sort_order": {
+    "sortOrder": {
       "type": "integer",
       "default": 0,
       "description": "Display order (lower number appears first)"
     },
-    "is_active": {
+    "isActive": {
       "type": "boolean",
       "default": true,
       "description": "Show or hide this milestone on frontend"

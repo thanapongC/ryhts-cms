@@ -10,7 +10,7 @@
       "required": true,
       "description": "Link text (e.g. Products, About Us)"
     },
-    "product_page": {
+    "productPage": {
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::product.product",
@@ -26,12 +26,12 @@
       "default": "_self",
       "description": "Link target (_self or _blank)"
     },
-    "sort_order": {
+    "sortOrder": {
       "type": "integer",
       "default": 0,
       "description": "Display order (lower number appears first)"
     },
-    "is_active": {
+    "isActive": {
       "type": "boolean",
       "default": true,
       "description": "Show or hide this link"

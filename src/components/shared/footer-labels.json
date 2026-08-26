@@ -5,29 +5,34 @@
     "description": "Shared footer heading and link labels"
   },
   "attributes": {
-    "contact_heading": {
+    "contactHeading": {
       "type": "string",
       "description": "Contact section heading in footer"
     },
-    "links_heading": {
+    "linksHeading": {
       "type": "string",
       "description": "Links section heading in footer"
     },
-    "about_heading": {
+    "aboutHeading": {
       "type": "string",
       "description": "About section heading in footer"
     },
-    "newsletter_heading": {
+    "newsletterHeading": {
       "type": "string",
       "description": "Newsletter section heading"
     },
-    "newsletter_placeholder": {
+    "newsletterPlaceholder": {
       "type": "string",
       "description": "Newsletter email input placeholder"
     },
-    "newsletter_button": {
+    "newsletterButton": {
       "type": "string",
       "description": "Newsletter subscribe button text"
+    },
+    "isActive": {
+      "type": "boolean",
+      "default": true,
+      "description": "Show or hide these footer labels"
     }
   }
 }

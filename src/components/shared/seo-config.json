@@ -5,55 +5,60 @@
     "description": "Site-wide SEO defaults, social profiles, and analytics (used only in Global Setting)"
   },
   "attributes": {
-    "site_url": {
+    "siteUrl": {
       "type": "string",
       "description": "Canonical site URL (e.g. https://ryhts.com)"
     },
-    "site_name": {
+    "siteName": {
       "type": "string",
       "description": "Site name for structured data and OG"
     },
-    "default_title": {
+    "defaultTitle": {
       "type": "string",
       "description": "Default meta title when pages do not provide one"
     },
-    "default_description": {
+    "defaultDescription": {
       "type": "text",
       "description": "Default meta description when pages do not provide one"
     },
-    "default_og_image": {
+    "defaultOgImage": {
       "type": "media",
       "multiple": false,
       "allowedTypes": ["images"],
       "description": "Fallback OG image when pages do not provide one"
     },
-    "brand_name": {
+    "brandName": {
       "type": "string",
       "description": "Brand name for structured data"
     },
-    "facebook_url": {
+    "facebookUrl": {
       "type": "string",
       "description": "Facebook profile URL"
     },
-    "line_url": {
+    "lineUrl": {
       "type": "string",
       "description": "LINE Official Account URL"
     },
-    "twitter_url": {
+    "twitterUrl": {
       "type": "string",
       "description": "Twitter profile URL"
     },
-    "google_analytics_id": {
+    "googleAnalyticsId": {
       "type": "string",
       "description": "Google Analytics measurement ID"
     },
-    "facebook_pixel_id": {
+    "facebookPixelId": {
       "type": "string",
       "description": "Facebook Pixel ID"
     },
-    "twitter_handle": {
+    "twitterHandle": {
       "type": "string",
       "description": "Twitter handle for cards"
+    },
+    "isActive": {
+      "type": "boolean",
+      "default": true,
+      "description": "Enable or disable this SEO config"
     }
   }
 }

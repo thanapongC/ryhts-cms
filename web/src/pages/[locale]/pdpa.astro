@@ -15,9 +15,9 @@ const siteUrl = Astro.url.origin;
 ---
 
 <BaseLayout
-  title={seo?.meta_title || pdpa?.company_name || "PDPA"}
-  description={seo?.meta_description || "PDPA compliance policy"}
-  ogImage={getStrapiAbsoluteImageUrl(seo?.og_image) || undefined}
+  title={seo?.metaTitle || pdpa?.companyName || "PDPA"}
+  description={seo?.metaDescription || "PDPA compliance policy"}
+  ogImage={getStrapiAbsoluteImageUrl(seo?.ogImage) || undefined}
   robots={seo?.robots}
   locale={lang}
   hreflangs={[
@@ -27,7 +27,7 @@ const siteUrl = Astro.url.origin;
   ]}
 >
   <div class="page-header">
-    <div class="container"><h1>{pdpa?.company_name || "PDPA"}</h1></div>
+    <div class="container"><h1>{pdpa?.companyName || "PDPA"}</h1></div>
   </div>
 
   <section class="section">
@@ -35,9 +35,9 @@ const siteUrl = Astro.url.origin;
       <div class="breadcrumb"><a href={`/${lang}/`}>Home</a><span>/</span><span>PDPA</span></div>
       {pdpaResult.isOffline && <OfflineNotice title="部分内容不可用" message="PDPA content may be unavailable." />}
       <div class="policy-content">
-        {pdpa?.rights_text && <div class="policy-section"><h2>สิทธิของท่าน</h2><div class="rich-text" set:html={pdpa.rights_text} /></div>}
-        {pdpa?.third_parties_text && <div class="policy-section"><h2>การเปิดเผยข้อมูล</h2><div class="rich-text" set:html={pdpa.third_parties_text} /></div>}
-        {pdpa?.dpo_name && <div class="dpo-info"><h2>ติดต่อ DPO</h2><p>{pdpa.dpo_name} ({pdpa.dpo_position})</p>{pdpa.dpo_email && <p>Email: {pdpa.dpo_email}</p>}</div>}
+        {pdpa?.rightsText && <div class="policy-section"><h2>สิทธิของท่าน</h2><div class="rich-text" set:html={pdpa.rightsText} /></div>}
+        {pdpa?.thirdPartiesText && <div class="policy-section"><h2>การเปิดเผยข้อมูล</h2><div class="rich-text" set:html={pdpa.thirdPartiesText} /></div>}
+        {pdpa?.dpoName && <div class="dpo-info"><h2>ติดต่อ DPO</h2><p>{pdpa.dpoName} ({pdpa.dpoPosition})</p>{pdpa.dpoEmail && <p>Email: {pdpa.dpoEmail}</p>}</div>}
       </div>
     </div>
   </section>

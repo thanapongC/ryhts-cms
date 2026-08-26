@@ -14,7 +14,7 @@
       "type": "string",
       "description": "Link URL (manual fallback)"
     },
-    "product_page": {
+    "productPage": {
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::product.product",
@@ -25,6 +25,16 @@
       "enum": ["_self", "_blank"],
       "default": "_self",
       "description": "Link target (_self or _blank)"
+    },
+    "sortOrder": {
+      "type": "integer",
+      "default": 0,
+      "description": "Display order (lower number appears first)"
+    },
+    "isActive": {
+      "type": "boolean",
+      "default": true,
+      "description": "Show or hide this child item"
     }
   }
 }

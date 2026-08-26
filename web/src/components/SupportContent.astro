@@ -21,12 +21,12 @@ interface Props {
 const { lang, page } = Astro.props;
 
 // Section data with fallbacks (integate-rule.md §7)
-const hero = page?.hero_section;
-const statusCard = page?.status_card;
-const faqSection = page?.faq_section;
-const helpCenter = page?.help_center_section;
-const contactSection = page?.contact_section;
-const contactSettings = page?.contact_settings;
+const hero = page?.heroSection;
+const statusCard = page?.statusCard;
+const faqSection = page?.faqSection;
+const helpCenter = page?.helpCenterSection;
+const contactSection = page?.contactSection;
+const contactSettings = page?.contactSettings;
 
 const faqs = filterAndSort(page?.faqs);
 const helpResources = filterAndSort(page?.help_resources);
@@ -37,9 +37,9 @@ const fallbackHero = {
   subtitle: lang === "en"
     ? "Find answers to common questions or reach out to our support team"
     : "ค้นหาคำตอบสำหรับคำถามที่พบบ่อย หรือติดต่อทีมสนับสนุนของเรา",
-  faq_cta_label: lang === "en" ? "Browse FAQ" : "ดูคำถามที่พบบ่อย",
-  manual_cta_label: lang === "en" ? "Read Manuals" : "อ่านคู่มือ",
-  contact_cta_label: lang === "en" ? "Contact Support" : "ติดต่อฝ่ายสนับสนุน",
+  faqCtaLabel: lang === "en" ? "Browse FAQ" : "ดูคำถามที่พบบ่อย",
+  manualCtaLabel: lang === "en" ? "Read Manuals" : "อ่านคู่มือ",
+  contactCtaLabel: lang === "en" ? "Contact Support" : "ติดต่อฝ่ายสนับสนุน",
 };
 
 const fallbackFaqSection = {
@@ -48,8 +48,8 @@ const fallbackFaqSection = {
   subtitle: lang === "en"
     ? "Quick answers to the most common questions"
     : "คำตอบรวดเร็วสำหรับคำถามที่พบบ่อยที่สุด",
-  empty_prompt: lang === "en" ? "No FAQs available yet." : "ยังไม่มีคำถามที่พบบ่อย",
-  contact_cta_label: lang === "en" ? "Ask a Question" : "ถามคำถาม",
+  emptyPrompt: lang === "en" ? "No FAQs available yet." : "ยังไม่มีคำถามที่พบบ่อย",
+  contactCtaLabel: lang === "en" ? "Ask a Question" : "ถามคำถาม",
 };
 
 const fallbackHelpCenter = {
@@ -63,10 +63,10 @@ const fallbackHelpCenter = {
 const fallbackContactSection = {
   badge: lang === "en" ? "Contact" : "ติดต่อ",
   title: lang === "en" ? "Get in Touch" : "ติดต่อเรา",
-  address_label: lang === "en" ? "Address" : "ที่อยู่",
-  business_hours_label: lang === "en" ? "Business Hours" : "เวลาทำการ",
-  phone_label: lang === "en" ? "Phone" : "โทรศัพท์",
-  email_label: lang === "en" ? "Email" : "อีเมล",
+  addressLabel: lang === "en" ? "Address" : "ที่อยู่",
+  businessHoursLabel: lang === "en" ? "Business Hours" : "เวลาทำการ",
+  phoneLabel: lang === "en" ? "Phone" : "โทรศัพท์",
+  emailLabel: lang === "en" ? "Email" : "อีเมล",
 };
 
 const displayHero = hero || fallbackHero;
@@ -109,10 +109,10 @@ const quickHelpLinks = [
           {statusCard.kicker && <span class="sup-status-kicker">{statusCard.kicker}</span>}
           {statusCard.title && <h3>{statusCard.title}</h3>}
           {statusCard.hours && <p class="sup-status-hours"><i class="fas fa-clock"></i> {statusCard.hours}</p>}
-          {statusCard.status_label && (
+          {statusCard.statusLabel && (
             <div class="sup-status-badge">
               <span class="sup-status-dot"></span>
-              {statusCard.status_label}
+              {statusCard.statusLabel}
             </div>
           )}
         </div>
@@ -154,7 +154,7 @@ const quickHelpLinks = [
             </summary>
             <div class="sup-faq-answer">
               {faq.items && faq.items.length > 0 ? (
-                faq.items.filter(item => item.is_active !== false).sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0)).map((item) => (
+                faq.items.filter(item => item.isActive !== false).sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0)).map((item) => (
                   <div class="sup-faq-qa">
                     <strong>{item.question}</strong>
                     <div class="rich-text" set:html={item.answer} />
@@ -196,7 +196,7 @@ const quickHelpLinks = [
             {resource.description && <p>{resource.description}</p>}
             {resource.items && resource.items.length > 0 && (
               <ul class="sup-help-items">
-                {resource.items.filter(item => item.is_active !== false).slice(0, 5).map((item) => (
+                {resource.items.filter(item => item.isActive !== false).slice(0, 5).map((item) => (
                   <li>{item.question}</li>
                 ))}
               </ul>
@@ -217,8 +217,8 @@ const quickHelpLinks = [
     </div>
 
     <div class="sup-contact-grid">
-      {contactSettings?.contact_info && contactSettings.contact_info.length > 0 ? (
-        contactSettings.contact_info.map((item) => (
+      {contactSettings?.contactInfo && contactSettings.contactInfo.length > 0 ? (
+        contactSettings.contactInfo.map((item) => (
           <div class="sup-contact-item">
             {item.icon && <div class="sup-contact-icon"><i class={`fas fa-${item.icon}`}></i></div>}
             <div>

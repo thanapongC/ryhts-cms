@@ -25,16 +25,16 @@ const fallbackSubtitle = lang === "en"
 
 const title = page?.title || fallbackTitle;
 const subtitle = page?.subtitle || fallbackSubtitle;
-const featuredImage = page?.featured_image ? getStrapiAbsoluteImageUrl(page.featured_image) : "";
+const featuredImage = page?.featuredImage ? getStrapiAbsoluteImageUrl(page.featuredImage) : "";
 
-const trustItems = filterAndSort(page?.trust_items);
-const trialFeatures = filterAndSort(page?.trial_features);
+const trustItems = filterAndSort(page?.trustItems);
+const trialFeatures = filterAndSort(page?.trialFeatures);
 const testimonials = page?.testimonials
-  ?.filter((t) => t.is_active !== false)
-  ?.sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0)) || [];
+  ?.filter((t) => t.isActive !== false)
+  ?.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0)) || [];
 
 // Build form labels with fallbacks
-const labels = page?.form_labels?.[0] || {} as any;
+const labels = page?.formLabels?.[0] || {} as any;
 const formLabelMap = {
   fullName: labels.full_name_label || (lang === "en" ? "Full Name" : "ชื่อ-นามสกุล"),
   fullNamePlaceholder: labels.full_name_placeholder || (lang === "en" ? "Enter your full name" : "กรอกชื่อ-นามสกุล"),
@@ -75,7 +75,7 @@ const displayTrustItems = trustItems.length > 0 ? trustItems : fallbackTrustItem
   <div class="container">
     <div class="ft-hero-content">
       <div class="ft-hero-text">
-        {page?.trust_items && trustItems.length > 0 && (
+        {page?.trustItems && trustItems.length > 0 && (
           <div class="ft-trust-bar">
             {trustItems.map((item) => (
               <span class="ft-trust-badge">

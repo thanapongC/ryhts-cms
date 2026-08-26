@@ -16,37 +16,36 @@
  *   siteName: string
  *   siteDescription: string
  */
-import { getStrapiMedia, getLinkUrl, normalizeInternalUrl, filterAndSort, type FooterSetting, type SiteSetting } from "../lib/api";
+import { getStrapiMedia, getLinkUrl, normalizeInternalUrl, filterAndSort, type FooterSetting } from "../lib/api";
 
 interface Props {
   locale: string;
   footerSetting: FooterSetting | null;
-  siteSetting: SiteSetting | null;
   logoUrl: string;
   siteName: string;
   siteDescription: string;
 }
 
-const { locale, footerSetting, siteSetting, logoUrl, siteName, siteDescription } = Astro.props;
+const { locale, footerSetting, logoUrl, siteName, siteDescription } = Astro.props;
 const t = { home: `/${locale}/` };
 
 // Process CMS data with fallbacks (integate-rule.md §7)
 const stats = filterAndSort(footerSetting?.stats);
-const footerSections = filterAndSort(footerSetting?.footer_sections);
-const legalLinks = filterAndSort(footerSetting?.legal_links);
-const socialLinks = footerSetting?.social_links || {};
+const footerSections = filterAndSort(footerSetting?.footerSections);
+const legalLinks = filterAndSort(footerSetting?.legalLinks);
+const socialLinks = footerSetting?.socialLinks || {};
 const copyrightText = footerSetting?.copyright || `© ${new Date().getFullYear()} ${siteName}. All rights reserved.`;
 
 // CTA section
-const ctaBadge = footerSetting?.cta_badge || "";
-const ctaTitle = footerSetting?.cta_title || (locale === "en" ? "Ready to Get Started?" : "พร้อมเริ่มต้นหรือยัง?");
-const ctaDescription = footerSetting?.cta_description || (locale === "en"
+const ctaBadge = footerSetting?.ctaBadge || "";
+const ctaTitle = footerSetting?.ctaTitle || (locale === "en" ? "Ready to Get Started?" : "พร้อมเริ่มต้นหรือยัง?");
+const ctaDescription = footerSetting?.ctaDescription || (locale === "en"
   ? "Contact our sales team for a custom quote"
   : "ติดต่อทีมขายเพื่อขอใบเสนอราคา");
-const primaryCtaLabel = footerSetting?.primary_cta_label || (locale === "en" ? "Contact Sales" : "ติดต่อฝ่ายขาย");
-const primaryCtaUrl = normalizeInternalUrl(footerSetting?.primary_cta_url, t.home) || `${locale === "en" ? "/en" : ""}/contact`;
-const secondaryCtaLabel = footerSetting?.secondary_cta_label || (locale === "en" ? "View Products" : "ดูสินค้า");
-const secondaryCtaUrl = normalizeInternalUrl(footerSetting?.secondary_cta_url, t.home) || `${locale === "en" ? "/en" : ""}/products`;
+const primaryCtaLabel = footerSetting?.primaryCtaLabel || (locale === "en" ? "Contact Sales" : "ติดต่อฝ่ายขาย");
+const primaryCtaUrl = normalizeInternalUrl(footerSetting?.primaryCtaUrl, t.home) || `${locale === "en" ? "/en" : ""}/contact`;
+const secondaryCtaLabel = footerSetting?.secondaryCtaLabel || (locale === "en" ? "View Products" : "ดูสินค้า");
+const secondaryCtaUrl = normalizeInternalUrl(footerSetting?.secondaryCtaUrl, t.home) || `${locale === "en" ? "/en" : ""}/products`;
 
 // Fallback nav links
 const fallbackNavLinks = [
@@ -108,15 +107,10 @@ const fallbackLegalLinks = [
         <h4>{siteName}</h4>
         <div class="footer-about">
           {logoUrl && <img src={logoUrl} alt={siteName} class="footer-logo" height="50" />}
-          <p>{footerSetting?.company_description || siteDescription}</p>
+          <p>{footerSetting?.companyDescription || siteDescription}</p>
         </div>
         <div class="footer-contact">
-          {siteSetting?.phone && (
-            <p><a href={`tel:${siteSetting.phone}`}><i class="fas fa-phone"></i> {siteSetting.phone}</a></p>
-          )}
-          {siteSetting?.email && (
-            <p><a href={`mailto:${siteSetting.email}`}><i class="fas fa-envelope"></i> {siteSetting.email}</a></p>
-          )}
+          
         </div>
       </div>
 
@@ -127,8 +121,8 @@ const fallbackLegalLinks = [
             <h4>{section.title}</h4>
             <ul class="footer-links">
               {section.links
-                ?.filter((link) => link.is_active !== false)
-                ?.sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0))
+                ?.filter((link) => link.isActive !== false)
+                ?.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0))
                 .map((link) => (
                   <li>
                     <a

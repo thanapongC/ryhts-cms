@@ -1,35 +1,30 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { safeGetContactPage, safeGetCompanyInfo, safeGetSiteSetting, getStrapiAbsoluteImageUrl } from "../../lib/api";
+import { safeGetContactPage, getStrapiAbsoluteImageUrl } from "../../lib/api";
 import { isValidLocale, DEFAULT_LOCALE, type Locale } from "../../lib/i18n";
 import OfflineNotice from "../../components/OfflineNotice.astro";
 import PageHeader from "../../components/PageHeader.astro";
 import Breadcrumb from "../../components/Breadcrumb.astro";
-import ContactInfo from "../../components/ContactInfo.astro";
 import ContactForm from "../../components/ContactForm.astro";
 
 const lang = (Astro.params.locale as Locale) || DEFAULT_LOCALE;
 if (!isValidLocale(lang)) return Astro.redirect(`/${DEFAULT_LOCALE}/contact`);
 
 const pageResult = await safeGetContactPage(lang);
-const companyResult = await safeGetCompanyInfo(lang);
-const siteResult = await safeGetSiteSetting(lang);
 
 const page = pageResult.data;
-const companyInfo = companyResult.data;
-const siteSetting = siteResult.data;
 
 const contactTitle = page?.title || "ติดต่อเรา";
 const seo = page?.seo;
-const isOffline = pageResult.isOffline || companyResult.isOffline || siteResult.isOffline;
+const isOffline = pageResult.isOffline;
 
 const siteUrl = Astro.url.origin;
 ---
 
 <BaseLayout
-  title={seo?.meta_title || "Contact Us"}
-  description={seo?.meta_description || "ติดต่อ Ryhts Ribbon"}
-  ogImage={getStrapiAbsoluteImageUrl(seo?.og_image) || undefined}
+  title={seo?.metaTitle || "Contact Us"}
+  description={seo?.metaDescription || "ติดต่อ Ryhts Ribbon"}
+  ogImage={getStrapiAbsoluteImageUrl(seo?.ogImage) || undefined}
   robots={seo?.robots}
   keywords={seo?.keywords?.split(",").map(k => k.trim()) || []}
   locale={lang}
@@ -42,10 +37,10 @@ const siteUrl = Astro.url.origin;
     "@context": "https://schema.org",
     "@type": "ContactPage",
     name: contactTitle,
-    description: seo?.meta_description || "",
+    description: seo?.metaDescription || "",
   }}
 >
-  <PageHeader title={contactTitle} description={seo?.meta_description} />
+  <PageHeader title={contactTitle} description={seo?.metaDescription} />
 
   <section class="section">
     <div class="container">
@@ -56,21 +51,12 @@ const siteUrl = Astro.url.origin;
       )}
 
       <div class="contact-grid">
-        {companyInfo && <ContactInfo companyInfo={companyInfo} siteSetting={siteSetting} />}
         <ContactForm />
       </div>
-
-      {companyInfo?.map_link && (
-        <div class="contact-map">
-          <iframe src={companyInfo.map_link} width="100%" height="400" style="border:0; border-radius: var(--radius-lg);" allowfullscreen loading="lazy"></iframe>
-        </div>
-      )}
     </div>
   </section>
 </BaseLayout>
 
 <style>
-  .contact-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 48px; margin-bottom: 48px; }
-  .contact-map { margin-top: 24px; }
-  @media (max-width: 768px) { .contact-grid { grid-template-columns: 1fr; } }
+  .contact-grid { display: grid; grid-template-columns: 1fr; gap: 48px; margin-bottom: 48px; }
 </style>

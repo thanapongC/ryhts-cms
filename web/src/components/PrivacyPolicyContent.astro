@@ -20,10 +20,10 @@ const { lang, policy } = Astro.props;
 
 const t = { home: `/${lang}/` };
 const seo = policy?.seo;
-const policySections = filterAndSort(policy?.policy_sections);
-const relatedLinks = filterAndSort(policy?.related_links);
-const appliesToProducts = policy?.applies_to_products || [];
-const contactInfo = policy?.contact_info || [];
+const policySections = filterAndSort(policy?.policySections);
+const relatedLinks = filterAndSort(policy?.relatedLinks);
+const appliesToProducts = policy?.appliesToProducts || [];
+const contactInfo = policy?.contactInfo || [];
 
 function formatDate(dateStr: string): string {
   if (!dateStr) return "";
@@ -42,16 +42,16 @@ function getProductUrl(product: { slug?: string }): string {
 
 <div class="pp-hero">
   <div class="container">
-    {policy?.featured_image && (
-      <img src={getStrapiAbsoluteImageUrl(policy.featured_image)} alt={policy?.title || ""} class="pp-hero-image" />
+    {policy?.featuredImage && (
+      <img src={getStrapiAbsoluteImageUrl(policy.featuredImage)} alt={policy?.title || ""} class="pp-hero-image" />
     )}
     <h1>{policy?.title || (lang === "en" ? "Privacy Policy" : "นโยบายความเป็นส่วนตัว")}</h1>
     <div class="pp-dates">
-      {policy?.effective_date && (
-        <span>{lang === "en" ? "Effective" : "มีผลบังคับใช้"}: {formatDate(policy.effective_date)}</span>
+      {policy?.effectiveDate && (
+        <span>{lang === "en" ? "Effective" : "มีผลบังคับใช้"}: {formatDate(policy.effectiveDate)}</span>
       )}
-      {policy?.last_updated && (
-        <span>{lang === "en" ? "Last updated" : "อัปเดตล่าสุด"}: {formatDate(policy.last_updated)}</span>
+      {policy?.lastUpdated && (
+        <span>{lang === "en" ? "Last updated" : "อัปเดตล่าสุด"}: {formatDate(policy.lastUpdated)}</span>
       )}
     </div>
   </div>

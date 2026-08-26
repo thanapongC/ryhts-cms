@@ -5,9 +5,26 @@
     "description": "Selectable request type option for the Privacy Request form"
   },
   "attributes": {
-    "value": { "type": "enumeration", "enum": ["access", "correction", "deletion", "restriction", "objection", "withdrawal"], "required": true },
-    "label": { "type": "string", "localized": true },
-    "isActive": { "type": "boolean", "default": true },
-    "sortOrder": { "type": "integer", "default": 0 }
+    "value": {
+      "type": "enumeration",
+      "enum": ["access", "correction", "deletion", "restriction", "objection", "withdrawal"],
+      "required": true,
+      "description": "Request type value identifier"
+    },
+    "label": {
+      "type": "string",
+      "localized": true,
+      "description": "Display label for this request type"
+    },
+    "isActive": {
+      "type": "boolean",
+      "default": true,
+      "description": "Show or hide this option"
+    },
+    "sortOrder": {
+      "type": "integer",
+      "default": 0,
+      "description": "Display order (lower number appears first)"
+    }
   }
 }

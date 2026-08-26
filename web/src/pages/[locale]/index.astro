@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { safeGetFeaturedProducts, safeGetCompanyInfo, safeGetGlobalSetting, getStrapiAbsoluteImageUrl } from "../../lib/api";
+import { safeGetFeaturedProducts, safeGetGlobalSetting, getStrapiAbsoluteImageUrl } from "../../lib/api";
 import OfflineNotice from "../../components/OfflineNotice.astro";
 import SkeletonCard from "../../components/SkeletonCard.astro";
 import ProductCard from "../../components/ProductCard.astro";
@@ -13,11 +13,9 @@ const lang = (Astro.params.locale as Locale) || DEFAULT_LOCALE;
 if (!isValidLocale(lang)) return Astro.redirect(`/${DEFAULT_LOCALE}/`);
 
 const productsResult = await safeGetFeaturedProducts(lang);
-const companyResult = await safeGetCompanyInfo(lang);
 const globalResult = await safeGetGlobalSetting(lang);
 
 const products = productsResult.data;
-const companyInfo = companyResult.data;
 const globalSetting = globalResult.data;
 const isOffline = productsResult.isOffline;
 
@@ -25,9 +23,9 @@ const seoConfig = globalSetting?.seoConfig;
 ---
 
 <BaseLayout
-  title={seoConfig?.default_title || "RYHTS - Ryhts Ribbon"}
-  description={seoConfig?.default_description || "Premier Ribbons for Premier Printing"}
-  ogImage={getStrapiAbsoluteImageUrl(seoConfig?.default_og_image) || undefined}
+  title={seoConfig?.defaultTitle || "RYHTS - Ryhts Ribbon"}
+  description={seoConfig?.defaultDescription || "Premier Ribbons for Premier Printing"}
+  ogImage={getStrapiAbsoluteImageUrl(seoConfig?.defaultOgImage) || undefined}
   keywords={[]}
   locale={lang}
   jsonLd={{
@@ -46,7 +44,7 @@ const seoConfig = globalSetting?.seoConfig;
     },
   }}
 >
-  <HeroSection customerCount={companyInfo?.customer_count || 100} />
+  <HeroSection />
 
   <section class="section">
     <div class="container">

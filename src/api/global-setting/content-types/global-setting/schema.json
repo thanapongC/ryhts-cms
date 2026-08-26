@@ -16,18 +16,18 @@
     }
   },
   "attributes": {
-    "site_name": {
+    "siteName": {
       "type": "string",
       "required": true,
       "description": "Localized site name"
     },
-    "site_logo": {
+    "siteLogo": {
       "type": "media",
       "multiple": false,
       "allowedTypes": ["images"],
       "description": "Site logo image"
     },
-    "contact_info": {
+    "contactInfo": {
       "type": "component",
       "repeatable": true,
       "component": "shared.contact-info",

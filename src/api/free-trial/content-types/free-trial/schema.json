@@ -25,13 +25,13 @@
       "type": "string",
       "description": "Short tagline or subtitle"
     },
-    "featured_image": {
+    "featuredImage": {
       "type": "media",
       "multiple": false,
       "allowedTypes": ["images"],
       "description": "Hero or featured image"
     },
-    "trust_items": {
+    "trustItems": {
       "type": "component",
       "repeatable": true,
       "component": "free-trial.trust-item",
@@ -41,13 +41,13 @@
       "type": "richtext",
       "description": "Main page content (rich text)"
     },
-    "trial_features": {
+    "trialFeatures": {
       "type": "component",
       "repeatable": true,
       "component": "free-trial.trial-feature",
       "description": "Feature highlights for the trial"
     },
-    "form_labels": {
+    "formLabels": {
       "type": "component",
       "repeatable": true,
       "component": "free-trial.form-labels",
@@ -60,7 +60,13 @@
     },
     "seo": {
       "type": "component",
-      "component": "shared.seo-meta"
+      "repeatable": false,
+      "component": "shared.seo-meta",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     }
   }
 }

@@ -17,7 +17,7 @@ const article = articleResult.data;
 
 if (!article) return Astro.redirect(`/${lang}/articles`);
 
-const featuredImage = getStrapiMedia(article.featured_image?.url);
+const featuredImage = getStrapiMedia(article.featuredImage?.url);
 const seo = article.seo;
 const categoryName = typeof article.category === 'string' ? article.category : article.category?.name || "";
 
@@ -34,9 +34,9 @@ const siteUrl = Astro.url.origin;
 ---
 
 <BaseLayout
-  title={seo?.meta_title || article.title}
-  description={seo?.meta_description || article.excerpt}
-  ogImage={getStrapiAbsoluteImageUrl(seo?.og_image) || dynamicOgImage}
+  title={seo?.metaTitle || article.title}
+  description={seo?.metaDescription || article.excerpt}
+  ogImage={getStrapiAbsoluteImageUrl(seo?.ogImage) || dynamicOgImage}
   robots={seo?.robots}
   keywords={seo?.keywords?.split(",").map(k => k.trim()) || []}
   locale={lang}

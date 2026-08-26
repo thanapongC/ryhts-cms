@@ -5,9 +5,32 @@
     "description": "A single section with title, content, and optional image for product pages"
   },
   "attributes": {
-    "title": { "type": "string", "required": true, "localized": true },
-    "content": { "type": "blocks", "localized": true },
-    "image": { "type": "media", "multiple": false, "allowedTypes": ["images"] },
-    "sortOrder": { "type": "integer", "default": 0 }
+    "title": {
+      "type": "string",
+      "required": true,
+      "localized": true,
+      "description": "Section heading text"
+    },
+    "content": {
+      "type": "blocks",
+      "localized": true,
+      "description": "Section content in rich text blocks"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"],
+      "description": "Optional image for this section"
+    },
+    "sortOrder": {
+      "type": "integer",
+      "default": 0,
+      "description": "Display order (lower number appears first)"
+    },
+    "isActive": {
+      "type": "boolean",
+      "default": true,
+      "description": "Show or hide this section"
+    }
   }
 }

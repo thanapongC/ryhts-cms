@@ -21,31 +21,31 @@
       "required": true,
       "description": "Navigation menu name"
     },
-    "header_items": {
+    "headerItems": {
       "type": "component",
       "repeatable": true,
       "component": "navigation.nav-item",
       "description": "Header navigation menu items"
     },
-    "footer_sections": {
+    "footerSections": {
       "type": "component",
       "repeatable": true,
       "component": "navigation.footer-section",
       "description": "Footer navigation sections"
     },
-    "footer_labels": {
+    "footerLabels": {
       "type": "component",
       "repeatable": false,
       "component": "shared.footer-labels",
       "description": "Footer heading and link labels"
     },
-    "product_names": {
+    "productNames": {
       "type": "component",
       "repeatable": true,
       "component": "navigation.product-name",
       "description": "Product name mappings for navigation display"
     },
-    "button_labels": {
+    "buttonLabels": {
       "type": "component",
       "repeatable": false,
       "component": "shared.button-labels",

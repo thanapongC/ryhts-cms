@@ -19,12 +19,12 @@
       "type": "string",
       "description": "Font Awesome icon class (e.g. fa-users, fa-box)"
     },
-    "sort_order": {
+    "sortOrder": {
       "type": "integer",
       "default": 0,
       "description": "Display order (lower number appears first)"
     },
-    "is_active": {
+    "isActive": {
       "type": "boolean",
       "default": true,
       "description": "Show or hide this stat item"

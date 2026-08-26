@@ -26,13 +26,13 @@ const imageUrl = getStrapiMedia(product.images?.[0]?.url);
   )}
   <div class="product-card-body">
     <div class="product-card-meta">
-      <span class={`badge ${RIBBON_TYPE_BADGE_CLASS[product.ribbon_type] || "badge-primary"}`}>
-        {RIBBON_TYPE_LABELS[product.ribbon_type] || product.ribbon_type}
+      <span class={`badge ${RIBBON_TYPE_BADGE_CLASS[product.ribbonType] || "badge-primary"}`}>
+        {RIBBON_TYPE_LABELS[product.ribbonType] || product.ribbonType}
       </span>
       {product.brand && <span class="product-brand">{product.brand.name}</span>}
     </div>
     <h3>{product.title}</h3>
-    <p class="product-excerpt">{product.short_description}</p>
+    <p class="product-excerpt">{product.shortDescription}</p>
     <span class="product-link">อ่านรายละเอียด →</span>
   </div>
 </a>

@@ -25,7 +25,7 @@
       "type": "text",
       "description": "Short summary of the cookie policy"
     },
-    "featured_image": {
+    "featuredImage": {
       "type": "media",
       "multiple": false,
       "allowedTypes": ["images"],
@@ -35,13 +35,19 @@
       "type": "richtext",
       "description": "Full cookie policy content"
     },
-    "last_updated": {
+    "lastUpdated": {
       "type": "date",
       "description": "When the cookie policy was last updated"
     },
     "seo": {
       "type": "component",
-      "component": "shared.seo-meta"
+      "repeatable": false,
+      "component": "shared.seo-meta",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     }
   }
 }

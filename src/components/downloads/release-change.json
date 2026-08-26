@@ -5,7 +5,21 @@
     "description": "A single change item in a release notes entry"
   },
   "attributes": {
-    "text": { "type": "string", "required": true, "localized": true },
-    "sortOrder": { "type": "integer", "default": 0 }
+    "text": {
+      "type": "string",
+      "required": true,
+      "localized": true,
+      "description": "Change description text"
+    },
+    "sortOrder": {
+      "type": "integer",
+      "default": 0,
+      "description": "Display order (lower number appears first)"
+    },
+    "isActive": {
+      "type": "boolean",
+      "default": true,
+      "description": "Show or hide this change item"
+    }
   }
 }

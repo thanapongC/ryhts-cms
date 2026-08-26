@@ -23,19 +23,19 @@ const seo = product.seo;
 const dynamicOgImage = getOgImageUrl({
   baseUrl: Astro.url.origin,
   title: product.title,
-  subtitle: product.short_description || product.brand?.name || "",
+  subtitle: product.shortDescription || product.brand?.name || "",
   type: "product",
   brand: product.brand?.name || "Ryhts Ribbon",
-  category: RIBBON_TYPE_LABELS[product.ribbon_type] || product.ribbon_type,
+  category: RIBBON_TYPE_LABELS[product.ribbonType] || product.ribbonType,
 });
 
 const siteUrl = Astro.url.origin;
 ---
 
 <BaseLayout
-  title={seo?.meta_title || product.title}
-  description={seo?.meta_description || product.short_description}
-  ogImage={getStrapiAbsoluteImageUrl(seo?.og_image) || dynamicOgImage}
+  title={seo?.metaTitle || product.title}
+  description={seo?.metaDescription || product.shortDescription}
+  ogImage={getStrapiAbsoluteImageUrl(seo?.ogImage) || dynamicOgImage}
   robots={seo?.robots}
   keywords={seo?.keywords?.split(",").map(k => k.trim()) || []}
   locale={lang}
@@ -50,12 +50,12 @@ const siteUrl = Astro.url.origin;
     "@context": "https://schema.org",
     "@type": "Product",
     name: product.title,
-    description: product.short_description,
+    description: product.shortDescription,
     image: mainImage || undefined,
     brand: product.brand ? { "@type": "Brand", name: product.brand.name } : undefined,
   }}
 >
-  <PageHeader title={product.title} description={product.short_description} />
+  <PageHeader title={product.title} description={product.shortDescription} />
 
   <section class="section">
     <div class="container">
@@ -70,14 +70,14 @@ const siteUrl = Astro.url.origin;
 
         <div class="product-info">
           <div class="product-meta">
-            <span class={`badge badge-${product.ribbon_type}`}>{RIBBON_TYPE_LABELS[product.ribbon_type]}</span>
+            <span class={`badge badge-${product.ribbonType}`}>{RIBBON_TYPE_LABELS[product.ribbonType]}</span>
             {product.brand && <span class="product-brand-name">{product.brand.name}</span>}
           </div>
 
           <h2 class="product-title">{product.title}</h2>
 
           {product.price > 0 && <div class="product-price"><span class="price-value">฿{product.price.toLocaleString()}</span></div>}
-          {product.short_description && <p class="product-desc">{product.short_description}</p>}
+          {product.shortDescription && <p class="product-desc">{product.shortDescription}</p>}
 
           <div class="product-actions">
             <a href={`/${lang}/contact`} class="btn btn-primary btn-lg">ติดต่อสอบถาม</a>

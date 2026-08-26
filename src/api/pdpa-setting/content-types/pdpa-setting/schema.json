@@ -16,101 +16,89 @@
     }
   },
   "attributes": {
-    "company_name": {
+    "companyName": {
       "type": "string",
       "required": true,
       "description": "Company name as registered under PDPA"
     },
-    "dpo_name": {
+    "dpoName": {
       "type": "string",
       "description": "Data Protection Officer name"
     },
-    "dpo_position": {
+    "dpoPosition": {
       "type": "string",
       "description": "DPO job title or position"
     },
-    "dpo_email": {
+    "dpoEmail": {
       "type": "email",
       "description": "DPO contact email"
     },
-    "dpo_phone": {
+    "dpoPhone": {
       "type": "string",
       "description": "DPO contact phone"
     },
-    "contact_info": {
+    "contactInfo": {
       "type": "component",
       "repeatable": true,
       "component": "shared.contact-info",
       "description": "DPO contact details"
     },
-    "data_retention_days": {
+    "dataRetentionDays": {
       "type": "integer",
       "default": 365,
       "min": 1,
       "description": "Default data retention period in days"
     },
-    "data_retention_description": {
+    "dataRetentionDescription": {
       "type": "text",
       "description": "Explanation of data retention policy"
     },
-    "rights_text": {
+    "rightsText": {
       "type": "richtext",
       "description": "Data subject rights explanation"
     },
-    "third_parties_text": {
+    "thirdPartiesText": {
       "type": "richtext",
       "description": "Third-party data sharing disclosure"
     },
-    "consent_banner_title": {
-      "type": "string",
-      "description": "Cookie consent banner heading text"
+    "consentBanner": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.cookie-consent-settings",
+      "description": "Consent banner labels and descriptions"
     },
-    "consent_banner_description": {
-      "type": "text",
-      "description": "Cookie consent banner description text"
-    },
-    "consent_accept_all_text": {
-      "type": "string",
-      "default": "Accept All"
-    },
-    "consent_reject_all_text": {
-      "type": "string",
-      "default": "Reject All"
-    },
-    "consent_manage_text": {
-      "type": "string",
-      "default": "Manage Preferences"
-    },
-    "consent_save_text": {
-      "type": "string",
-      "default": "Save Preferences"
-    },
-    "privacy_policy_url": {
+    "privacyPolicyUrl": {
       "type": "string",
       "description": "Link to full privacy policy page"
     },
-    "cookie_policy_url": {
+    "cookiePolicyUrl": {
       "type": "string",
       "description": "Link to full cookie policy page"
     },
-    "contact_text": {
+    "contactText": {
       "type": "text",
       "description": "Instructions for contacting DPO"
     },
-    "applies_to_products": {
+    "appliesToProducts": {
       "type": "relation",
       "relation": "manyToMany",
       "target": "api::product.product",
-      "inversedBy": "pdpa_applied_in"
+      "inversedBy": "pdpaAppliedIn"
     },
-    "is_active": {
+    "isActive": {
       "type": "boolean",
       "default": true,
       "description": "Enable/disable PDPA compliance features"
     },
     "seo": {
       "type": "component",
-      "component": "shared.seo-meta"
+      "repeatable": false,
+      "component": "shared.seo-meta",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     }
   }
 }

@@ -446,7 +446,7 @@ const STRAPI_URL = import.meta.env.PUBLIC_STRAPI_URL || "http://localhost:1337";
       const articlesJson = articlesRes.ok ? await articlesRes.json() : { data: [] };
 
       const getImage = (item: any): string => {
-        const img = item.images?.[0] || item.featured_image;
+        const img = item.images?.[0] || item.featuredImage;
         if (!img) return "";
         return img.url?.startsWith("http") ? img.url : `${STRAPI_URL}${img.url}`;
       };
@@ -456,7 +456,7 @@ const STRAPI_URL = import.meta.env.PUBLIC_STRAPI_URL || "http://localhost:1337";
           type: "product" as const,
           title: p.title,
           slug: p.slug,
-          excerpt: p.short_description || "",
+          excerpt: p.shortDescription || "",
           image: getImage(p),
         })),
         ...articlesJson.data.map((a: any) => ({

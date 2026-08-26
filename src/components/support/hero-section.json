@@ -5,11 +5,46 @@
     "description": "Hero copy and navigation CTA labels for the support page"
   },
   "attributes": {
-    "badge": { "type": "string", "localized": true },
-    "title": { "type": "string", "required": true, "localized": true },
-    "subtitle": { "type": "text", "localized": true },
-    "faqCtaLabel": { "type": "string", "localized": true },
-    "manualCtaLabel": { "type": "string", "localized": true },
-    "contactCtaLabel": { "type": "string", "localized": true }
+    "badge": {
+      "type": "string",
+      "localized": true,
+      "description": "Badge text above the hero title"
+    },
+    "title": {
+      "type": "string",
+      "required": true,
+      "localized": true,
+      "description": "Hero heading text"
+    },
+    "subtitle": {
+      "type": "text",
+      "localized": true,
+      "description": "Hero subtitle or description"
+    },
+    "faqCtaLabel": {
+      "type": "string",
+      "localized": true,
+      "description": "Label for the FAQ navigation CTA button"
+    },
+    "manualCtaLabel": {
+      "type": "string",
+      "localized": true,
+      "description": "Label for the manual/documentation CTA button"
+    },
+    "contactCtaLabel": {
+      "type": "string",
+      "localized": true,
+      "description": "Label for the contact support CTA button"
+    },
+    "sortOrder": {
+      "type": "integer",
+      "default": 0,
+      "description": "Display order (lower number appears first)"
+    },
+    "isActive": {
+      "type": "boolean",
+      "default": true,
+      "description": "Show or hide this hero section"
+    }
   }
 }

@@ -18,9 +18,9 @@ const siteUrl = Astro.url.origin;
 ---
 
 <BaseLayout
-  title={seo?.meta_title || policy?.title || (lang === "en" ? "Privacy Policy" : "นโยบายความเป็นส่วนตัว")}
-  description={seo?.meta_description || policy?.description || ""}
-  ogImage={getStrapiAbsoluteImageUrl(seo?.og_image) || undefined}
+  title={seo?.metaTitle || policy?.title || (lang === "en" ? "Privacy Policy" : "นโยบายความเป็นส่วนตัว")}
+  description={seo?.metaDescription || policy?.description || ""}
+  ogImage={getStrapiAbsoluteImageUrl(seo?.ogImage) || undefined}
   robots={seo?.robots}
   keywords={seo?.keywords?.split(",").map((k: string) => k.trim()) || []}
   locale={lang}
@@ -33,7 +33,7 @@ const siteUrl = Astro.url.origin;
     "@context": "https://schema.org",
     "@type": "WebPage",
     name: policy?.title || "Privacy Policy",
-    description: seo?.meta_description || "",
+    description: seo?.metaDescription || "",
   }}
 >
   {isOffline && !policy ? (

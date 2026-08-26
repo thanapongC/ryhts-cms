@@ -25,7 +25,6 @@ import {
   type Article,
   type Brand,
   type Category,
-  type CompanyInfo,
   type ContactPage,
   type ContactFloating,
   type CookieCategory,
@@ -40,7 +39,6 @@ import {
   type PdpaSetting,
   type PrivacyPolicy,
   type Product,
-  type SiteSetting,
   type SupportPage,
   type TeamMember,
   type TermsOfService,
@@ -71,23 +69,14 @@ import {
   type NavChildItem,
   type FooterLabels,
   type ButtonLabels,
-  type SupportPage,
-  type SupportHeroSection,
-  type SupportStatusCard,
-  type SupportFaqSection,
-  type SupportHelpCenterSection,
-  type SupportContactSection,
 } from "./strapi";
 
 import {
-  mockSiteSetting,
   mockGlobalSetting,
   mockFooterSetting,
-  mockCompanyInfo,
   mockProducts,
   mockCategories,
   mockArticles,
-  mockPages,
   mockAboutPage,
   mockContactPage,
   mockPrivacyPolicy,
@@ -114,7 +103,6 @@ export {
   type Article,
   type Brand,
   type Category,
-  type CompanyInfo,
   type ContactPage,
   type CookieCategory,
   type CookiePolicy,
@@ -126,7 +114,6 @@ export {
   type PdpaSetting,
   type PrivacyPolicy,
   type Product,
-  type SiteSetting,
   type TeamMember,
   type TermsOfService,
   type Testimonial,
@@ -165,65 +152,65 @@ export {
 //
 // Every rendered field must be in the populate list.
 // Nested components use dot notation: footerSections.links
+// Field names use camelCase matching the Strapi schemas.
 
 const POPULATE = {
-  siteSetting: ["site_logo", "site_favicon", "stats"],
   globalSetting: [
-    "site_logo",
-    "contact_info",
+    "siteLogo",
+    "contactInfo",
     "stats",
     "seoConfig",
-    "seoConfig.default_og_image",
+    "seoConfig.defaultOgImage",
   ],
   footerSetting: [
     "stats",
-    "footer_sections",
-    "footer_sections.links",
-    "footer_sections.links.product_page",
-    "legal_links",
+    "footerSections",
+    "footerSections.links",
+    "footerSections.links.productPage",
+    "legalLinks",
   ],
-  companyInfo: ["contact_info"],
   aboutPage: [
-    "featured_image",
+    "featuredImage",
     "stats",
-    "team_members",
-    "team_members.avatar",
+    "teamMembers",
+    "teamMembers.avatar",
     "partners",
     "partners.logo",
-    "timeline_milestones",
-    "timeline_milestones.image",
+    "timelineMilestones",
+    "timelineMilestones.image",
     "seo",
-    "seo.og_image",
-    "seo.twitter_image",
+    "seo.ogImage",
+    "seo.twitterImage",
   ],
-  contactPage: ["featured_image", "seo", "seo.og_image"],
+  contactPage: ["featuredImage", "seo", "seo.ogImage"],
   freeTrial: [
-    "featured_image",
-    "trust_items",
-    "trial_features",
-    "form_labels",
+    "featuredImage",
+    "trustItems",
+    "trialFeatures",
+    "formLabels",
     "testimonials",
     "testimonials.avatar",
     "seo",
-    "seo.og_image",
+    "seo.ogImage",
   ],
   privacyPolicy: [
-    "featured_image",
-    "policy_sections",
-    "applies_to_products",
-    "related_links",
-    "related_links.product",
-    "contact_info",
+    "featuredImage",
+    "policySections",
+    "appliesToProducts",
+    "relatedLinks",
+    "relatedLinks.product",
+    "contactInfo",
     "seo",
-    "seo.og_image",
+    "seo.ogImage",
   ],
-  termsOfService: ["featured_image", "seo", "seo.og_image"],
-  cookiePolicy: ["featured_image", "seo", "seo.og_image"],
+  termsOfService: ["featuredImage", "seo", "seo.ogImage"],
+  cookiePolicy: ["featuredImage", "seo", "seo.ogImage"],
   pdpaSetting: [
-    "contact_info",
-    "applies_to_products",
+    "contactInfo",
+    "consentBanner",
+    "appliesToProducts",
     "seo",
-    "seo.og_image",
+    "seo.ogImage",
   ],
   product: [
     "images",
@@ -232,42 +219,34 @@ const POPULATE = {
     "categories",
     "categories.image",
     "seo",
-    "seo.og_image",
+    "seo.ogImage",
   ],
-  article: ["featured_image", "category", "seo", "seo.og_image"],
-  category: ["image", "products", "seo", "seo.og_image"],
-  brand: ["logo", "products", "seo", "seo.og_image"],
+  article: ["featuredImage", "category", "seo", "seo.ogImage"],
+  category: ["image", "products", "seo", "seo.ogImage"],
+  brand: ["logo", "products", "seo", "seo.ogImage"],
   cookieCategory: [],
-  faq: ["items", "seo", "seo.og_image"],
-  testimonial: ["avatar", "free_trial_pages"],
-  teamMember: ["avatar", "about_page"],
-  partner: ["logo", "about_page"],
-  timelineMilestone: ["image", "about_page"],
+  faq: ["items", "seo", "seo.ogImage"],
+  testimonial: ["avatar", "freeTrialPages"],
+  teamMember: ["avatar", "aboutPage"],
+  partner: ["logo", "aboutPage"],
+  timelineMilestone: ["image", "aboutPage"],
   supportPage: [
-    "hero_section",
-    "status_card",
-    "faq_section",
+    "heroSection",
+    "statusCard",
+    "faqSection",
     "faqs",
     "faqs.items",
-    "help_center_section",
-    "help_resources",
-    "contact_section",
-    "contact_settings",
-    "contact_settings.contact_info",
+    "helpCenterSection",
+    "helpResources",
+    "contactSection",
+    "contactSettings",
+    "contactSettings.contactInfo",
     "seo",
-    "seo.og_image",
+    "seo.ogImage",
   ],
 } as const;
 
 // ─── Page Fetch Functions ───────────────────────────────────────────
-
-export async function getSiteSetting(locale: Locale = "th") {
-  const res = await fetchStrapiSingle<SiteSetting>("site-setting", {
-    locale,
-    populate: [...POPULATE.siteSetting],
-  });
-  return res.data;
-}
 
 export async function getGlobalSetting(locale: Locale = "th") {
   const res = await fetchStrapiSingle<GlobalSetting>("global-setting", {
@@ -281,14 +260,6 @@ export async function getFooterSetting(locale: Locale = "th") {
   const res = await fetchStrapiSingle<FooterSetting>("footer-setting", {
     locale,
     populate: [...POPULATE.footerSetting],
-  });
-  return res.data;
-}
-
-export async function getCompanyInfo(locale: Locale = "th") {
-  const res = await fetchStrapiSingle<CompanyInfo>("company-info", {
-    locale,
-    populate: [...POPULATE.companyInfo],
   });
   return res.data;
 }
@@ -339,7 +310,9 @@ export async function getCookiePolicy(locale: Locale = "th") {
     populate: [...POPULATE.cookiePolicy],
   });
   return res.data;
-}export async function getPdpaSetting(locale: Locale = "th") {
+}
+
+export async function getPdpaSetting(locale: Locale = "th") {
   const res = await fetchStrapiSingle<PdpaSetting>("pdpa-setting", {
     locale,
     populate: [...POPULATE.pdpaSetting],
@@ -375,15 +348,15 @@ export async function getNavigation(locale: Locale = "th") {
   const res = await fetchStrapiSingle<Navigation>("navigation", {
     locale,
     populate: [
-      "header_items",
-      "header_items.children",
-      "header_items.children.product_page",
-      "footer_sections",
-      "footer_sections.links",
-      "footer_sections.links.product_page",
-      "footer_labels",
-      "product_names",
-      "button_labels",
+      "headerItems",
+      "headerItems.children",
+      "headerItems.children.productPage",
+      "footerSections",
+      "footerSections.links",
+      "footerSections.links.productPage",
+      "footerLabels",
+      "productNames",
+      "buttonLabels",
     ],
   });
   return res.data;
@@ -408,7 +381,7 @@ export async function getFeaturedProducts(locale: Locale = "th") {
   const res = await fetchStrapiCollection<Product>("products", {
     locale,
     populate: [...POPULATE.product],
-    filters: { "filters[is_featured][$eq]": "true" },
+    filters: { "filters[isFeatured][$eq]": "true" },
     sort: "publishedAt:desc",
   });
   return res.data;
@@ -476,7 +449,7 @@ export async function getCookieCategories(locale: Locale = "th") {
     {
       locale,
       populate: [...POPULATE.cookieCategory],
-      sort: "sort_order:asc",
+      sort: "sortOrder:asc",
     },
   );
   return res.data;
@@ -486,7 +459,7 @@ export async function getFaq(locale: Locale = "th") {
   const res = await fetchStrapiCollection<Faq>("faqs", {
     locale,
     populate: [...POPULATE.faq],
-    sort: "sort_order:asc",
+    sort: "sortOrder:asc",
   });
   return res.data;
 }
@@ -495,20 +468,12 @@ export async function getFaq(locale: Locale = "th") {
 //
 // CMS value → i18n/static value → safe default
 
-export async function safeGetSiteSetting(locale: Locale = "th") {
-  return safeFetch(() => getSiteSetting(locale), mockSiteSetting);
-}
-
 export async function safeGetGlobalSetting(locale: Locale = "th") {
   return safeFetch(() => getGlobalSetting(locale), mockGlobalSetting);
 }
 
 export async function safeGetFooterSetting(locale: Locale = "th") {
   return safeFetch(() => getFooterSetting(locale), mockFooterSetting);
-}
-
-export async function safeGetCompanyInfo(locale: Locale = "th") {
-  return safeFetch(() => getCompanyInfo(locale), mockCompanyInfo);
 }
 
 export async function safeGetAboutPage(locale: Locale = "th") {
@@ -547,11 +512,11 @@ export async function safeGetFeaturedProducts(locale: Locale = "th") {
     async () => {
       const data = await getFeaturedProducts(locale);
       if (!data || data.length === 0) {
-        return mockProducts.filter((p) => p.is_featured);
+        return mockProducts.filter((p) => p.isFeatured);
       }
       return data;
     },
-    mockProducts.filter((p) => p.is_featured),
+    mockProducts.filter((p) => p.isFeatured),
   );
 }
 

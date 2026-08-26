@@ -7,13 +7,12 @@ export interface ContactFloatingContactAction extends Struct.ComponentSchema {
     displayName: 'Contact Action';
   };
   attributes: {
-    aria_label: Schema.Attribute.String;
+    ariaLabel: Schema.Attribute.String;
     description: Schema.Attribute.Text;
-    is_active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     label: Schema.Attribute.String & Schema.Attribute.Required;
-    open_in_new_tab: Schema.Attribute.Boolean &
-      Schema.Attribute.DefaultTo<false>;
-    sort_order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    openInNewTab: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     type: Schema.Attribute.Enumeration<
       ['phone', 'email', 'line', 'whatsapp', 'link']
     > &
@@ -60,9 +59,9 @@ export interface FaqFaqItem extends Struct.ComponentSchema {
   };
   attributes: {
     answer: Schema.Attribute.RichText & Schema.Attribute.Required;
-    is_active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     question: Schema.Attribute.String & Schema.Attribute.Required;
-    sort_order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
   };
 }
 
@@ -73,13 +72,10 @@ export interface FooterFooterLink extends Struct.ComponentSchema {
     displayName: 'Footer Link';
   };
   attributes: {
-    is_active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     label: Schema.Attribute.String & Schema.Attribute.Required;
-    product_page: Schema.Attribute.Relation<
-      'manyToOne',
-      'api::product.product'
-    >;
-    sort_order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    productPage: Schema.Attribute.Relation<'manyToOne', 'api::product.product'>;
+    sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     target: Schema.Attribute.Enumeration<['_self', '_blank']> &
       Schema.Attribute.DefaultTo<'_self'>;
     url: Schema.Attribute.String;
@@ -93,9 +89,9 @@ export interface FooterFooterSection extends Struct.ComponentSchema {
     displayName: 'Footer Section';
   };
   attributes: {
-    is_active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     links: Schema.Attribute.Component<'footer.footer-link', true>;
-    sort_order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     title: Schema.Attribute.String & Schema.Attribute.Required;
   };
 }
@@ -107,9 +103,9 @@ export interface FooterLegalLink extends Struct.ComponentSchema {
     displayName: 'Legal Link';
   };
   attributes: {
-    is_active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     label: Schema.Attribute.String & Schema.Attribute.Required;
-    sort_order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     target: Schema.Attribute.Enumeration<['_self', '_blank']> &
       Schema.Attribute.DefaultTo<'_self'>;
     url: Schema.Attribute.String & Schema.Attribute.Required;
@@ -123,10 +119,10 @@ export interface FreeTrialFormLabels extends Struct.ComponentSchema {
     displayName: 'Form Labels';
   };
   attributes: {
-    is_active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     label: Schema.Attribute.String & Schema.Attribute.Required;
     placeholder: Schema.Attribute.String;
-    sort_order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
   };
 }
 
@@ -139,8 +135,8 @@ export interface FreeTrialTrialFeature extends Struct.ComponentSchema {
   attributes: {
     description: Schema.Attribute.Text;
     icon: Schema.Attribute.String;
-    is_active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
-    sort_order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     title: Schema.Attribute.String & Schema.Attribute.Required;
   };
 }
@@ -153,9 +149,9 @@ export interface FreeTrialTrustItem extends Struct.ComponentSchema {
   };
   attributes: {
     icon: Schema.Attribute.String;
-    is_active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     label: Schema.Attribute.String & Schema.Attribute.Required;
-    sort_order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
   };
 }
 
@@ -166,9 +162,9 @@ export interface NavigationFooterSection extends Struct.ComponentSchema {
     displayName: 'Navigation Footer Section';
   };
   attributes: {
-    is_active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     links: Schema.Attribute.Component<'navigation.nav-child-item', true>;
-    sort_order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     title: Schema.Attribute.String & Schema.Attribute.Required;
   };
 }
@@ -181,10 +177,7 @@ export interface NavigationNavChildItem extends Struct.ComponentSchema {
   };
   attributes: {
     label: Schema.Attribute.String & Schema.Attribute.Required;
-    product_page: Schema.Attribute.Relation<
-      'manyToOne',
-      'api::product.product'
-    >;
+    productPage: Schema.Attribute.Relation<'manyToOne', 'api::product.product'>;
     target: Schema.Attribute.Enumeration<['_self', '_blank']> &
       Schema.Attribute.DefaultTo<'_self'>;
     url: Schema.Attribute.String;
@@ -214,7 +207,7 @@ export interface NavigationProductName extends Struct.ComponentSchema {
   };
   attributes: {
     name: Schema.Attribute.String & Schema.Attribute.Required;
-    sort_order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     url: Schema.Attribute.String;
   };
 }
@@ -240,8 +233,8 @@ export interface PrivacyPolicySection extends Struct.ComponentSchema {
   };
   attributes: {
     content: Schema.Attribute.RichText & Schema.Attribute.Required;
-    is_active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
-    sort_order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     title: Schema.Attribute.String & Schema.Attribute.Required;
   };
 }
@@ -253,10 +246,10 @@ export interface PrivacyRelatedLink extends Struct.ComponentSchema {
     displayName: 'Related Link';
   };
   attributes: {
-    is_active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     label: Schema.Attribute.String & Schema.Attribute.Required;
     product: Schema.Attribute.Relation<'manyToOne', 'api::product.product'>;
-    sort_order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     url: Schema.Attribute.String;
   };
 }
@@ -306,14 +299,14 @@ export interface SharedButtonLabels extends Struct.ComponentSchema {
     displayName: 'Button Labels';
   };
   attributes: {
-    back_to_home: Schema.Attribute.String;
-    call_now: Schema.Attribute.String;
-    contact_us: Schema.Attribute.String;
+    backToHome: Schema.Attribute.String;
+    callNow: Schema.Attribute.String;
+    contactUs: Schema.Attribute.String;
     download: Schema.Attribute.String;
-    learn_more: Schema.Attribute.String;
-    read_more: Schema.Attribute.String;
-    request_quote: Schema.Attribute.String;
-    view_all: Schema.Attribute.String;
+    learnMore: Schema.Attribute.String;
+    readMore: Schema.Attribute.String;
+    requestQuote: Schema.Attribute.String;
+    viewAll: Schema.Attribute.String;
   };
 }
 
@@ -325,9 +318,9 @@ export interface SharedContactInfo extends Struct.ComponentSchema {
   };
   attributes: {
     icon: Schema.Attribute.String;
-    is_active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     label: Schema.Attribute.String & Schema.Attribute.Required;
-    sort_order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     url: Schema.Attribute.String;
     value: Schema.Attribute.String & Schema.Attribute.Required;
   };
@@ -340,24 +333,24 @@ export interface SharedCookieConsentSettings extends Struct.ComponentSchema {
     displayName: 'Cookie Consent Settings';
   };
   attributes: {
-    accept_all_label: Schema.Attribute.String &
+    acceptAllLabel: Schema.Attribute.String &
       Schema.Attribute.DefaultTo<'Accept All'>;
-    always_on_label: Schema.Attribute.String;
-    analytics_description: Schema.Attribute.Text;
-    analytics_label: Schema.Attribute.String;
-    cookie_policy_label: Schema.Attribute.String;
+    alwaysOnLabel: Schema.Attribute.String;
+    analyticsDescription: Schema.Attribute.Text;
+    analyticsLabel: Schema.Attribute.String;
+    cookiePolicyLabel: Schema.Attribute.String;
     description: Schema.Attribute.Text;
-    learn_more_label: Schema.Attribute.String;
-    manage_label: Schema.Attribute.String &
+    learnMoreLabel: Schema.Attribute.String;
+    manageLabel: Schema.Attribute.String &
       Schema.Attribute.DefaultTo<'Manage Preferences'>;
-    marketing_description: Schema.Attribute.Text;
-    marketing_label: Schema.Attribute.String;
-    necessary_description: Schema.Attribute.Text;
-    necessary_label: Schema.Attribute.String;
-    privacy_policy_label: Schema.Attribute.String;
-    reject_all_label: Schema.Attribute.String &
+    marketingDescription: Schema.Attribute.Text;
+    marketingLabel: Schema.Attribute.String;
+    necessaryDescription: Schema.Attribute.Text;
+    necessaryLabel: Schema.Attribute.String;
+    privacyPolicyLabel: Schema.Attribute.String;
+    rejectAllLabel: Schema.Attribute.String &
       Schema.Attribute.DefaultTo<'Reject All'>;
-    save_label: Schema.Attribute.String &
+    saveLabel: Schema.Attribute.String &
       Schema.Attribute.DefaultTo<'Save Preferences'>;
     title: Schema.Attribute.String;
   };
@@ -370,12 +363,12 @@ export interface SharedFooterLabels extends Struct.ComponentSchema {
     displayName: 'Footer Labels';
   };
   attributes: {
-    about_heading: Schema.Attribute.String;
-    contact_heading: Schema.Attribute.String;
-    links_heading: Schema.Attribute.String;
-    newsletter_button: Schema.Attribute.String;
-    newsletter_heading: Schema.Attribute.String;
-    newsletter_placeholder: Schema.Attribute.String;
+    aboutHeading: Schema.Attribute.String;
+    contactHeading: Schema.Attribute.String;
+    linksHeading: Schema.Attribute.String;
+    newsletterButton: Schema.Attribute.String;
+    newsletterHeading: Schema.Attribute.String;
+    newsletterPlaceholder: Schema.Attribute.String;
   };
 }
 
@@ -453,18 +446,18 @@ export interface SharedSeoConfig extends Struct.ComponentSchema {
     displayName: 'SEO Config';
   };
   attributes: {
-    brand_name: Schema.Attribute.String;
-    default_description: Schema.Attribute.Text;
-    default_og_image: Schema.Attribute.Media<'images'>;
-    default_title: Schema.Attribute.String;
-    facebook_pixel_id: Schema.Attribute.String;
-    facebook_url: Schema.Attribute.String;
-    google_analytics_id: Schema.Attribute.String;
-    line_url: Schema.Attribute.String;
-    site_name: Schema.Attribute.String;
-    site_url: Schema.Attribute.String;
-    twitter_handle: Schema.Attribute.String;
-    twitter_url: Schema.Attribute.String;
+    brandName: Schema.Attribute.String;
+    defaultDescription: Schema.Attribute.Text;
+    defaultOgImage: Schema.Attribute.Media<'images'>;
+    defaultTitle: Schema.Attribute.String;
+    facebookPixelId: Schema.Attribute.String;
+    facebookUrl: Schema.Attribute.String;
+    googleAnalyticsId: Schema.Attribute.String;
+    lineUrl: Schema.Attribute.String;
+    siteName: Schema.Attribute.String;
+    siteUrl: Schema.Attribute.String;
+    twitterHandle: Schema.Attribute.String;
+    twitterUrl: Schema.Attribute.String;
   };
 }
 
@@ -475,19 +468,19 @@ export interface SharedSeoMeta extends Struct.ComponentSchema {
     displayName: 'SEO Meta';
   };
   attributes: {
-    alternate_languages: Schema.Attribute.JSON;
-    canonical_url: Schema.Attribute.String;
+    alternateLanguages: Schema.Attribute.JSON;
+    canonicalUrl: Schema.Attribute.String;
     keywords: Schema.Attribute.Text;
-    max_image_preview: Schema.Attribute.Enumeration<
+    maxImagePreview: Schema.Attribute.Enumeration<
       ['none', 'standard', 'large']
     >;
-    max_snippet: Schema.Attribute.Integer;
-    max_video_preview: Schema.Attribute.Integer;
-    meta_description: Schema.Attribute.Text &
+    maxSnippet: Schema.Attribute.Integer;
+    maxVideoPreview: Schema.Attribute.Integer;
+    metaDescription: Schema.Attribute.Text &
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 160;
       }>;
-    meta_title: Schema.Attribute.String &
+    metaTitle: Schema.Attribute.String &
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 70;
       }>;
@@ -495,15 +488,15 @@ export interface SharedSeoMeta extends Struct.ComponentSchema {
     nofollow: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     noindex: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     nosnippet: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
-    og_description: Schema.Attribute.Text;
-    og_image: Schema.Attribute.Media<'images'>;
-    og_title: Schema.Attribute.String;
-    og_type: Schema.Attribute.Enumeration<['website', 'article', 'product']> &
+    ogDescription: Schema.Attribute.Text;
+    ogImage: Schema.Attribute.Media<'images'>;
+    ogTitle: Schema.Attribute.String;
+    ogType: Schema.Attribute.Enumeration<['website', 'article', 'product']> &
       Schema.Attribute.DefaultTo<'website'>;
-    schema_type: Schema.Attribute.String;
-    twitter_description: Schema.Attribute.Text;
-    twitter_image: Schema.Attribute.Media<'images'>;
-    twitter_title: Schema.Attribute.String;
+    schemaType: Schema.Attribute.String;
+    twitterDescription: Schema.Attribute.Text;
+    twitterImage: Schema.Attribute.Media<'images'>;
+    twitterTitle: Schema.Attribute.String;
   };
 }
 
@@ -515,9 +508,9 @@ export interface SharedStatItem extends Struct.ComponentSchema {
   };
   attributes: {
     icon: Schema.Attribute.String;
-    is_active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     label: Schema.Attribute.String & Schema.Attribute.Required;
-    sort_order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     value: Schema.Attribute.String & Schema.Attribute.Required;
   };
 }

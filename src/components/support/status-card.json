@@ -5,9 +5,35 @@
     "description": "Support team availability card shown beside the hero"
   },
   "attributes": {
-    "kicker": { "type": "string", "localized": true },
-    "title": { "type": "string", "localized": true },
-    "hours": { "type": "string", "localized": true },
-    "statusLabel": { "type": "string", "localized": true }
+    "kicker": {
+      "type": "string",
+      "localized": true,
+      "description": "Small label above the card title"
+    },
+    "title": {
+      "type": "string",
+      "localized": true,
+      "description": "Card heading text"
+    },
+    "hours": {
+      "type": "string",
+      "localized": true,
+      "description": "Business hours display text"
+    },
+    "statusLabel": {
+      "type": "string",
+      "localized": true,
+      "description": "Status badge text (e.g. Online, Available)"
+    },
+    "sortOrder": {
+      "type": "integer",
+      "default": 0,
+      "description": "Display order (lower number appears first)"
+    },
+    "isActive": {
+      "type": "boolean",
+      "default": true,
+      "description": "Show or hide this status card"
+    }
   }
 }

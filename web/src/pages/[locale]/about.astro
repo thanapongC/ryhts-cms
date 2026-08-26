@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { safeGetAboutPage, safeGetCompanyInfo, getStrapiAbsoluteImageUrl } from "../../lib/api";
+import { safeGetAboutPage, getStrapiAbsoluteImageUrl } from "../../lib/api";
 import { isValidLocale, DEFAULT_LOCALE, type Locale } from "../../lib/i18n";
 import OfflineNotice from "../../components/OfflineNotice.astro";
 import AboutContent from "../../components/AboutContent.astro";
@@ -9,21 +9,19 @@ const lang = (Astro.params.locale as Locale) || DEFAULT_LOCALE;
 if (!isValidLocale(lang)) return Astro.redirect(`/${DEFAULT_LOCALE}/about`);
 
 const pageResult = await safeGetAboutPage(lang);
-const companyResult = await safeGetCompanyInfo(lang);
 
 const page = pageResult.data;
-const companyInfo = companyResult.data;
 
 const seo = page?.seo;
-const isOffline = pageResult.isOffline || companyResult.isOffline;
+const isOffline = pageResult.isOffline;
 
 const siteUrl = Astro.url.origin;
 ---
 
 <BaseLayout
-  title={seo?.meta_title || page?.title || (lang === "en" ? "About Ryhts" : "เกี่ยวกับ Ryhts")}
-  description={seo?.meta_description || ""}
-  ogImage={getStrapiAbsoluteImageUrl(seo?.og_image) || getStrapiAbsoluteImageUrl(page?.featured_image) || undefined}
+  title={seo?.metaTitle || page?.title || (lang === "en" ? "About Ryhts" : "เกี่ยวกับ Ryhts")}
+  description={seo?.metaDescription || ""}
+  ogImage={getStrapiAbsoluteImageUrl(seo?.ogImage) || getStrapiAbsoluteImageUrl(page?.featuredImage) || undefined}
   robots={seo?.robots}
   keywords={seo?.keywords?.split(",").map((k: string) => k.trim()) || []}
   locale={lang}
@@ -36,7 +34,7 @@ const siteUrl = Astro.url.origin;
     "@context": "https://schema.org",
     "@type": "AboutPage",
     name: page?.title || "About Ryhts",
-    description: seo?.meta_description || "",
+    description: seo?.metaDescription || "",
   }}
 >
   <div class="page-header">
@@ -61,7 +59,7 @@ const siteUrl = Astro.url.origin;
         />
       )}
 
-      <AboutContent lang={lang} page={page} companyInfo={companyInfo} />
+      <AboutContent lang={lang} page={page} />
     </div>
   </section>
 </BaseLayout>

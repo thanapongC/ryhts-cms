@@ -16,24 +16,24 @@
     }
   },
   "attributes": {
-    "is_enabled": {
+    "isEnabled": {
       "type": "boolean",
       "default": true,
       "description": "Enable/disable the floating contact widget"
     },
-    "button_label": {
+    "buttonLabel": {
       "type": "string",
       "description": "Floating button label"
     },
-    "panel_title": {
+    "panelTitle": {
       "type": "string",
       "description": "Contact panel heading"
     },
-    "panel_description": {
+    "panelDescription": {
       "type": "text",
       "description": "Contact panel description"
     },
-    "close_label": {
+    "closeLabel": {
       "type": "string",
       "description": "Close button label"
     },

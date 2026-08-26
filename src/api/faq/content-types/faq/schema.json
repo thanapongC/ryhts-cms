@@ -35,19 +35,25 @@
       "component": "faq.faq-item",
       "description": "FAQ question and answer pairs"
     },
-    "sort_order": {
+    "sortOrder": {
       "type": "integer",
       "default": 0,
       "description": "Display order (lower number appears first)"
     },
-    "is_active": {
+    "isActive": {
       "type": "boolean",
       "default": true,
       "description": "Show or hide this FAQ group on frontend"
     },
     "seo": {
       "type": "component",
-      "component": "shared.seo-meta"
+      "repeatable": false,
+      "component": "shared.seo-meta",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     }
   }
 }

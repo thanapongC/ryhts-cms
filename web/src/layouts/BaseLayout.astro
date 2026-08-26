@@ -1,5 +1,5 @@
 ---
-import { safeGetSiteSetting, safeGetFooterSetting, safeGetGlobalSetting, getStrapiMedia } from "../lib/api";
+import { safeGetFooterSetting, safeGetGlobalSetting, getStrapiMedia } from "../lib/api";
 import { detectLocale, type Locale } from "../lib/i18n";
 import ErrorBanner from "../components/ErrorBanner.astro";
 import CookieConsent from "../components/CookieConsent.astro";
@@ -81,24 +81,22 @@ const acceptLanguage = Astro.request.headers.get("accept-language") || undefined
 const detectedLocale = detectLocale(cookieHeader, acceptLanguage);
 const locale = propLocale || urlLocale || detectedLocale;
 
-const siteResult = await safeGetSiteSetting(locale);
 const footerResult = await safeGetFooterSetting(locale);
 const globalResult = await safeGetGlobalSetting(locale);
 
-const siteSetting = siteResult.data;
 const footerSetting = footerResult.data;
 const globalSetting = globalResult.data;
-const isOffline = siteResult.isOffline || footerResult.isOffline || globalResult.isOffline;
+const isOffline = footerResult.isOffline || globalResult.isOffline;
 
-const siteName = siteSetting?.site_name || "RYHTS";
-const siteDescription = siteSetting?.site_description || "Premier Ribbons for Premier Printing";
+const siteName = globalSetting?.siteName || "RYHTS";
+const siteDescription = globalSetting?.seoConfig?.defaultDescription || "Premier Ribbons for Premier Printing";
 const pageTitle = title ? `${title} | ${siteName}` : siteName;
 const metaDescription = description || siteDescription;
-const logoUrl = getStrapiMedia(siteSetting?.site_logo?.url);
+const logoUrl = getStrapiMedia(globalSetting?.siteLogo?.url);
 
 // Default OG image priority: page prop > global SEO config > site logo > static fallback
-const globalOgImage = getStrapiMedia(globalResult.data?.seoConfig?.default_og_image?.url);
-const defaultOgImage = globalOgImage || siteSetting?.og_image?.url || siteSetting?.site_logo?.url || "/og-default.svg";
+const globalOgImage = getStrapiMedia(globalResult.data?.seoConfig?.defaultOgImage?.url);
+const defaultOgImage = globalOgImage || globalSetting?.siteLogo?.url || "/og-default.svg";
 const resolvedOgImage = ogImage || defaultOgImage;
 
 const navItems = [
@@ -195,12 +193,7 @@ const resolvedHreflangs = hreflangs || defaultHreflangs;
         <div class="header-right">
           <LanguageSwitcher currentLocale={locale} />
           <SearchOverlay />
-          {siteSetting?.phone && (
-            <a href={`tel:${siteSetting.phone}`} class="header-phone">
-              <i class="fas fa-phone"></i>
-              <span>{siteSetting.phone}</span>
-            </a>
-          )}
+          
           <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Toggle menu">
             <i class="fas fa-bars"></i>
           </button>
@@ -225,11 +218,7 @@ const resolvedHreflangs = hreflangs || defaultHreflangs;
             </a>
           ))}
         </nav>
-        {siteSetting?.phone && (
-          <a href={`tel:${siteSetting.phone}`} class="mobile-nav-phone">
-            <i class="fas fa-phone"></i> {siteSetting.phone}
-          </a>
-        )}
+        
       </div>
     </header>
 
@@ -242,7 +231,6 @@ const resolvedHreflangs = hreflangs || defaultHreflangs;
     <Footer
       locale={locale}
       footerSetting={footerSetting}
-      siteSetting={siteSetting}
       logoUrl={logoUrl}
       siteName={siteName}
       siteDescription={siteDescription}

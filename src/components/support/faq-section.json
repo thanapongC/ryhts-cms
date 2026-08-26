@@ -5,10 +5,41 @@
     "description": "FAQ section headings and fallback CTA copy"
   },
   "attributes": {
-    "badge": { "type": "string", "localized": true },
-    "title": { "type": "string", "required": true, "localized": true },
-    "subtitle": { "type": "text", "localized": true },
-    "emptyPrompt": { "type": "string", "localized": true },
-    "contactCtaLabel": { "type": "string", "localized": true }
+    "badge": {
+      "type": "string",
+      "localized": true,
+      "description": "Badge text above the section title"
+    },
+    "title": {
+      "type": "string",
+      "required": true,
+      "localized": true,
+      "description": "Section heading text"
+    },
+    "subtitle": {
+      "type": "text",
+      "localized": true,
+      "description": "Section subtitle or description"
+    },
+    "emptyPrompt": {
+      "type": "string",
+      "localized": true,
+      "description": "Text shown when no FAQ items exist"
+    },
+    "contactCtaLabel": {
+      "type": "string",
+      "localized": true,
+      "description": "Label for the contact CTA in empty state"
+    },
+    "sortOrder": {
+      "type": "integer",
+      "default": 0,
+      "description": "Display order (lower number appears first)"
+    },
+    "isActive": {
+      "type": "boolean",
+      "default": true,
+      "description": "Show or hide this FAQ section"
+    }
   }
 }

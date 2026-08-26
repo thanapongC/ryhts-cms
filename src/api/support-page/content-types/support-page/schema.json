@@ -16,15 +16,15 @@
     }
   },
   "attributes": {
-    "hero_section": {
+    "heroSection": {
       "type": "component",
       "component": "support.hero-section"
     },
-    "status_card": {
+    "statusCard": {
       "type": "component",
       "component": "support.status-card"
     },
-    "faq_section": {
+    "faqSection": {
       "type": "component",
       "component": "support.faq-section"
     },
@@ -33,27 +33,33 @@
       "relation": "manyToMany",
       "target": "api::faq.faq"
     },
-    "help_center_section": {
+    "helpCenterSection": {
       "type": "component",
       "component": "support.help-center-section"
     },
-    "help_resources": {
+    "helpResources": {
       "type": "relation",
       "relation": "manyToMany",
       "target": "api::faq.faq"
     },
-    "contact_section": {
+    "contactSection": {
       "type": "component",
       "component": "support.contact-section"
     },
-    "contact_settings": {
+    "contactSettings": {
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::global-setting.global-setting"
     },
     "seo": {
       "type": "component",
-      "component": "shared.seo-meta"
+      "repeatable": false,
+      "component": "shared.seo-meta",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     }
   }
 }

@@ -16,31 +16,31 @@
     }
   },
   "attributes": {
-    "cta_badge": {
+    "ctaBadge": {
       "type": "string",
       "description": "CTA section badge text"
     },
-    "cta_title": {
+    "ctaTitle": {
       "type": "string",
       "description": "CTA section heading"
     },
-    "cta_description": {
+    "ctaDescription": {
       "type": "text",
       "description": "CTA section description"
     },
-    "primary_cta_label": {
+    "primaryCtaLabel": {
       "type": "string",
       "description": "Primary CTA button text"
     },
-    "primary_cta_url": {
+    "primaryCtaUrl": {
       "type": "string",
       "description": "Primary CTA button URL"
     },
-    "secondary_cta_label": {
+    "secondaryCtaLabel": {
       "type": "string",
       "description": "Secondary CTA button text"
     },
-    "secondary_cta_url": {
+    "secondaryCtaUrl": {
       "type": "string",
       "description": "Secondary CTA button URL"
     },
@@ -50,21 +50,21 @@
       "component": "shared.stat-item",
       "description": "Footer statistics display"
     },
-    "company_description": {
+    "companyDescription": {
       "type": "text",
       "description": "Company description text in footer"
     },
-    "social_links": {
+    "socialLinks": {
       "type": "json",
       "description": "Social media links as JSON object"
     },
-    "footer_sections": {
+    "footerSections": {
       "type": "component",
       "repeatable": true,
       "component": "footer.footer-section",
       "description": "Navigation sections in the footer"
     },
-    "legal_links": {
+    "legalLinks": {
       "type": "component",
       "repeatable": true,
       "component": "footer.legal-link",

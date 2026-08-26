@@ -5,11 +5,35 @@
     "description": "Cookie category card for the Cookie Policy page"
   },
   "attributes": {
-    "title": { "type": "string", "localized": true },
-    "description": { "type": "text", "localized": true },
-    "icon": { "type": "enumeration", "enum": ["shield", "settings", "analytics", "marketing"] },
-    "accent": { "type": "enumeration", "enum": ["red", "orange"] },
-    "isActive": { "type": "boolean", "default": true },
-    "sortOrder": { "type": "integer", "default": 0 }
+    "title": {
+      "type": "string",
+      "localized": true,
+      "description": "Category title (e.g. Necessary, Analytics)"
+    },
+    "description": {
+      "type": "text",
+      "localized": true,
+      "description": "Category description explaining what this cookie type does"
+    },
+    "icon": {
+      "type": "enumeration",
+      "enum": ["shield", "settings", "analytics", "marketing"],
+      "description": "Icon to display for this category"
+    },
+    "accent": {
+      "type": "enumeration",
+      "enum": ["red", "orange"],
+      "description": "Accent color for the category card"
+    },
+    "isActive": {
+      "type": "boolean",
+      "default": true,
+      "description": "Show or hide this category card"
+    },
+    "sortOrder": {
+      "type": "integer",
+      "default": 0,
+      "description": "Display order (lower number appears first)"
+    }
   }
 }

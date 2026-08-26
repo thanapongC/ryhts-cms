@@ -18,13 +18,23 @@
       "type": "enumeration",
       "enum": ["_self", "_blank"],
       "default": "_self",
-      "description": "Link target"
+      "description": "Link target (_self or _blank)"
     },
     "children": {
       "type": "component",
       "repeatable": true,
       "component": "navigation.nav-child-item",
       "description": "Dropdown sub-items"
+    },
+    "sortOrder": {
+      "type": "integer",
+      "default": 0,
+      "description": "Display order (lower number appears first)"
+    },
+    "isActive": {
+      "type": "boolean",
+      "default": true,
+      "description": "Show or hide this nav item"
     }
   }
 }

@@ -15,7 +15,7 @@ interface Props {
 }
 
 const { article, formatDate = defaultFormatDate } = Astro.props;
-const imageUrl = getStrapiMedia(article.featured_image?.url);
+const imageUrl = getStrapiMedia(article.featuredImage?.url);
 ---
 
 <a href={`/articles/${article.slug}`} class="article-card">

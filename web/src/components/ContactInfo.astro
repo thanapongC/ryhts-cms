@@ -3,81 +3,35 @@
  * ContactInfo — Company contact information display.
  *
  * Props:
- *   companyInfo: CompanyInfo
- *   phone?: string — Additional phone number (e.g. sales)
+ *   contactInfo: ContactInfo[] — Contact items from GlobalSetting
  */
-import type { CompanyInfo, SiteSetting } from "../lib/api";
+import type { ContactInfo } from "../lib/api";
 
 interface Props {
-  companyInfo: CompanyInfo;
-  siteSetting?: SiteSetting | null;
+  contactInfo: ContactInfo[];
 }
 
-const { companyInfo, siteSetting } = Astro.props;
+const { contactInfo } = Astro.props;
 ---
 
 <div class="contact-info">
   <h2>ข้อมูลการติดต่อ</h2>
 
-  {companyInfo.company_name && (
+  {contactInfo.map((item) => (
     <div class="info-item">
-      <div class="info-icon"><i class="fas fa-building"></i></div>
+      {item.icon && (
+        <div class="info-icon"><i class={`fas fa-${item.icon}`}></i></div>
+      )}
       <div>
-        <h4>{companyInfo.company_name}</h4>
-        {companyInfo.company_name_en && <p>{companyInfo.company_name_en}</p>}
+        <h4>{item.label}</h4>
+        {item.url ? (
+          <p><a href={item.url}>{item.value}</a></p>
+        ) : (
+          <p>{item.value}</p>
+        )}
       </div>
     </div>
-  )}
-
-  {companyInfo.address && (
-    <div class="info-item">
-      <div class="info-icon"><i class="fas fa-map-marker-alt"></i></div>
-      <div>
-        <h4>ที่อยู่</h4>
-        <p>{companyInfo.address}</p>
-      </div>
-    </div>
-  )}
-
-  {companyInfo.phone && (
-    <div class="info-item">
-      <div class="info-icon"><i class="fas fa-phone"></i></div>
-      <div>
-        <h4>โทรศัพท์</h4>
-        <p><a href={`tel:${companyInfo.phone}`}>{companyInfo.phone}</a></p>
-      </div>
-    </div>
-  )}
-
-  {companyInfo.email && (
-    <div class="info-item">
-      <div class="info-icon"><i class="fas fa-envelope"></i></div>
-      <div>
-        <h4>อีเมล</h4>
-        <p><a href={`mailto:${companyInfo.email}`}>{companyInfo.email}</a></p>
-      </div>
-    </div>
-  )}
-
-  {companyInfo.business_hours && (
-    <div class="info-item">
-      <div class="info-icon"><i class="fas fa-clock"></i></div>
-      <div>
-        <h4>เวลาทำการ</h4>
-        <p>{companyInfo.business_hours}</p>
-      </div>
-    </div>
-  )}
-
-  {siteSetting?.phone && (
-    <div class="info-item">
-      <div class="info-icon"><i class="fas fa-headset"></i></div>
-      <div>
-        <h4>ฝ่ายขาย</h4>
-        <p><a href={`tel:${siteSetting.phone}`}>{siteSetting.phone}</a></p>
-      </div>
-    </div>
-  )}
+  ))}
 </div>
 
 <style>

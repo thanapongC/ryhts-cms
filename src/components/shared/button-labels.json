@@ -5,37 +5,42 @@
     "description": "Shared CTA and action button labels across the site"
   },
   "attributes": {
-    "contact_us": {
+    "contactUs": {
       "type": "string",
       "description": "Contact us button label"
     },
-    "learn_more": {
+    "learnMore": {
       "type": "string",
       "description": "Learn more button label"
     },
-    "view_all": {
+    "viewAll": {
       "type": "string",
       "description": "View all button label"
     },
-    "read_more": {
+    "readMore": {
       "type": "string",
       "description": "Read more button label"
     },
-    "back_to_home": {
+    "backToHome": {
       "type": "string",
       "description": "Back to home button label"
     },
-    "call_now": {
+    "callNow": {
       "type": "string",
       "description": "Call now button label"
     },
-    "request_quote": {
+    "requestQuote": {
       "type": "string",
       "description": "Request quote button label"
     },
     "download": {
       "type": "string",
       "description": "Download button label"
+    },
+    "isActive": {
+      "type": "boolean",
+      "default": true,
+      "description": "Show or hide these button labels"
     }
   }
 }

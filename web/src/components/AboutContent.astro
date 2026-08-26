@@ -10,22 +10,21 @@
  *   page: AboutPage | null (CMS data)
  *   companyInfo: CompanyInfo | null
  */
-import { getStrapiMedia, getStrapiAbsoluteImageUrl, filterAndSort, type AboutPage, type CompanyInfo } from "../lib/api";
+import { getStrapiMedia, getStrapiAbsoluteImageUrl, filterAndSort, type AboutPage } from "../lib/api";
 
 interface Props {
   lang: "th" | "en";
   page: AboutPage | null;
-  companyInfo: CompanyInfo | null;
 }
 
-const { lang, page, companyInfo } = Astro.props;
+const { lang, page } = Astro.props;
 
 const pageTitle = page?.title || (lang === "en" ? "About Ryhts" : "เกี่ยวกับ Ryhts");
-const featuredImage = page?.featured_image ? getStrapiAbsoluteImageUrl(page.featured_image) : "";
+const featuredImage = page?.featuredImage ? getStrapiAbsoluteImageUrl(page.featuredImage) : "";
 const stats = filterAndSort(page?.stats);
-const teamMembers = filterAndSort(page?.team_members);
+const teamMembers = filterAndSort(page?.teamMembers);
 const partners = filterAndSort(page?.partners);
-const milestones = filterAndSort(page?.timeline_milestones);
+const milestones = filterAndSort(page?.timelineMilestones);
 
 const fallbackContent = lang === "en"
   ? "Ryhts is a premier distributor of thermal transfer ribbons for barcode printers."
@@ -50,7 +49,7 @@ const fallbackContent = lang === "en"
         {page?.subtitle && <p class="about-subtitle">{page.subtitle}</p>}
         <p>{fallbackContent}</p>
       </div>
-      {(stats.length > 0 || companyInfo?.customer_count) && (
+      {stats.length > 0 && (
         <div class="about-stats">
           {stats.map((stat) => (
             <div class="stat-item">
@@ -58,12 +57,6 @@ const fallbackContent = lang === "en"
               <span class="stat-label">{stat.label}</span>
             </div>
           ))}
-          {!stats.length && companyInfo?.customer_count && (
-            <div class="stat-item">
-              <span class="stat-number">{companyInfo.customer_count}+</span>
-              <span class="stat-label">{lang === "en" ? "Trusted Customers" : "ลูกค้าที่ไว้วางใจ"}</span>
-            </div>
-          )}
         </div>
       )}
     </div>
@@ -95,7 +88,7 @@ const fallbackContent = lang === "en"
     <h2>{lang === "en" ? "Our Partners" : "พันธมิตรของเรา"}</h2>
     <div class="partners-grid">
       {partners.map((partner) => (
-        <a class="partner-card" href={partner.website_url || "#"} target={partner.website_url ? "_blank" : undefined} rel={partner.website_url ? "noopener noreferrer" : undefined}>
+        <a class="partner-card" href={partner.websiteUrl || "#"} target={partner.websiteUrl ? "_blank" : undefined} rel={partner.websiteUrl ? "noopener noreferrer" : undefined}>
           {partner.logo && (
             <img src={getStrapiMedia(partner.logo.url)} alt={partner.name} />
           )}
@@ -115,7 +108,7 @@ const fallbackContent = lang === "en"
         <div class="timeline-item">
           <div class="timeline-marker" />
           <div class="timeline-content">
-            {m.milestone_date && <span class="timeline-date">{m.milestone_date}</span>}
+            {m.milestoneDate && <span class="timeline-date">{m.milestoneDate}</span>}
             <h3>{m.title}</h3>
             {m.description && <p>{m.description}</p>}
           </div>

@@ -5,9 +5,25 @@
     "description": "Before-submit checklist item for the Privacy Request page"
   },
   "attributes": {
-    "text": { "type": "text", "localized": true },
-    "accent": { "type": "enumeration", "enum": ["red", "orange"] },
-    "isActive": { "type": "boolean", "default": true },
-    "sortOrder": { "type": "integer", "default": 0 }
+    "text": {
+      "type": "text",
+      "localized": true,
+      "description": "Tip text to display"
+    },
+    "accent": {
+      "type": "enumeration",
+      "enum": ["red", "orange"],
+      "description": "Accent color for the tip"
+    },
+    "isActive": {
+      "type": "boolean",
+      "default": true,
+      "description": "Show or hide this tip"
+    },
+    "sortOrder": {
+      "type": "integer",
+      "default": 0,
+      "description": "Display order (lower number appears first)"
+    }
   }
 }

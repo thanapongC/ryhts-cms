@@ -25,7 +25,7 @@
       "type": "string",
       "description": "Short tagline or subtitle"
     },
-    "featured_image": {
+    "featuredImage": {
       "type": "media",
       "multiple": false,
       "allowedTypes": ["images"],
@@ -37,7 +37,13 @@
     },
     "seo": {
       "type": "component",
-      "component": "shared.seo-meta"
+      "repeatable": false,
+      "component": "shared.seo-meta",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     }
   }
 }

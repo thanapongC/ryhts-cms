@@ -14,10 +14,15 @@
       "type": "string",
       "description": "Product URL"
     },
-    "sort_order": {
+    "sortOrder": {
       "type": "integer",
       "default": 0,
       "description": "Display order (lower number appears first)"
+    },
+    "isActive": {
+      "type": "boolean",
+      "default": true,
+      "description": "Show or hide this product name"
     }
   }
 }

@@ -24,7 +24,7 @@
       "type": "uid",
       "targetField": "title"
     },
-    "short_description": {
+    "shortDescription": {
       "type": "text",
       "maxLength": 500,
       "description": "Brief product summary"
@@ -37,7 +37,7 @@
       "type": "decimal",
       "min": 0
     },
-    "ribbon_type": {
+    "ribbonType": {
       "type": "enumeration",
       "enum": ["wax", "wax_resin", "resin"],
       "required": true
@@ -50,7 +50,7 @@
       "type": "text",
       "description": "Compatible printer models"
     },
-    "is_featured": {
+    "isFeatured": {
       "type": "boolean",
       "default": false
     },
@@ -71,21 +71,27 @@
       "target": "api::category.category",
       "inversedBy": "products"
     },
-    "privacy_applied_in": {
+    "privacyAppliedIn": {
       "type": "relation",
       "relation": "manyToMany",
       "target": "api::privacy-policy.privacy-policy",
-      "mappedBy": "applies_to_products"
+      "mappedBy": "appliesToProducts"
     },
-    "pdpa_applied_in": {
+    "pdpaAppliedIn": {
       "type": "relation",
       "relation": "manyToMany",
       "target": "api::pdpa-setting.pdpa-setting",
-      "mappedBy": "applies_to_products"
+      "mappedBy": "appliesToProducts"
     },
     "seo": {
       "type": "component",
-      "component": "shared.seo-meta"
+      "repeatable": false,
+      "component": "shared.seo-meta",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     }
   }
 }

@@ -15,9 +15,9 @@ const siteUrl = Astro.url.origin;
 ---
 
 <BaseLayout
-  title={seo?.meta_title || tos?.title || "Terms of Service"}
-  description={seo?.meta_description || tos?.description || ""}
-  ogImage={getStrapiAbsoluteImageUrl(seo?.og_image) || undefined}
+  title={seo?.metaTitle || tos?.title || "Terms of Service"}
+  description={seo?.metaDescription || tos?.description || ""}
+  ogImage={getStrapiAbsoluteImageUrl(seo?.ogImage) || undefined}
   robots={seo?.robots}
   locale={lang}
   hreflangs={[
