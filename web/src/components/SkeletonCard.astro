@@ -45,7 +45,8 @@ const { count = 3, variant = "product" } = Astro.props;
   }
 
   .skeleton-card {
-    background: #fff;
+    background: var(--color-background);
+    border: 1px solid var(--color-border);
     border-radius: var(--radius-lg);
     overflow: hidden;
     box-shadow: var(--shadow);
@@ -53,7 +54,7 @@ const { count = 3, variant = "product" } = Astro.props;
 
   .skeleton-image {
     aspect-ratio: 4 / 3;
-    background: #e5e7eb;
+    background: var(--color-border);
   }
 
   .skeleton-body {
@@ -64,7 +65,7 @@ const { count = 3, variant = "product" } = Astro.props;
     width: 80px;
     height: 24px;
     border-radius: 12px;
-    background: #e5e7eb;
+    background: var(--color-border);
     margin-bottom: 12px;
   }
 
@@ -72,7 +73,7 @@ const { count = 3, variant = "product" } = Astro.props;
     width: 70%;
     height: 20px;
     border-radius: 4px;
-    background: #e5e7eb;
+    background: var(--color-border);
     margin-bottom: 12px;
   }
 
@@ -80,7 +81,7 @@ const { count = 3, variant = "product" } = Astro.props;
     width: 100%;
     height: 14px;
     border-radius: 4px;
-    background: #e5e7eb;
+    background: var(--color-border);
     margin-bottom: 8px;
   }
 
@@ -90,8 +91,8 @@ const { count = 3, variant = "product" } = Astro.props;
 
   .skeleton-pulse {
     animation: skeleton-pulse 1.5s ease-in-out infinite;
-    background-color: #e5e7eb;
-    background-image: linear-gradient(90deg, #e5e7eb 0px, #f3f4f6 40px, #e5e7eb 80px);
+    background-color: var(--color-border);
+    background-image: linear-gradient(90deg, var(--color-border) 0px, var(--color-border-light) 40px, var(--color-border) 80px);
     background-size: 200px;
   }
 

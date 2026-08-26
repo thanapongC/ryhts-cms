@@ -71,10 +71,10 @@ const STRAPI_URL = import.meta.env.PUBLIC_STRAPI_URL || "http://localhost:1337";
   .search-trigger {
     background: none;
     border: none;
-    color: var(--color-text);
+    color: var(--color-text-primary);
     cursor: pointer;
     padding: 8px;
-    border-radius: var(--radius);
+    border-radius: var(--radius-sm);
     transition: all var(--transition);
     display: flex;
     align-items: center;
@@ -83,7 +83,7 @@ const STRAPI_URL = import.meta.env.PUBLIC_STRAPI_URL || "http://localhost:1337";
 
   .search-trigger:hover {
     color: var(--color-primary);
-    background: var(--color-primary-light);
+    background: var(--color-background-blue);
   }
 
   /* ─── Overlay ──────────────────────────────────────────────────── */
@@ -148,12 +148,12 @@ const STRAPI_URL = import.meta.env.PUBLIC_STRAPI_URL || "http://localhost:1337";
     outline: none;
     font-size: 17px;
     font-family: var(--font-family);
-    color: var(--color-text);
+    color: var(--color-text-primary);
     background: transparent;
   }
 
   .search-input::placeholder {
-    color: var(--color-text-light);
+    color: var(--color-text-muted);
   }
 
   .search-spinner {
@@ -170,9 +170,9 @@ const STRAPI_URL = import.meta.env.PUBLIC_STRAPI_URL || "http://localhost:1337";
     display: flex;
     align-items: center;
     gap: 6px;
-    background: var(--color-bg-light);
+    background: var(--color-background-soft);
     border: 1px solid var(--color-border);
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     padding: 4px 10px;
     cursor: pointer;
     font-size: 14px;
@@ -209,7 +209,7 @@ const STRAPI_URL = import.meta.env.PUBLIC_STRAPI_URL || "http://localhost:1337";
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    background: var(--color-bg-light);
+    background: var(--color-background-soft);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -218,7 +218,7 @@ const STRAPI_URL = import.meta.env.PUBLIC_STRAPI_URL || "http://localhost:1337";
 
   .search-idle-icon i {
     font-size: 22px;
-    color: var(--color-text-light);
+    color: var(--color-text-muted);
   }
 
   .search-idle p,
@@ -264,16 +264,16 @@ const STRAPI_URL = import.meta.env.PUBLIC_STRAPI_URL || "http://localhost:1337";
 
   .search-result-item:hover,
   .search-result-item.focused {
-    background: var(--color-primary-light);
+    background: var(--color-background-blue);
   }
 
   .search-result-thumb {
     width: 48px;
     height: 48px;
-    border-radius: var(--radius);
+    border-radius: var(--radius-sm);
     overflow: hidden;
     flex-shrink: 0;
-    background: var(--color-bg-light);
+    background: var(--color-background-soft);
   }
 
   .search-result-thumb img {
@@ -300,7 +300,7 @@ const STRAPI_URL = import.meta.env.PUBLIC_STRAPI_URL || "http://localhost:1337";
   .search-result-title {
     font-size: 14px;
     font-weight: 500;
-    color: var(--color-text);
+    color: var(--color-text-primary);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -321,17 +321,17 @@ const STRAPI_URL = import.meta.env.PUBLIC_STRAPI_URL || "http://localhost:1337";
     border-radius: 10px;
     font-weight: 500;
     flex-shrink: 0;
-    background: var(--color-bg-light);
+    background: var(--color-background-soft);
     color: var(--color-text-secondary);
   }
 
   .search-result-badge.product {
-    background: #dbeafe;
-    color: #1e40af;
+    background: var(--color-background-blue);
+    color: var(--color-primary);
   }
 
   .search-result-badge.article {
-    background: #dcfce7;
+    background: #DCFCE7;
     color: #166534;
   }
 

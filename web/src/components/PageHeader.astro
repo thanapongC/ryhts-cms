@@ -23,15 +23,16 @@ const { title, description } = Astro.props;
 
 <style>
   .page-header {
-    background: linear-gradient(135deg, #f8fbff 0%, #e8f4fd 100%);
+    background: var(--color-background);
     padding: 140px 0 60px;
     text-align: center;
+    border-bottom: 1px solid var(--color-border-light);
   }
 
   .page-header h1 {
     font-size: 40px;
     font-weight: 700;
-    color: var(--color-text);
+    color: var(--color-text-primary);
     margin-bottom: 12px;
   }
 

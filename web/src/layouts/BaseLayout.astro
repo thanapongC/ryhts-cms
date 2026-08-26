@@ -242,7 +242,7 @@ const resolvedHreflangs = hreflangs || defaultHreflangs;
     <style is:global>
       @import "../styles/global.css";
 
-      /* ─── Header ──────────────────────────────────────────────────── */
+      /* ─── Header (design-rule.md §8) ──────────────────────────────── */
       .site-header {
         position: fixed;
         top: 0;
@@ -250,7 +250,7 @@ const resolvedHreflangs = hreflangs || defaultHreflangs;
         right: 0;
         z-index: 1000;
         background: rgba(255, 255, 255, 0.97);
-        backdrop-filter: blur(10px);
+        backdrop-filter: blur(12px);
         border-bottom: 1px solid var(--color-border-light);
         transition: all var(--transition);
       }
@@ -260,7 +260,7 @@ const resolvedHreflangs = hreflangs || defaultHreflangs;
       }
 
       .site-header.scrolled {
-        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 1px 12px rgba(15, 23, 42, 0.06);
       }
 
       .header-inner {
@@ -277,7 +277,7 @@ const resolvedHreflangs = hreflangs || defaultHreflangs;
       }
 
       .logo-text {
-        font-size: 24px;
+        font-size: 22px;
         font-weight: 700;
         color: var(--color-primary);
         letter-spacing: -0.5px;
@@ -286,40 +286,40 @@ const resolvedHreflangs = hreflangs || defaultHreflangs;
       .main-nav {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 4px;
       }
 
       .nav-link {
         padding: 8px 16px;
-        color: var(--color-text);
+        color: var(--color-text-primary);
         font-size: 15px;
         font-weight: 500;
-        border-radius: var(--radius);
+        border-radius: var(--radius-sm);
         transition: all var(--transition);
         text-decoration: none;
       }
 
       .nav-link:hover {
         color: var(--color-primary);
-        background: var(--color-primary-light);
+        background: var(--color-background-blue);
       }
 
       .nav-link.active {
         color: var(--color-primary);
-        background: var(--color-primary-light);
+        background: var(--color-background-blue);
       }
 
       .header-right {
         display: flex;
         align-items: center;
-        gap: 16px;
+        gap: 12px;
       }
 
       .header-phone {
         display: flex;
         align-items: center;
         gap: 8px;
-        color: var(--color-text);
+        color: var(--color-text-primary);
         font-size: 14px;
         font-weight: 500;
         text-decoration: none;
@@ -338,7 +338,7 @@ const resolvedHreflangs = hreflangs || defaultHreflangs;
         background: none;
         border: none;
         font-size: 22px;
-        color: var(--color-text);
+        color: var(--color-text-primary);
         cursor: pointer;
         padding: 8px;
       }
@@ -348,11 +348,11 @@ const resolvedHreflangs = hreflangs || defaultHreflangs;
         position: fixed;
         top: 0;
         right: -100%;
-        width: 280px;
+        width: 300px;
         height: 100vh;
-        background: #fff;
+        background: var(--color-background);
         z-index: 2000;
-        box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+        box-shadow: -8px 0 30px rgba(15, 23, 42, 0.12);
         transition: right var(--transition);
         display: flex;
         flex-direction: column;
@@ -374,7 +374,7 @@ const resolvedHreflangs = hreflangs || defaultHreflangs;
         background: none;
         border: none;
         font-size: 24px;
-        color: var(--color-text);
+        color: var(--color-text-primary);
         cursor: pointer;
       }
 
@@ -386,10 +386,10 @@ const resolvedHreflangs = hreflangs || defaultHreflangs;
 
       .mobile-nav-link {
         padding: 12px 16px;
-        color: var(--color-text);
+        color: var(--color-text-primary);
         font-size: 16px;
         font-weight: 500;
-        border-radius: var(--radius);
+        border-radius: var(--radius-sm);
         text-decoration: none;
         transition: all var(--transition);
       }
@@ -397,7 +397,7 @@ const resolvedHreflangs = hreflangs || defaultHreflangs;
       .mobile-nav-link:hover,
       .mobile-nav-link.active {
         color: var(--color-primary);
-        background: var(--color-primary-light);
+        background: var(--color-background-blue);
       }
 
       .mobile-nav-phone {
@@ -406,9 +406,9 @@ const resolvedHreflangs = hreflangs || defaultHreflangs;
         align-items: center;
         gap: 8px;
         padding: 12px 16px;
-        background: var(--color-primary-light);
+        background: var(--color-background-blue);
         color: var(--color-primary);
-        border-radius: var(--radius);
+        border-radius: var(--radius-sm);
         font-weight: 500;
         text-decoration: none;
       }

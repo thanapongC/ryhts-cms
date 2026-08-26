@@ -236,7 +236,7 @@ const CONSENT_VERSION = "1"; // bump to re-prompt users
   /* ─── Category items ───────────────────────────────────────────── */
   .cookie-category {
     border: 1px solid var(--color-border-light);
-    border-radius: var(--radius);
+    border-radius: var(--radius-sm);
     padding: 16px;
     margin-bottom: 12px;
     transition: border-color var(--transition);
@@ -247,7 +247,7 @@ const CONSENT_VERSION = "1"; // bump to re-prompt users
   }
 
   .cookie-category:hover {
-    border-color: var(--color-primary);
+    border-color: var(--color-border-blue);
   }
 
   .cookie-category-header {
@@ -267,12 +267,13 @@ const CONSENT_VERSION = "1"; // bump to re-prompt users
     display: flex;
     align-items: center;
     gap: 8px;
+    color: var(--color-text-primary);
   }
 
   .cookie-category-required {
     font-size: 11px;
-    background: var(--color-bg-light);
-    color: var(--color-text-light);
+    background: var(--color-background-soft);
+    color: var(--color-text-muted);
     padding: 2px 8px;
     border-radius: 10px;
     font-weight: 500;
@@ -344,7 +345,7 @@ const CONSENT_VERSION = "1"; // bump to re-prompt users
   .skeleton-line {
     height: 14px;
     border-radius: 4px;
-    background: #e5e7eb;
+    background: var(--color-border);
     margin-bottom: 10px;
     animation: skeleton-pulse 1.5s ease-in-out infinite;
     background-color: #e5e7eb;

@@ -266,8 +266,9 @@ const quickHelpLinks = [
 <style>
   /* Hero */
   .sup-hero {
-    background: linear-gradient(135deg, #f8fbff 0%, #e8f4fd 100%);
+    background: var(--color-background);
     padding: 140px 0 80px;
+    border-bottom: 1px solid var(--color-border-light);
   }
 
   .sup-hero-content {
@@ -285,6 +286,7 @@ const quickHelpLinks = [
     font-size: 40px;
     font-weight: 700;
     margin-bottom: 16px;
+    color: var(--color-text-primary);
   }
 
   .sup-hero-text p {
@@ -302,7 +304,8 @@ const quickHelpLinks = [
 
   /* Status Card */
   .sup-status-card {
-    background: #fff;
+    background: var(--color-background);
+    border: 1px solid var(--color-border);
     border-radius: var(--radius-lg);
     padding: 32px;
     box-shadow: var(--shadow-lg);
@@ -313,12 +316,13 @@ const quickHelpLinks = [
     font-size: 12px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    color: var(--color-text-light);
+    color: var(--color-text-muted);
   }
 
   .sup-status-card h3 {
     font-size: 22px;
     margin: 8px 0;
+    color: var(--color-text-primary);
   }
 
   .sup-status-hours {
@@ -337,7 +341,7 @@ const quickHelpLinks = [
     align-items: center;
     gap: 8px;
     padding: 8px 16px;
-    background: #dcfce7;
+    background: #DCFCE7;
     color: #166534;
     border-radius: 20px;
     font-size: 14px;
@@ -348,7 +352,7 @@ const quickHelpLinks = [
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: #16a34a;
+    background: var(--color-success);
   }
 
   /* Quick Links */
@@ -363,11 +367,12 @@ const quickHelpLinks = [
     align-items: center;
     gap: 12px;
     padding: 20px;
-    background: #fff;
+    background: var(--color-background);
+    border: 1px solid var(--color-border);
     border-radius: var(--radius);
     box-shadow: var(--shadow);
     text-decoration: none;
-    color: var(--color-text);
+    color: var(--color-text-primary);
     transition: all var(--transition);
   }
 
@@ -375,13 +380,14 @@ const quickHelpLinks = [
     box-shadow: var(--shadow-lg);
     transform: translateY(-2px);
     color: var(--color-primary);
+    border-color: var(--color-border-blue);
   }
 
   .sup-quick-icon {
     width: 40px;
     height: 40px;
-    border-radius: var(--radius);
-    background: var(--color-primary-light);
+    border-radius: var(--radius-sm);
+    background: var(--color-background-blue);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -411,6 +417,7 @@ const quickHelpLinks = [
   .sup-section-header h2 {
     font-size: 28px;
     margin-bottom: 8px;
+    color: var(--color-text-primary);
   }
 
   .sup-section-header p {
@@ -425,9 +432,9 @@ const quickHelpLinks = [
   }
 
   .sup-faq-item {
-    background: #fff;
+    background: var(--color-background);
     border: 1px solid var(--color-border);
-    border-radius: var(--radius);
+    border-radius: var(--radius-sm);
     margin-bottom: 12px;
     overflow: hidden;
     transition: box-shadow var(--transition);
@@ -453,7 +460,7 @@ const quickHelpLinks = [
   }
 
   .sup-faq-question i {
-    color: var(--color-text-light);
+    color: var(--color-text-muted);
     transition: transform var(--transition);
   }
 
@@ -486,7 +493,7 @@ const quickHelpLinks = [
 
   .sup-empty i {
     font-size: 48px;
-    color: var(--color-text-light);
+    color: var(--color-text-muted);
     margin-bottom: 16px;
   }
 
@@ -504,7 +511,8 @@ const quickHelpLinks = [
   }
 
   .sup-help-card {
-    background: #fff;
+    background: var(--color-background);
+    border: 1px solid var(--color-border);
     border-radius: var(--radius-lg);
     padding: 32px;
     box-shadow: var(--shadow);
@@ -513,6 +521,7 @@ const quickHelpLinks = [
   .sup-help-card h3 {
     font-size: 18px;
     margin-bottom: 8px;
+    color: var(--color-text-primary);
   }
 
   .sup-help-card > p {
@@ -551,7 +560,8 @@ const quickHelpLinks = [
     align-items: flex-start;
     gap: 16px;
     padding: 24px;
-    background: var(--color-bg-light);
+    background: var(--color-background-soft);
+    border: 1px solid var(--color-border-light);
     border-radius: var(--radius);
   }
 
@@ -559,7 +569,7 @@ const quickHelpLinks = [
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    background: var(--color-primary-light);
+    background: var(--color-background-blue);
     display: flex;
     align-items: center;
     justify-content: center;

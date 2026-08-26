@@ -43,6 +43,7 @@ const { title = "ส่งข้อความถึงเรา" } = Astro.pro
   .contact-form-wrapper h2 {
     font-size: 24px;
     margin-bottom: 28px;
+    color: var(--color-text-primary);
   }
 
   .contact-form {
@@ -60,19 +61,24 @@ const { title = "ส่งข้อความถึงเรา" } = Astro.pro
   .form-group label {
     font-size: 14px;
     font-weight: 500;
-    color: var(--color-text);
+    color: var(--color-text-primary);
   }
 
   .form-group input,
   .form-group textarea {
     padding: 12px 16px;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-sm);
     font-family: var(--font-family);
     font-size: 15px;
-    color: var(--color-text);
-    background: #fff;
-    transition: border-color var(--transition);
+    color: var(--color-text-primary);
+    background: var(--color-background);
+    transition: all var(--transition);
+  }
+
+  .form-group input::placeholder,
+  .form-group textarea::placeholder {
+    color: #9CA3AF;
   }
 
   .form-group input:focus,

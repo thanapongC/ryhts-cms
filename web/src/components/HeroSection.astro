@@ -38,7 +38,7 @@ const { customerCount = 100 } = Astro.props;
 <style>
   .hero {
     padding: 140px 0 80px;
-    background: linear-gradient(135deg, #f8fbff 0%, #e8f4fd 100%);
+    background: var(--color-background);
     min-height: 520px;
     display: flex;
     align-items: center;
@@ -56,9 +56,9 @@ const { customerCount = 100 } = Astro.props;
   .hero-content h1 {
     font-size: 48px;
     font-weight: 700;
-    line-height: 1.2;
+    line-height: 1.15;
     margin-bottom: 20px;
-    color: var(--color-text);
+    color: var(--color-text-primary);
   }
 
   .hero-content p {
@@ -70,7 +70,7 @@ const { customerCount = 100 } = Astro.props;
 
   .hero-actions {
     display: flex;
-    gap: 16px;
+    gap: 12px;
     flex-wrap: wrap;
   }
 
@@ -85,8 +85,8 @@ const { customerCount = 100 } = Astro.props;
     width: 320px;
     height: 320px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--color-primary) 0%, #0160b0 100%);
-    opacity: 0.1;
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+    opacity: 0.08;
     position: absolute;
   }
 
@@ -94,10 +94,11 @@ const { customerCount = 100 } = Astro.props;
     position: relative;
     z-index: 1;
     text-align: center;
-    background: #fff;
+    background: #FFFFFF;
     padding: 40px;
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-xl);
     box-shadow: var(--shadow-lg);
+    border: 1px solid var(--color-border-light);
   }
 
   .hero-badge-number {
@@ -111,7 +112,7 @@ const { customerCount = 100 } = Astro.props;
   .hero-badge-text {
     display: block;
     font-size: 16px;
-    color: var(--color-text-secondary);
+    color: var(--color-text-muted);
     margin-top: 8px;
   }
 
