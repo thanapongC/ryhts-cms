@@ -464,7 +464,7 @@ export interface ApiAboutPageAboutPage extends Struct.SingleTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    featured_image: Schema.Attribute.Media<'images'>;
+    featuredImage: Schema.Attribute.Media<'images'>;
     locale: Schema.Attribute.String;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -472,14 +472,19 @@ export interface ApiAboutPageAboutPage extends Struct.SingleTypeSchema {
     >;
     partners: Schema.Attribute.Relation<'oneToMany', 'api::partner.partner'>;
     publishedAt: Schema.Attribute.DateTime;
-    seo: Schema.Attribute.Component<'shared.seo-meta', false>;
+    seo: Schema.Attribute.Component<'shared.seo-meta', false> &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     stats: Schema.Attribute.Component<'shared.stat-item', true>;
     subtitle: Schema.Attribute.String;
-    team_members: Schema.Attribute.Relation<
+    teamMembers: Schema.Attribute.Relation<
       'oneToMany',
       'api::team-member.team-member'
     >;
-    timeline_milestones: Schema.Attribute.Relation<
+    timelineMilestones: Schema.Attribute.Relation<
       'oneToMany',
       'api::timeline-milestone.timeline-milestone'
     >;
@@ -509,7 +514,7 @@ export interface ApiArticleArticle extends Struct.CollectionTypeSchema {
     };
   };
   attributes: {
-    article_date: Schema.Attribute.Date;
+    articleDate: Schema.Attribute.Date;
     author: Schema.Attribute.String;
     category: Schema.Attribute.Relation<'manyToOne', 'api::category.category'>;
     content: Schema.Attribute.RichText;
@@ -520,14 +525,19 @@ export interface ApiArticleArticle extends Struct.CollectionTypeSchema {
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 500;
       }>;
-    featured_image: Schema.Attribute.Media<'images'>;
+    featuredImage: Schema.Attribute.Media<'images'>;
     locale: Schema.Attribute.String;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::article.article'
     >;
     publishedAt: Schema.Attribute.DateTime;
-    seo: Schema.Attribute.Component<'shared.seo-meta', false>;
+    seo: Schema.Attribute.Component<'shared.seo-meta', false> &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     slug: Schema.Attribute.UID<'title'>;
     tags: Schema.Attribute.JSON;
     title: Schema.Attribute.String & Schema.Attribute.Required;
@@ -619,54 +629,6 @@ export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
   };
 }
 
-export interface ApiCompanyInfoCompanyInfo extends Struct.SingleTypeSchema {
-  collectionName: 'company_infos';
-  info: {
-    description: 'Company contact information - address, phone, hours';
-    displayName: 'Site - Company Info';
-    pluralName: 'company-infos';
-    singularName: 'company-info';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  pluginOptions: {
-    i18n: {
-      localized: true;
-    };
-  };
-  attributes: {
-    address: Schema.Attribute.Text;
-    business_hours: Schema.Attribute.Text;
-    company_name: Schema.Attribute.String & Schema.Attribute.Required;
-    company_name_en: Schema.Attribute.String;
-    contact_info: Schema.Attribute.Component<'shared.contact-info', true>;
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    customer_count: Schema.Attribute.Integer &
-      Schema.Attribute.SetMinMax<
-        {
-          min: 0;
-        },
-        number
-      > &
-      Schema.Attribute.DefaultTo<0>;
-    email: Schema.Attribute.Email;
-    locale: Schema.Attribute.String;
-    localizations: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::company-info.company-info'
-    >;
-    map_link: Schema.Attribute.String;
-    phone: Schema.Attribute.String;
-    publishedAt: Schema.Attribute.DateTime;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-  };
-}
-
 export interface ApiContactFloatingContactFloating
   extends Struct.SingleTypeSchema {
   collectionName: 'contact_floatings';
@@ -689,19 +651,19 @@ export interface ApiContactFloatingContactFloating
       'contact-floating.contact-action',
       true
     >;
-    button_label: Schema.Attribute.String;
-    close_label: Schema.Attribute.String;
+    buttonLabel: Schema.Attribute.String;
+    closeLabel: Schema.Attribute.String;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    is_enabled: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    isEnabled: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     locale: Schema.Attribute.String;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::contact-floating.contact-floating'
     >;
-    panel_description: Schema.Attribute.Text;
-    panel_title: Schema.Attribute.String;
+    panelDescription: Schema.Attribute.Text;
+    panelTitle: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -730,14 +692,19 @@ export interface ApiContactPageContactPage extends Struct.SingleTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    featured_image: Schema.Attribute.Media<'images'>;
+    featuredImage: Schema.Attribute.Media<'images'>;
     locale: Schema.Attribute.String;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::contact-page.contact-page'
     >;
     publishedAt: Schema.Attribute.DateTime;
-    seo: Schema.Attribute.Component<'shared.seo-meta', false>;
+    seo: Schema.Attribute.Component<'shared.seo-meta', false> &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     subtitle: Schema.Attribute.String;
     title: Schema.Attribute.String &
       Schema.Attribute.Required &
@@ -771,20 +738,20 @@ export interface ApiCookieCategoryCookieCategory
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     description: Schema.Attribute.Text;
-    is_active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
-    is_default_enabled: Schema.Attribute.Boolean &
+    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    isDefaultEnabled: Schema.Attribute.Boolean &
       Schema.Attribute.DefaultTo<false>;
-    is_required: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    isRequired: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     locale: Schema.Attribute.String;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::cookie-category.cookie-category'
     >;
     name: Schema.Attribute.String & Schema.Attribute.Required;
-    privacy_policy_url: Schema.Attribute.String;
+    privacyPolicyUrl: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
     slug: Schema.Attribute.UID<'name'>;
-    sort_order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -813,15 +780,20 @@ export interface ApiCookiePolicyCookiePolicy extends Struct.SingleTypeSchema {
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     description: Schema.Attribute.Text;
-    featured_image: Schema.Attribute.Media<'images'>;
-    last_updated: Schema.Attribute.Date;
+    featuredImage: Schema.Attribute.Media<'images'>;
+    lastUpdated: Schema.Attribute.Date;
     locale: Schema.Attribute.String;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::cookie-policy.cookie-policy'
     >;
     publishedAt: Schema.Attribute.DateTime;
-    seo: Schema.Attribute.Component<'shared.seo-meta', false>;
+    seo: Schema.Attribute.Component<'shared.seo-meta', false> &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     title: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<'Cookie Policy'>;
@@ -888,14 +860,19 @@ export interface ApiFaqFaq extends Struct.CollectionTypeSchema {
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     description: Schema.Attribute.Text;
-    is_active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     items: Schema.Attribute.Component<'faq.faq-item', true>;
     locale: Schema.Attribute.String;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::faq.faq'>;
     publishedAt: Schema.Attribute.DateTime;
-    seo: Schema.Attribute.Component<'shared.seo-meta', false>;
+    seo: Schema.Attribute.Component<'shared.seo-meta', false> &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     slug: Schema.Attribute.UID<'title'>;
-    sort_order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     title: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -920,27 +897,27 @@ export interface ApiFooterSettingFooterSetting extends Struct.SingleTypeSchema {
     };
   };
   attributes: {
-    company_description: Schema.Attribute.Text;
+    companyDescription: Schema.Attribute.Text;
     copyright: Schema.Attribute.Text;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    cta_badge: Schema.Attribute.String;
-    cta_description: Schema.Attribute.Text;
-    cta_title: Schema.Attribute.String;
-    footer_sections: Schema.Attribute.Component<'footer.footer-section', true>;
-    legal_links: Schema.Attribute.Component<'footer.legal-link', true>;
+    ctaBadge: Schema.Attribute.String;
+    ctaDescription: Schema.Attribute.Text;
+    ctaTitle: Schema.Attribute.String;
+    footerSections: Schema.Attribute.Component<'footer.footer-section', true>;
+    legalLinks: Schema.Attribute.Component<'footer.legal-link', true>;
     locale: Schema.Attribute.String;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::footer-setting.footer-setting'
     >;
-    primary_cta_label: Schema.Attribute.String;
-    primary_cta_url: Schema.Attribute.String;
+    primaryCtaLabel: Schema.Attribute.String;
+    primaryCtaUrl: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
-    secondary_cta_label: Schema.Attribute.String;
-    secondary_cta_url: Schema.Attribute.String;
-    social_links: Schema.Attribute.JSON;
+    secondaryCtaLabel: Schema.Attribute.String;
+    secondaryCtaUrl: Schema.Attribute.String;
+    socialLinks: Schema.Attribute.JSON;
     stats: Schema.Attribute.Component<'shared.stat-item', true>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -969,15 +946,20 @@ export interface ApiFreeTrialFreeTrial extends Struct.SingleTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    featured_image: Schema.Attribute.Media<'images'>;
-    form_labels: Schema.Attribute.Component<'free-trial.form-labels', true>;
+    featuredImage: Schema.Attribute.Media<'images'>;
+    formLabels: Schema.Attribute.Component<'free-trial.form-labels', true>;
     locale: Schema.Attribute.String;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::free-trial.free-trial'
     >;
     publishedAt: Schema.Attribute.DateTime;
-    seo: Schema.Attribute.Component<'shared.seo-meta', false>;
+    seo: Schema.Attribute.Component<'shared.seo-meta', false> &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     subtitle: Schema.Attribute.String;
     testimonials: Schema.Attribute.Relation<
       'manyToMany',
@@ -986,11 +968,8 @@ export interface ApiFreeTrialFreeTrial extends Struct.SingleTypeSchema {
     title: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<'\u0E17\u0E14\u0E25\u0E2D\u0E07\u0E43\u0E0A\u0E49\u0E1F\u0E23\u0E35'>;
-    trial_features: Schema.Attribute.Component<
-      'free-trial.trial-feature',
-      true
-    >;
-    trust_items: Schema.Attribute.Component<'free-trial.trust-item', true>;
+    trialFeatures: Schema.Attribute.Component<'free-trial.trial-feature', true>;
+    trustItems: Schema.Attribute.Component<'free-trial.trust-item', true>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1014,7 +993,7 @@ export interface ApiGlobalSettingGlobalSetting extends Struct.SingleTypeSchema {
     };
   };
   attributes: {
-    contact_info: Schema.Attribute.Component<'shared.contact-info', true>;
+    contactInfo: Schema.Attribute.Component<'shared.contact-info', true>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1025,8 +1004,8 @@ export interface ApiGlobalSettingGlobalSetting extends Struct.SingleTypeSchema {
     >;
     publishedAt: Schema.Attribute.DateTime;
     seoConfig: Schema.Attribute.Component<'shared.seo-config', false>;
-    site_logo: Schema.Attribute.Media<'images'>;
-    site_name: Schema.Attribute.String & Schema.Attribute.Required;
+    siteLogo: Schema.Attribute.Media<'images'>;
+    siteName: Schema.Attribute.String & Schema.Attribute.Required;
     stats: Schema.Attribute.Component<'shared.stat-item', true>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -1051,23 +1030,23 @@ export interface ApiNavigationNavigation extends Struct.SingleTypeSchema {
     };
   };
   attributes: {
-    button_labels: Schema.Attribute.Component<'shared.button-labels', false>;
+    buttonLabels: Schema.Attribute.Component<'shared.button-labels', false>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    footer_labels: Schema.Attribute.Component<'shared.footer-labels', false>;
-    footer_sections: Schema.Attribute.Component<
+    footerLabels: Schema.Attribute.Component<'shared.footer-labels', false>;
+    footerSections: Schema.Attribute.Component<
       'navigation.footer-section',
       true
     >;
-    header_items: Schema.Attribute.Component<'navigation.nav-item', true>;
+    headerItems: Schema.Attribute.Component<'navigation.nav-item', true>;
     locale: Schema.Attribute.String;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::navigation.navigation'
     >;
     name: Schema.Attribute.String & Schema.Attribute.Required;
-    product_names: Schema.Attribute.Component<'navigation.product-name', true>;
+    productNames: Schema.Attribute.Component<'navigation.product-name', true>;
     publishedAt: Schema.Attribute.DateTime;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -1092,7 +1071,7 @@ export interface ApiPartnerPartner extends Struct.CollectionTypeSchema {
     };
   };
   attributes: {
-    about_page: Schema.Attribute.Relation<
+    aboutPage: Schema.Attribute.Relation<
       'manyToOne',
       'api::about-page.about-page'
     >;
@@ -1100,7 +1079,7 @@ export interface ApiPartnerPartner extends Struct.CollectionTypeSchema {
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     description: Schema.Attribute.Text;
-    is_active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     locale: Schema.Attribute.String;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -1109,11 +1088,11 @@ export interface ApiPartnerPartner extends Struct.CollectionTypeSchema {
     logo: Schema.Attribute.Media<'images'>;
     name: Schema.Attribute.String & Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
-    sort_order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    website_url: Schema.Attribute.String;
+    websiteUrl: Schema.Attribute.String;
   };
 }
 
@@ -1134,28 +1113,22 @@ export interface ApiPdpaSettingPdpaSetting extends Struct.SingleTypeSchema {
     };
   };
   attributes: {
-    applies_to_products: Schema.Attribute.Relation<
+    appliesToProducts: Schema.Attribute.Relation<
       'manyToMany',
       'api::product.product'
     >;
-    company_name: Schema.Attribute.String & Schema.Attribute.Required;
-    consent_accept_all_text: Schema.Attribute.String &
-      Schema.Attribute.DefaultTo<'Accept All'>;
-    consent_banner_description: Schema.Attribute.Text;
-    consent_banner_title: Schema.Attribute.String;
-    consent_manage_text: Schema.Attribute.String &
-      Schema.Attribute.DefaultTo<'Manage Preferences'>;
-    consent_reject_all_text: Schema.Attribute.String &
-      Schema.Attribute.DefaultTo<'Reject All'>;
-    consent_save_text: Schema.Attribute.String &
-      Schema.Attribute.DefaultTo<'Save Preferences'>;
-    contact_info: Schema.Attribute.Component<'shared.contact-info', true>;
-    contact_text: Schema.Attribute.Text;
-    cookie_policy_url: Schema.Attribute.String;
+    companyName: Schema.Attribute.String & Schema.Attribute.Required;
+    consentBanner: Schema.Attribute.Component<
+      'shared.cookie-consent-settings',
+      false
+    >;
+    contactInfo: Schema.Attribute.Component<'shared.contact-info', true>;
+    contactText: Schema.Attribute.Text;
+    cookiePolicyUrl: Schema.Attribute.String;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    data_retention_days: Schema.Attribute.Integer &
+    dataRetentionDays: Schema.Attribute.Integer &
       Schema.Attribute.SetMinMax<
         {
           min: 1;
@@ -1163,22 +1136,27 @@ export interface ApiPdpaSettingPdpaSetting extends Struct.SingleTypeSchema {
         number
       > &
       Schema.Attribute.DefaultTo<365>;
-    data_retention_description: Schema.Attribute.Text;
-    dpo_email: Schema.Attribute.Email;
-    dpo_name: Schema.Attribute.String;
-    dpo_phone: Schema.Attribute.String;
-    dpo_position: Schema.Attribute.String;
-    is_active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    dataRetentionDescription: Schema.Attribute.Text;
+    dpoEmail: Schema.Attribute.Email;
+    dpoName: Schema.Attribute.String;
+    dpoPhone: Schema.Attribute.String;
+    dpoPosition: Schema.Attribute.String;
+    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     locale: Schema.Attribute.String;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::pdpa-setting.pdpa-setting'
     >;
-    privacy_policy_url: Schema.Attribute.String;
+    privacyPolicyUrl: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
-    rights_text: Schema.Attribute.RichText;
-    seo: Schema.Attribute.Component<'shared.seo-meta', false>;
-    third_parties_text: Schema.Attribute.RichText;
+    rightsText: Schema.Attribute.RichText;
+    seo: Schema.Attribute.Component<'shared.seo-meta', false> &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    thirdPartiesText: Schema.Attribute.RichText;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1189,7 +1167,7 @@ export interface ApiPrivacyPolicyPrivacyPolicy extends Struct.SingleTypeSchema {
   collectionName: 'privacy_policies';
   info: {
     description: 'Privacy policy page content - PDPA-compliant privacy disclosure';
-    displayName: 'Page - Privacy Policy';
+    displayName: 'Page - Privacy Settings';
     pluralName: 'privacy-policies';
     singularName: 'privacy-policy';
   };
@@ -1202,28 +1180,33 @@ export interface ApiPrivacyPolicyPrivacyPolicy extends Struct.SingleTypeSchema {
     };
   };
   attributes: {
-    applies_to_products: Schema.Attribute.Relation<
+    appliesToProducts: Schema.Attribute.Relation<
       'manyToMany',
       'api::product.product'
     >;
-    contact_info: Schema.Attribute.Component<'shared.contact-info', true>;
+    contactInfo: Schema.Attribute.Component<'shared.contact-info', true>;
     content: Schema.Attribute.RichText;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     description: Schema.Attribute.Text;
-    effective_date: Schema.Attribute.Date;
-    featured_image: Schema.Attribute.Media<'images'>;
-    last_updated: Schema.Attribute.Date;
+    effectiveDate: Schema.Attribute.Date;
+    featuredImage: Schema.Attribute.Media<'images'>;
+    lastUpdated: Schema.Attribute.Date;
     locale: Schema.Attribute.String;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::privacy-policy.privacy-policy'
     >;
-    policy_sections: Schema.Attribute.Component<'privacy.policy-section', true>;
+    policySections: Schema.Attribute.Component<'privacy.policy-section', true>;
     publishedAt: Schema.Attribute.DateTime;
-    related_links: Schema.Attribute.Component<'privacy.related-link', true>;
-    seo: Schema.Attribute.Component<'shared.seo-meta', false>;
+    relatedLinks: Schema.Attribute.Component<'privacy.related-link', true>;
+    seo: Schema.Attribute.Component<'shared.seo-meta', false> &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     title: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<'Privacy Policy'>;
@@ -1261,13 +1244,13 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     description: Schema.Attribute.RichText;
     images: Schema.Attribute.Media<'images', true>;
-    is_featured: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    isFeatured: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     locale: Schema.Attribute.String;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::product.product'
     >;
-    pdpa_applied_in: Schema.Attribute.Relation<
+    pdpaAppliedIn: Schema.Attribute.Relation<
       'manyToMany',
       'api::pdpa-setting.pdpa-setting'
     >;
@@ -1278,62 +1261,26 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
         },
         number
       >;
-    privacy_applied_in: Schema.Attribute.Relation<
+    privacyAppliedIn: Schema.Attribute.Relation<
       'manyToMany',
       'api::privacy-policy.privacy-policy'
     >;
     publishedAt: Schema.Attribute.DateTime;
-    ribbon_type: Schema.Attribute.Enumeration<['wax', 'wax_resin', 'resin']> &
+    ribbonType: Schema.Attribute.Enumeration<['wax', 'wax_resin', 'resin']> &
       Schema.Attribute.Required;
-    seo: Schema.Attribute.Component<'shared.seo-meta', false>;
-    short_description: Schema.Attribute.Text &
+    seo: Schema.Attribute.Component<'shared.seo-meta', false> &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    shortDescription: Schema.Attribute.Text &
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 500;
       }>;
     sizes: Schema.Attribute.JSON;
     slug: Schema.Attribute.UID<'title'>;
     title: Schema.Attribute.String & Schema.Attribute.Required;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-  };
-}
-
-export interface ApiSiteSettingSiteSetting extends Struct.SingleTypeSchema {
-  collectionName: 'site_settings';
-  info: {
-    description: 'General site settings - company name, logo, description';
-    displayName: 'Site - Settings';
-    pluralName: 'site-settings';
-    singularName: 'site-setting';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  pluginOptions: {
-    i18n: {
-      localized: true;
-    };
-  };
-  attributes: {
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    currency: Schema.Attribute.String & Schema.Attribute.DefaultTo<'THB'>;
-    email: Schema.Attribute.Email;
-    locale: Schema.Attribute.String;
-    localizations: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::site-setting.site-setting'
-    >;
-    og_image: Schema.Attribute.Media<'images'>;
-    phone: Schema.Attribute.String;
-    publishedAt: Schema.Attribute.DateTime;
-    site_description: Schema.Attribute.Text;
-    site_favicon: Schema.Attribute.Media<'images'>;
-    site_logo: Schema.Attribute.Media<'images'>;
-    site_name: Schema.Attribute.String & Schema.Attribute.Required;
-    stats: Schema.Attribute.Component<'shared.stat-item', true>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1357,11 +1304,11 @@ export interface ApiSupportPageSupportPage extends Struct.SingleTypeSchema {
     };
   };
   attributes: {
-    contact_section: Schema.Attribute.Component<
+    contactSection: Schema.Attribute.Component<
       'support.contact-section',
       false
     >;
-    contact_settings: Schema.Attribute.Relation<
+    contactSettings: Schema.Attribute.Relation<
       'manyToOne',
       'api::global-setting.global-setting'
     >;
@@ -1369,21 +1316,26 @@ export interface ApiSupportPageSupportPage extends Struct.SingleTypeSchema {
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     faqs: Schema.Attribute.Relation<'manyToMany', 'api::faq.faq'>;
-    faq_section: Schema.Attribute.Component<'support.faq-section', false>;
-    help_center_section: Schema.Attribute.Component<
+    faqSection: Schema.Attribute.Component<'support.faq-section', false>;
+    helpCenterSection: Schema.Attribute.Component<
       'support.help-center-section',
       false
     >;
-    help_resources: Schema.Attribute.Relation<'manyToMany', 'api::faq.faq'>;
-    hero_section: Schema.Attribute.Component<'support.hero-section', false>;
+    helpResources: Schema.Attribute.Relation<'manyToMany', 'api::faq.faq'>;
+    heroSection: Schema.Attribute.Component<'support.hero-section', false>;
     locale: Schema.Attribute.String;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::support-page.support-page'
     >;
     publishedAt: Schema.Attribute.DateTime;
-    seo: Schema.Attribute.Component<'shared.seo-meta', false>;
-    status_card: Schema.Attribute.Component<'support.status-card', false>;
+    seo: Schema.Attribute.Component<'shared.seo-meta', false> &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    statusCard: Schema.Attribute.Component<'support.status-card', false>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1407,7 +1359,7 @@ export interface ApiTeamMemberTeamMember extends Struct.CollectionTypeSchema {
     };
   };
   attributes: {
-    about_page: Schema.Attribute.Relation<
+    aboutPage: Schema.Attribute.Relation<
       'manyToOne',
       'api::about-page.about-page'
     >;
@@ -1416,7 +1368,7 @@ export interface ApiTeamMemberTeamMember extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    is_active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     locale: Schema.Attribute.String;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -1425,7 +1377,7 @@ export interface ApiTeamMemberTeamMember extends Struct.CollectionTypeSchema {
     name: Schema.Attribute.String & Schema.Attribute.Required;
     position: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
-    sort_order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1455,16 +1407,21 @@ export interface ApiTermsOfServiceTermsOfService
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     description: Schema.Attribute.Text;
-    effective_date: Schema.Attribute.Date;
-    featured_image: Schema.Attribute.Media<'images'>;
-    last_updated: Schema.Attribute.Date;
+    effectiveDate: Schema.Attribute.Date;
+    featuredImage: Schema.Attribute.Media<'images'>;
+    lastUpdated: Schema.Attribute.Date;
     locale: Schema.Attribute.String;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::terms-of-service.terms-of-service'
     >;
     publishedAt: Schema.Attribute.DateTime;
-    seo: Schema.Attribute.Component<'shared.seo-meta', false>;
+    seo: Schema.Attribute.Component<'shared.seo-meta', false> &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     title: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<'Terms of Service'>;
@@ -1496,11 +1453,11 @@ export interface ApiTestimonialTestimonial extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    free_trial_pages: Schema.Attribute.Relation<
+    freeTrialPages: Schema.Attribute.Relation<
       'manyToMany',
       'api::free-trial.free-trial'
     >;
-    is_active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     locale: Schema.Attribute.String;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -1518,7 +1475,7 @@ export interface ApiTestimonialTestimonial extends Struct.CollectionTypeSchema {
         },
         number
       >;
-    sort_order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1543,7 +1500,7 @@ export interface ApiTimelineMilestoneTimelineMilestone
     };
   };
   attributes: {
-    about_page: Schema.Attribute.Relation<
+    aboutPage: Schema.Attribute.Relation<
       'manyToOne',
       'api::about-page.about-page'
     >;
@@ -1552,15 +1509,15 @@ export interface ApiTimelineMilestoneTimelineMilestone
       Schema.Attribute.Private;
     description: Schema.Attribute.Text;
     image: Schema.Attribute.Media<'images'>;
-    is_active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     locale: Schema.Attribute.String;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::timeline-milestone.timeline-milestone'
     >;
-    milestone_date: Schema.Attribute.Date;
+    milestoneDate: Schema.Attribute.Date;
     publishedAt: Schema.Attribute.DateTime;
-    sort_order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     title: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -2083,7 +2040,6 @@ declare module '@strapi/strapi' {
       'api::article.article': ApiArticleArticle;
       'api::brand.brand': ApiBrandBrand;
       'api::category.category': ApiCategoryCategory;
-      'api::company-info.company-info': ApiCompanyInfoCompanyInfo;
       'api::contact-floating.contact-floating': ApiContactFloatingContactFloating;
       'api::contact-page.contact-page': ApiContactPageContactPage;
       'api::cookie-category.cookie-category': ApiCookieCategoryCookieCategory;
@@ -2098,7 +2054,6 @@ declare module '@strapi/strapi' {
       'api::pdpa-setting.pdpa-setting': ApiPdpaSettingPdpaSetting;
       'api::privacy-policy.privacy-policy': ApiPrivacyPolicyPrivacyPolicy;
       'api::product.product': ApiProductProduct;
-      'api::site-setting.site-setting': ApiSiteSettingSiteSetting;
       'api::support-page.support-page': ApiSupportPageSupportPage;
       'api::team-member.team-member': ApiTeamMemberTeamMember;
       'api::terms-of-service.terms-of-service': ApiTermsOfServiceTermsOfService;

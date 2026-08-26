@@ -46,6 +46,7 @@ export interface DownloadsReleaseChange extends Struct.ComponentSchema {
     displayName: 'Release Change';
   };
   attributes: {
+    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     text: Schema.Attribute.String & Schema.Attribute.Required;
   };
@@ -176,8 +177,10 @@ export interface NavigationNavChildItem extends Struct.ComponentSchema {
     displayName: 'Nav Child Item';
   };
   attributes: {
+    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     label: Schema.Attribute.String & Schema.Attribute.Required;
     productPage: Schema.Attribute.Relation<'manyToOne', 'api::product.product'>;
+    sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     target: Schema.Attribute.Enumeration<['_self', '_blank']> &
       Schema.Attribute.DefaultTo<'_self'>;
     url: Schema.Attribute.String;
@@ -192,7 +195,9 @@ export interface NavigationNavItem extends Struct.ComponentSchema {
   };
   attributes: {
     children: Schema.Attribute.Component<'navigation.nav-child-item', true>;
+    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     label: Schema.Attribute.String & Schema.Attribute.Required;
+    sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     target: Schema.Attribute.Enumeration<['_self', '_blank']> &
       Schema.Attribute.DefaultTo<'_self'>;
     url: Schema.Attribute.String;
@@ -206,6 +211,7 @@ export interface NavigationProductName extends Struct.ComponentSchema {
     displayName: 'Product Name';
   };
   attributes: {
+    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     name: Schema.Attribute.String & Schema.Attribute.Required;
     sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     url: Schema.Attribute.String;
@@ -221,7 +227,9 @@ export interface PricingPlanFeature extends Struct.ComponentSchema {
   attributes: {
     feature: Schema.Attribute.Relation<'manyToOne', 'api::faq.faq'>;
     included: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     note: Schema.Attribute.String;
+    sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
   };
 }
 
@@ -303,6 +311,7 @@ export interface SharedButtonLabels extends Struct.ComponentSchema {
     callNow: Schema.Attribute.String;
     contactUs: Schema.Attribute.String;
     download: Schema.Attribute.String;
+    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     learnMore: Schema.Attribute.String;
     readMore: Schema.Attribute.String;
     requestQuote: Schema.Attribute.String;
@@ -340,6 +349,7 @@ export interface SharedCookieConsentSettings extends Struct.ComponentSchema {
     analyticsLabel: Schema.Attribute.String;
     cookiePolicyLabel: Schema.Attribute.String;
     description: Schema.Attribute.Text;
+    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     learnMoreLabel: Schema.Attribute.String;
     manageLabel: Schema.Attribute.String &
       Schema.Attribute.DefaultTo<'Manage Preferences'>;
@@ -365,6 +375,7 @@ export interface SharedFooterLabels extends Struct.ComponentSchema {
   attributes: {
     aboutHeading: Schema.Attribute.String;
     contactHeading: Schema.Attribute.String;
+    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     linksHeading: Schema.Attribute.String;
     newsletterButton: Schema.Attribute.String;
     newsletterHeading: Schema.Attribute.String;
@@ -381,6 +392,7 @@ export interface SharedPageSectionItem extends Struct.ComponentSchema {
   attributes: {
     content: Schema.Attribute.Blocks;
     image: Schema.Attribute.Media<'images'>;
+    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     title: Schema.Attribute.String & Schema.Attribute.Required;
   };
@@ -453,6 +465,7 @@ export interface SharedSeoConfig extends Struct.ComponentSchema {
     facebookPixelId: Schema.Attribute.String;
     facebookUrl: Schema.Attribute.String;
     googleAnalyticsId: Schema.Attribute.String;
+    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     lineUrl: Schema.Attribute.String;
     siteName: Schema.Attribute.String;
     siteUrl: Schema.Attribute.String;
@@ -526,7 +539,9 @@ export interface SupportContactSection extends Struct.ComponentSchema {
     badge: Schema.Attribute.String;
     businessHoursLabel: Schema.Attribute.String;
     emailLabel: Schema.Attribute.String;
+    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     phoneLabel: Schema.Attribute.String;
+    sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     title: Schema.Attribute.String & Schema.Attribute.Required;
   };
 }
@@ -541,6 +556,8 @@ export interface SupportFaqSection extends Struct.ComponentSchema {
     badge: Schema.Attribute.String;
     contactCtaLabel: Schema.Attribute.String;
     emptyPrompt: Schema.Attribute.String;
+    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     subtitle: Schema.Attribute.Text;
     title: Schema.Attribute.String & Schema.Attribute.Required;
   };
@@ -554,6 +571,8 @@ export interface SupportHelpCenterSection extends Struct.ComponentSchema {
   };
   attributes: {
     badge: Schema.Attribute.String;
+    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     subtitle: Schema.Attribute.Text;
     title: Schema.Attribute.String & Schema.Attribute.Required;
   };
@@ -569,7 +588,9 @@ export interface SupportHeroSection extends Struct.ComponentSchema {
     badge: Schema.Attribute.String;
     contactCtaLabel: Schema.Attribute.String;
     faqCtaLabel: Schema.Attribute.String;
+    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     manualCtaLabel: Schema.Attribute.String;
+    sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     subtitle: Schema.Attribute.Text;
     title: Schema.Attribute.String & Schema.Attribute.Required;
   };
@@ -583,7 +604,9 @@ export interface SupportStatusCard extends Struct.ComponentSchema {
   };
   attributes: {
     hours: Schema.Attribute.String;
+    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     kicker: Schema.Attribute.String;
+    sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     statusLabel: Schema.Attribute.String;
     title: Schema.Attribute.String;
   };

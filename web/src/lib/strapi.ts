@@ -6,7 +6,7 @@
  */
 
 import type { Locale } from "./i18n";
-import { cacheGet, cacheSet, buildCacheKey } from "./cache";
+// Cache disabled — every request goes to Strapi API directly
 
 // ─── Constants ──────────────────────────────────────────────────────
 
@@ -641,30 +641,16 @@ export interface SupportPage {
 
 // ─── Fetch Engine ───────────────────────────────────────────────────
 
-/**
- * Default cache TTL in ms.
- * Configurable via SSR_CACHE_TTL_MS env var (value in seconds).
- * Override per-call via opts.ttlMs.
- */
-const CACHE_TTL_MS =
-  (Number(process.env.SSR_CACHE_TTL_MS) || 60) * 1000;
-
 async function fetchAPI<T>(
   path: string,
   params: Record<string, string> = {},
-  opts: { noCache?: boolean; ttlMs?: number } = {},
 ): Promise<T> {
   const url = new URL(`/api${path}`, STRAPI_URL);
   Object.entries(params).forEach(([key, value]) => {
     url.searchParams.set(key, value);
   });
 
-  // --- Cache check ---
-  if (!opts.noCache) {
-    const cacheKey = buildCacheKey(path, params);
-    const cached = cacheGet<T>(cacheKey);
-    if (cached !== undefined) return cached;
-  }
+
 
   let lastError: Error | null = null;
 
@@ -689,13 +675,6 @@ async function fetchAPI<T>(
       }
 
       const data: T = await res.json();
-
-      // --- Cache store ---
-      if (!opts.noCache) {
-        const cacheKey = buildCacheKey(path, params);
-        cacheSet(cacheKey, data, opts.ttlMs ?? CACHE_TTL_MS);
-      }
-
       return data;
     } catch (err) {
       lastError = err as Error;
