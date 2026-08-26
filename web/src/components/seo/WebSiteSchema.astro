@@ -1,0 +1,51 @@
+---
+/**
+ * WebSiteSchema — JSON-LD structured data for WebSite.
+ *
+ * Should be rendered on every page for site identification.
+ * Source: rules/seo-rule.md §Structured Data Rules
+ */
+
+import { siteConfig } from "../../lib/seo/config";
+
+interface Props {
+  /** Site name */
+  name?: string;
+
+  /** Site URL */
+  url?: string;
+
+  /** Site description */
+  description?: string;
+
+  /** Search action URL template */
+  searchActionTarget?: string;
+}
+
+const {
+  name = siteConfig.siteName,
+  url = siteConfig.siteUrl,
+  description = siteConfig.defaultDescription,
+  searchActionTarget,
+} = Astro.props;
+
+const website = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name,
+  url,
+  description,
+  ...(searchActionTarget && {
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: searchActionTarget,
+      },
+      "query-input": "required name=search_term_string",
+    },
+  }),
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(website)} />

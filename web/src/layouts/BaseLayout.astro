@@ -1,11 +1,21 @@
 ---
+/**
+ * BaseLayout — main layout component for all pages.
+ *
+ * Source: rules/seo-rule.md §Frontend Metadata Rules
+ * Design: rules/design-rule.md §8 (Header/Navigation)
+ */
+
 import { safeGetFooterSetting, safeGetGlobalSetting, getStrapiMedia } from "../lib/api";
 import { detectLocale, type Locale } from "../lib/i18n";
+import { siteConfig, generateHreflangs, type HreflangLink, type OgType } from "../lib/seo";
 import ErrorBanner from "../components/ErrorBanner.astro";
 import CookieConsent from "../components/CookieConsent.astro";
 import SearchOverlay from "../components/SearchOverlay.astro";
 import LanguageSwitcher from "../components/LanguageSwitcher.astro";
 import SeoHead from "../components/SeoHead.astro";
+import OrganizationSchema from "../components/seo/OrganizationSchema.astro";
+import WebSiteSchema from "../components/seo/WebSiteSchema.astro";
 import Footer from "../components/Footer.astro";
 
 interface ArticleMeta {
@@ -23,18 +33,13 @@ interface ProductMeta {
   brand?: string;
 }
 
-interface Hreflang {
-  lang: string;
-  href: string;
-}
-
 interface Props {
   title?: string;
   description?: string;
   ogImage?: string;
   ogImageAlt?: string;
   canonical?: string;
-  ogType?: "website" | "article" | "product";
+  ogType?: OgType;
   robots?: string;
   author?: string;
   keywords?: string[];
@@ -43,7 +48,7 @@ interface Props {
   twitterSite?: string;
   twitterCreator?: string;
   facebookAppId?: string;
-  hreflangs?: Hreflang[];
+  hreflangs?: HreflangLink[];
   article?: ArticleMeta;
   product?: ProductMeta;
   ogVideo?: string;
@@ -79,7 +84,7 @@ const urlLocale = Astro.params.locale as string;
 const cookieHeader = Astro.request.headers.get("cookie") || undefined;
 const acceptLanguage = Astro.request.headers.get("accept-language") || undefined;
 const detectedLocale = detectLocale(cookieHeader, acceptLanguage);
-const locale = propLocale || urlLocale || detectedLocale;
+const locale = (propLocale || urlLocale || detectedLocale) as Locale;
 
 const footerResult = await safeGetFooterSetting(locale);
 const globalResult = await safeGetGlobalSetting(locale);
@@ -88,8 +93,8 @@ const footerSetting = footerResult.data;
 const globalSetting = globalResult.data;
 const isOffline = footerResult.isOffline || globalResult.isOffline;
 
-const siteName = globalSetting?.siteName || "RYHTS";
-const siteDescription = globalSetting?.seoConfig?.defaultDescription || "Premier Ribbons for Premier Printing";
+const siteName = globalSetting?.siteName || siteConfig.siteName;
+const siteDescription = globalSetting?.seoConfig?.defaultDescription || siteConfig.defaultDescription;
 const pageTitle = title ? `${title} | ${siteName}` : siteName;
 const metaDescription = description || siteDescription;
 const logoUrl = getStrapiMedia(globalSetting?.siteLogo?.url);
@@ -107,25 +112,9 @@ const navItems = [
   { label: "Contact us", href: `/${locale}/contact` },
 ];
 
-// Generate hreflang tags for multilingual support
-// Current site supports: th (Thai), en (English)
+// Generate hreflang tags using SEO module
 const currentPath = Astro.url.pathname;
-const siteOrigin = Astro.url.origin;
-
-// Helper to build language-specific URL
-function getLanguageUrl(lang: string): string {
-  // Replace current locale prefix with target locale
-  const pathWithoutLocale = currentPath.replace(/^\/(th|en)/, "") || "/";
-  return `${siteOrigin}/${lang}${pathWithoutLocale === "/" ? "/" : pathWithoutLocale}`;
-}
-
-// Default hreflangs if not provided by page
-const defaultHreflangs: Hreflang[] = [
-  { lang: "th", href: getLanguageUrl("th") },
-  { lang: "en", href: getLanguageUrl("en") },
-  { lang: "x-default", href: getLanguageUrl("th") }, // Default to Thai
-];
-
+const defaultHreflangs = generateHreflangs(currentPath);
 const resolvedHreflangs = hreflangs || defaultHreflangs;
 ---
 
@@ -159,19 +148,28 @@ const resolvedHreflangs = hreflangs || defaultHreflangs;
       ogAudio={ogAudio}
       jsonLd={jsonLd}
     />
+    <!-- Global JSON-LD: Organization and WebSite (rules/seo-rule.md §Structured Data Rules) -->
+    <OrganizationSchema
+      name={siteName}
+      logo={logoUrl}
+    />
+    <WebSiteSchema
+      name={siteName}
+      description={siteDescription}
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   </head>
   <body>
     <!-- Offline Banner -->
     {isOffline && <ErrorBanner message="Unable to connect to the server. Some content may be outdated." />}
 
-    <!-- Header -->
+    <!-- Header (design-rule.md §8) -->
     <header class:list={["site-header", { "has-banner": isOffline }]} id="site-header">
       <div class="container header-inner">
-        <a href="/" class="logo">
+        <a href="/" class="logo" aria-label={siteName}>
           {logoUrl ? (
             <img src={logoUrl} alt={siteName} height="40" />
           ) : (
@@ -179,7 +177,7 @@ const resolvedHreflangs = hreflangs || defaultHreflangs;
           )}
         </a>
 
-        <nav class="main-nav" id="main-nav">
+        <nav class="main-nav" id="main-nav" aria-label="Main navigation">
           {navItems.map((item) => (
             <a
               href={item.href}
@@ -194,21 +192,21 @@ const resolvedHreflangs = hreflangs || defaultHreflangs;
           <LanguageSwitcher currentLocale={locale} />
           <SearchOverlay />
           
-          <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Toggle menu">
+          <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Toggle menu" aria-expanded="false">
             <i class="fas fa-bars"></i>
           </button>
         </div>
       </div>
 
       <!-- Mobile Menu -->
-      <div class="mobile-nav" id="mobile-nav">
+      <div class="mobile-nav" id="mobile-nav" aria-hidden="true">
         <div class="mobile-nav-header">
           <span class="logo-text">{siteName}</span>
           <button class="mobile-menu-close" id="mobile-menu-close" aria-label="Close menu">
             <i class="fas fa-times"></i>
           </button>
         </div>
-        <nav class="mobile-nav-links">
+        <nav class="mobile-nav-links" aria-label="Mobile navigation">
           {navItems.map((item) => (
             <a
               href={item.href}
@@ -231,6 +229,7 @@ const resolvedHreflangs = hreflangs || defaultHreflangs;
     <Footer
       locale={locale}
       footerSetting={footerSetting}
+      globalSetting={globalSetting}
       logoUrl={logoUrl}
       siteName={siteName}
       siteDescription={siteDescription}
@@ -248,9 +247,10 @@ const resolvedHreflangs = hreflangs || defaultHreflangs;
         top: 0;
         left: 0;
         right: 0;
-        z-index: 1000;
+        z-index: var(--z-header);
         background: rgba(255, 255, 255, 0.97);
         backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
         border-bottom: 1px solid var(--color-border-light);
         transition: all var(--transition);
       }
@@ -260,7 +260,7 @@ const resolvedHreflangs = hreflangs || defaultHreflangs;
       }
 
       .site-header.scrolled {
-        box-shadow: 0 1px 12px rgba(15, 23, 42, 0.06);
+        box-shadow: var(--shadow);
       }
 
       .header-inner {
@@ -270,10 +270,16 @@ const resolvedHreflangs = hreflangs || defaultHreflangs;
         height: var(--header-height);
       }
 
+      /* ─── Logo ────────────────────────────────────────────────────── */
       .logo {
         display: flex;
         align-items: center;
         text-decoration: none;
+        transition: opacity var(--transition);
+      }
+
+      .logo:hover {
+        opacity: 0.9;
       }
 
       .logo-text {
@@ -283,6 +289,7 @@ const resolvedHreflangs = hreflangs || defaultHreflangs;
         letter-spacing: -0.5px;
       }
 
+      /* ─── Navigation (design-rule.md §8) ──────────────────────────── */
       .main-nav {
         display: flex;
         align-items: center;
@@ -297,6 +304,7 @@ const resolvedHreflangs = hreflangs || defaultHreflangs;
         border-radius: var(--radius-sm);
         transition: all var(--transition);
         text-decoration: none;
+        position: relative;
       }
 
       .nav-link:hover {
@@ -307,6 +315,23 @@ const resolvedHreflangs = hreflangs || defaultHreflangs;
       .nav-link.active {
         color: var(--color-primary);
         background: var(--color-background-blue);
+      }
+
+      .nav-link::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        width: 0;
+        height: 2px;
+        background: var(--color-primary);
+        transition: all var(--transition);
+        transform: translateX(-50%);
+      }
+
+      .nav-link:hover::after,
+      .nav-link.active::after {
+        width: 60%;
       }
 
       .header-right {
@@ -323,6 +348,7 @@ const resolvedHreflangs = hreflangs || defaultHreflangs;
         font-size: 14px;
         font-weight: 500;
         text-decoration: none;
+        transition: color var(--transition);
       }
 
       .header-phone:hover {
@@ -341,9 +367,14 @@ const resolvedHreflangs = hreflangs || defaultHreflangs;
         color: var(--color-text-primary);
         cursor: pointer;
         padding: 8px;
+        transition: color var(--transition);
       }
 
-      /* ─── Mobile Nav ──────────────────────────────────────────────── */
+      .mobile-menu-toggle:hover {
+        color: var(--color-primary);
+      }
+
+      /* ─── Mobile Nav (design-rule.md §25) ──────────────────────────── */
       .mobile-nav {
         position: fixed;
         top: 0;
@@ -351,15 +382,15 @@ const resolvedHreflangs = hreflangs || defaultHreflangs;
         width: 300px;
         height: 100vh;
         background: var(--color-background);
-        z-index: 2000;
-        box-shadow: -8px 0 30px rgba(15, 23, 42, 0.12);
+        z-index: var(--z-mobile-nav);
+        box-shadow: var(--shadow-elevated);
         transition: right var(--transition);
         display: flex;
         flex-direction: column;
         padding: 24px;
       }
 
-      .mobile-nav.open {
+      .mobile-nav[aria-hidden="false"] {
         right: 0;
       }
 
@@ -376,6 +407,11 @@ const resolvedHreflangs = hreflangs || defaultHreflangs;
         font-size: 24px;
         color: var(--color-text-primary);
         cursor: pointer;
+        transition: color var(--transition);
+      }
+
+      .mobile-menu-close:hover {
+        color: var(--color-primary);
       }
 
       .mobile-nav-links {
@@ -411,9 +447,15 @@ const resolvedHreflangs = hreflangs || defaultHreflangs;
         border-radius: var(--radius-sm);
         font-weight: 500;
         text-decoration: none;
+        transition: all var(--transition);
       }
 
-      /* ─── Responsive ──────────────────────────────────────────────── */
+      .mobile-nav-phone:hover {
+        background: var(--color-primary);
+        color: var(--color-text-on-blue);
+      }
+
+      /* ─── Responsive (design-rule.md §25) ──────────────────────────── */
       @media (max-width: 768px) {
         .main-nav { display: none; }
         .header-phone span { display: none; }
@@ -442,18 +484,30 @@ const resolvedHreflangs = hreflangs || defaultHreflangs;
       const mobileNav = document.getElementById("mobile-nav");
 
       menuToggle?.addEventListener("click", () => {
-        mobileNav?.classList.add("open");
+        const isOpen = mobileNav?.getAttribute("aria-hidden") === "false";
+        mobileNav?.setAttribute("aria-hidden", String(isOpen));
+        menuToggle?.setAttribute("aria-expanded", String(!isOpen));
       });
 
       menuClose?.addEventListener("click", () => {
-        mobileNav?.classList.remove("open");
+        mobileNav?.setAttribute("aria-hidden", "true");
+        menuToggle?.setAttribute("aria-expanded", "false");
       });
 
       // Close mobile menu when clicking a link
       mobileNav?.querySelectorAll("a").forEach((link) => {
         link.addEventListener("click", () => {
-          mobileNav?.classList.remove("open");
+          mobileNav?.setAttribute("aria-hidden", "true");
+          menuToggle?.setAttribute("aria-expanded", "false");
         });
+      });
+
+      // Close mobile menu on escape key
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && mobileNav?.getAttribute("aria-hidden") === "false") {
+          mobileNav?.setAttribute("aria-hidden", "true");
+          menuToggle?.setAttribute("aria-expanded", "false");
+        }
       });
     </script>
   </body>

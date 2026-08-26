@@ -1,0 +1,49 @@
+---
+/**
+ * BreadcrumbSchema — JSON-LD structured data for BreadcrumbList.
+ *
+ * Use on pages that have a clear hierarchy.
+ * Source: rules/seo-rule.md §Structured Data Rules
+ */
+
+import { siteConfig } from "../../lib/seo/config";
+
+interface BreadcrumbItem {
+  /** Display name */
+  name: string;
+
+  /** URL path (without site URL prefix) */
+  url: string;
+}
+
+interface Props {
+  /** Array of breadcrumb items (excluding home) */
+  items: BreadcrumbItem[];
+}
+
+const { items } = Astro.props;
+
+// Always start with home
+const breadcrumbItems = [
+  {
+    "@type": "ListItem",
+    position: 1,
+    name: "Home",
+    item: siteConfig.siteUrl,
+  },
+  ...items.map((item, index) => ({
+    "@type": "ListItem",
+    position: index + 2,
+    name: item.name,
+    item: item.url.startsWith("http") ? item.url : `${siteConfig.siteUrl}${item.url}`,
+  })),
+];
+
+const breadcrumb = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: breadcrumbItems,
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(breadcrumb)} />

@@ -49,20 +49,39 @@ const {
   }
 
   .newsletter-content h2 {
-    font-size: 28px;
+    font-size: 32px;
+    font-weight: 700;
     color: #FFFFFF;
     margin-bottom: 8px;
+    line-height: 1.3;
   }
 
   .newsletter-content p {
     color: #E0F2FE;
     font-size: 16px;
+    line-height: 1.6;
+  }
+
+  .newsletter-cta {
+    flex-shrink: 0;
   }
 
   @media (max-width: 768px) {
+    .newsletter-section {
+      padding: 40px 0;
+    }
+
     .newsletter-inner {
       flex-direction: column;
       text-align: center;
+    }
+
+    .newsletter-content h2 {
+      font-size: 22px;
+    }
+
+    .newsletter-content p {
+      font-size: 14px;
     }
   }
 </style>

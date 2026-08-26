@@ -1,7 +1,101 @@
 /**
  * Internationalization (i18n) Utilities
- * Manages language preference persistence via cookies
+ * Manages language preference persistence via cookies and translations
  */
+
+// ─── Translations ─────────────────────────────────────────────────
+
+interface LocaleTranslations {
+  home: string;
+  nav: {
+    home: string;
+    products: string;
+    support: string;
+    downloads: string;
+    freeTrial: string;
+    contact: string;
+    about: string;
+    news: string;
+  };
+  footer: {
+    address: string;
+    phone: string;
+    email: string;
+    hours: string;
+  };
+  products: {
+    istockExpress: string;
+    istockExpressPro: string;
+    istockWMS: string;
+    istockSalesOrder: string;
+    istockTMS: string;
+    rfidSystem: string;
+  };
+}
+
+const translations: Record<Locale, LocaleTranslations> = {
+  th: {
+    home: "/th/",
+    nav: {
+      home: "หน้าแรก",
+      products: "สินค้า",
+      support: "ซัพพอร์ต",
+      downloads: "ดาวน์โหลด",
+      freeTrial: "ทดลองใช้ฟรี",
+      contact: "ติดต่อเรา",
+      about: "เกี่ยวกับเรา",
+      news: "ข่าวสาร",
+    },
+    footer: {
+      address: "icon-solutions",
+      phone: "02-114-7165",
+      email: "info@icon-solutions.co.th",
+      hours: "จันทร์ - ศุกร์ 09:00 - 18:00 น.",
+    },
+    products: {
+      istockExpress: "iStock Express",
+      istockExpressPro: "iStock Express Pro",
+      istockWMS: "iStock WMS",
+      istockSalesOrder: "iStock Sales Order",
+      istockTMS: "iStock TMS",
+      rfidSystem: "RFID System",
+    },
+  },
+  en: {
+    home: "/en/",
+    nav: {
+      home: "Home",
+      products: "Products",
+      support: "Support",
+      downloads: "Downloads",
+      freeTrial: "Free Trial",
+      contact: "Contact Us",
+      about: "About Us",
+      news: "News",
+    },
+    footer: {
+      address: "icon-solutions",
+      phone: "02-114-7165",
+      email: "info@icon-solutions.co.th",
+      hours: "Monday - Friday 09:00 - 18:00",
+    },
+    products: {
+      istockExpress: "iStock Express",
+      istockExpressPro: "iStock Express Pro",
+      istockWMS: "iStock WMS",
+      istockSalesOrder: "iStock Sales Order",
+      istockTMS: "iStock TMS",
+      rfidSystem: "RFID System",
+    },
+  },
+};
+
+/**
+ * Get translations for the given locale.
+ */
+export function getLocale(locale: Locale): LocaleTranslations {
+  return translations[locale] || translations.th;
+}
 
 export const COOKIE_NAME = "ryhts-locale";
 export const DEFAULT_LOCALE = "th";
