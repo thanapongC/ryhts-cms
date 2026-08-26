@@ -1340,6 +1340,56 @@ export interface ApiSiteSettingSiteSetting extends Struct.SingleTypeSchema {
   };
 }
 
+export interface ApiSupportPageSupportPage extends Struct.SingleTypeSchema {
+  collectionName: 'support_pages';
+  info: {
+    description: 'Support page content: hero, FAQ, help center, contact';
+    displayName: 'Page - Support';
+    pluralName: 'support-pages';
+    singularName: 'support-page';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
+  attributes: {
+    contact_section: Schema.Attribute.Component<
+      'support.contact-section',
+      false
+    >;
+    contact_settings: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::global-setting.global-setting'
+    >;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    faqs: Schema.Attribute.Relation<'manyToMany', 'api::faq.faq'>;
+    faq_section: Schema.Attribute.Component<'support.faq-section', false>;
+    help_center_section: Schema.Attribute.Component<
+      'support.help-center-section',
+      false
+    >;
+    help_resources: Schema.Attribute.Relation<'manyToMany', 'api::faq.faq'>;
+    hero_section: Schema.Attribute.Component<'support.hero-section', false>;
+    locale: Schema.Attribute.String;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::support-page.support-page'
+    >;
+    publishedAt: Schema.Attribute.DateTime;
+    seo: Schema.Attribute.Component<'shared.seo-meta', false>;
+    status_card: Schema.Attribute.Component<'support.status-card', false>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiTeamMemberTeamMember extends Struct.CollectionTypeSchema {
   collectionName: 'team_members';
   info: {
@@ -2049,6 +2099,7 @@ declare module '@strapi/strapi' {
       'api::privacy-policy.privacy-policy': ApiPrivacyPolicyPrivacyPolicy;
       'api::product.product': ApiProductProduct;
       'api::site-setting.site-setting': ApiSiteSettingSiteSetting;
+      'api::support-page.support-page': ApiSupportPageSupportPage;
       'api::team-member.team-member': ApiTeamMemberTeamMember;
       'api::terms-of-service.terms-of-service': ApiTermsOfServiceTermsOfService;
       'api::testimonial.testimonial': ApiTestimonialTestimonial;
