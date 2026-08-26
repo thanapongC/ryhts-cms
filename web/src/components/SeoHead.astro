@@ -5,29 +5,13 @@
  * Renders: title, description, canonical, OG tags, Twitter cards,
  * robots directives, author, keywords, hreflang, article metadata,
  * and JSON-LD structured data.
+ *
+ * Source: rules/seo-rule.md §Frontend Metadata Rules
  */
 
-import { getStrapiMedia } from "../lib/api";
-
-interface ArticleMeta {
-  publishedTime?: string;
-  modifiedTime?: string;
-  author?: string;
-  section?: string;
-  tags?: string[];
-}
-
-interface ProductMeta {
-  price?: string;
-  currency?: string;
-  availability?: string;
-  brand?: string;
-}
-
-interface Hreflang {
-  lang: string;
-  href: string;
-}
+import { siteConfig } from "../lib/seo/config";
+import { cleanCanonicalUrl } from "../lib/seo/canonical";
+import type { HreflangLink, OgType, ArticleMeta, ProductMeta } from "../lib/seo";
 
 interface Props {
   title: string;
@@ -35,7 +19,7 @@ interface Props {
   canonical?: string;
   ogImage?: string;
   ogImageAlt?: string;
-  ogType?: "website" | "article" | "product";
+  ogType?: OgType;
   robots?: string;
   author?: string;
   keywords?: string[];
@@ -45,7 +29,7 @@ interface Props {
   twitterCreator?: string;
   facebookAppId?: string;
   // Hreflang for multilingual
-  hreflangs?: Hreflang[];
+  hreflangs?: HreflangLink[];
   // Article-specific metadata
   article?: ArticleMeta;
   // Product-specific metadata
@@ -64,7 +48,7 @@ const {
   ogImage,
   ogImageAlt,
   ogType = "website",
-  robots = "index, follow",
+  robots = "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
   author,
   keywords = [],
   themeColor = "#017FE4",
@@ -79,25 +63,7 @@ const {
   jsonLd,
 } = Astro.props;
 
-const siteUrl = Astro.url.origin;
-const resolvedOgImage = ogImage ? getStrapiMedia(ogImage) : "";
-
-// Clean canonical URL: remove query params and ensure trailing slash consistency
-function cleanCanonicalUrl(url: string): string {
-  try {
-    const parsed = new URL(url);
-    // Remove query parameters and hash
-    let pathname = parsed.pathname;
-    // Ensure trailing slash for consistency (except root)
-    if (pathname !== "/" && !pathname.endsWith("/")) {
-      pathname += "/";
-    }
-    return `${parsed.origin}${pathname}`;
-  } catch {
-    return url;
-  }
-}
-
+const resolvedOgImage = ogImage || "";
 const canonicalUrl = canonical ? cleanCanonicalUrl(canonical) : cleanCanonicalUrl(Astro.url.href);
 const keywordsString = keywords.length > 0 ? keywords.join(", ") : undefined;
 ---
@@ -116,14 +82,14 @@ const keywordsString = keywords.length > 0 ? keywords.join(", ") : undefined;
 <meta property="og:url" content={canonicalUrl} />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
-<meta property="og:site_name" content="Ryhts Ribbon" />
+<meta property="og:site_name" content={siteConfig.siteName} />
 <meta property="og:locale" content="th_TH" />
 <meta property="og:locale:alternate" content="en_US" />
 {resolvedOgImage && (
   <>
     <meta property="og:image" content={resolvedOgImage} />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
+    <meta property="og:image:width" content={String(siteConfig.ogImageWidth)} />
+    <meta property="og:image:height" content={String(siteConfig.ogImageHeight)} />
     <meta property="og:image:alt" content={ogImageAlt || title} />
     <meta property="og:image:type" content="image/png" />
   </>

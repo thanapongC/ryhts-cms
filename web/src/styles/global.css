@@ -9,62 +9,71 @@
 
 /* ─── Design Tokens (design-rule.md §27) ──────────────────────── */
 :root {
-  /* Primary Brand */
+  /* ─── Primary Brand ──────────────────────────────────────────── */
   --color-primary: #017FE4;
   --color-primary-hover: #006CC2;
   --color-primary-dark: #005BA8;
 
-  /* Backgrounds */
+  /* ─── Backgrounds (design-rule.md §3) ────────────────────────── */
   --color-background: #FFFFFF;
   --color-background-soft: #F8FAFC;
   --color-background-blue: #EFF8FF;
   --color-background-blue-light: #EAF5FF;
   --color-background-section: #F5F9FC;
 
-  /* Text */
+  /* ─── Text (design-rule.md §4) ───────────────────────────────── */
   --color-text-primary: #111827;
   --color-text-secondary: #374151;
   --color-text-muted: #6B7280;
   --color-text-on-blue: #FFFFFF;
 
-  /* Borders */
+  /* ─── Borders (design-rule.md §5) ────────────────────────────── */
   --color-border: #E5E7EB;
   --color-border-light: #F1F5F9;
   --color-border-blue: #93C5FD;
   --color-border-strong-blue: #017FE4;
 
-  /* Semantic */
+  /* ─── Semantic ────────────────────────────────────────────────── */
   --color-success: #16A34A;
   --color-error: #DC2626;
 
-  /* Legacy aliases (backward compat) */
+  /* ─── Legacy aliases (backward compat) ────────────────────────── */
   --color-primary-light: #EFF8FF;
   --color-text: #111827;
   --color-bg: #FFFFFF;
   --color-bg-light: #F8FAFC;
   --color-bg-alt: #F1F5F9;
 
-  /* Typography */
+  /* ─── Typography (design-rule.md §14) ─────────────────────────── */
   --font-family: "Noto Sans Thai", "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-family-mono: "JetBrains Mono", "Fira Code", monospace;
 
-  /* Layout */
+  /* ─── Layout ──────────────────────────────────────────────────── */
   --container-max: 1200px;
   --container-padding: 20px;
   --header-height: 72px;
 
-  /* Border Radius (design-rule.md §23) */
+  /* ─── Border Radius (design-rule.md §23) ──────────────────────── */
   --radius-sm: 8px;
   --radius: 12px;
   --radius-lg: 16px;
   --radius-xl: 20px;
 
-  /* Shadows (design-rule.md §22) */
+  /* ─── Shadows (design-rule.md §22) ────────────────────────────── */
   --shadow: 0 4px 20px rgba(15, 23, 42, 0.06);
   --shadow-lg: 0 10px 30px rgba(15, 23, 42, 0.08);
   --shadow-elevated: 0 20px 60px rgba(15, 23, 42, 0.12);
 
-  /* Transitions */
+  /* ─── Transitions (design-rule.md §24) ─────────────────────────── */
   --transition: 0.25s ease;
+  --transition-fast: 0.15s ease;
+  --transition-slow: 0.4s ease;
+
+  /* ─── Z-index ──────────────────────────────────────────────────── */
+  --z-dropdown: 100;
+  --z-header: 1000;
+  --z-mobile-nav: 2000;
+  --z-modal: 3000;
 }
 
 html {
@@ -198,6 +207,10 @@ h1, h2, h3, h4, h5, h6 {
 
 .section-alt {
   background-color: var(--color-background-soft);
+}
+
+.section-blue {
+  background-color: var(--color-background-blue);
 }
 
 .section-title {
@@ -359,6 +372,78 @@ h1, h2, h3, h4, h5, h6 {
 .empty-state p {
   font-size: 18px;
   margin-top: 12px;
+}
+
+/* ─── Form Inputs (design-rule.md §16) ─────────────────────────── */
+.input,
+.textarea,
+.select {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-family);
+  font-size: 15px;
+  color: var(--color-text-primary);
+  background-color: var(--color-background);
+  transition: all var(--transition);
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  color: #9CA3AF;
+}
+
+.input:focus,
+.textarea:focus,
+.select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 4px rgba(1, 127, 228, 0.1);
+}
+
+.input:disabled,
+.textarea:disabled {
+  background-color: var(--color-background-soft);
+  cursor: not-allowed;
+}
+
+.textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+/* ─── Utility Classes ───────────────────────────────────────────── */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 /* ─── Micro-interactions (design-rule.md §24) ──────────────────── */
