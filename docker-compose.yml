@@ -1,0 +1,63 @@
+services:
+  cms:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ${DOCKER_IMAGE_PREFIX:-ryhts-ribbon}:cms
+    container_name: ryhts-cms
+    restart: unless-stopped
+    ports:
+      - "${CMS_PORT:-1337}:1337"
+    env_file:
+      - .env
+    environment:
+      - FRONTEND_URL=http://web:3000
+      - CACHE_SECRET=${CACHE_SECRET:-}
+    volumes:
+      - cms-data:/app/public/uploads
+    networks:
+      - ryhts
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:1337/_health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+      args:
+        PUBLIC_STRAPI_URL: ${PUBLIC_STRAPI_URL:-http://cms:1337}
+        STRAPI_API_TOKEN: ${STRAPI_API_TOKEN:-}
+        CMS_CONTENT_VERSION: ${WEB_CONTENT_VERSION:-local}
+    image: ${DOCKER_IMAGE_PREFIX:-ryhts-ribbon}:web
+    container_name: ryhts-web
+    restart: unless-stopped
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+    environment:
+      - PUBLIC_STRAPI_URL=${PUBLIC_STRAPI_URL:-http://cms:1337}
+      - STRAPI_API_TOKEN=${STRAPI_API_TOKEN:-}
+      - GMAIL_SMTP_USER=${GMAIL_SMTP_USER:-}
+      - GMAIL_SMTP_PASSWORD=${GMAIL_SMTP_PASSWORD:-}
+      - FORM_RECIPIENT_EMAIL=${FORM_RECIPIENT_EMAIL:-}
+      - CACHE_SECRET=${CACHE_SECRET:-}
+      - SSR_CACHE_TTL_MS=${SSR_CACHE_TTL_MS:-60}
+      - SSR_CACHE_STATIC_MAX_AGE=${SSR_CACHE_STATIC_MAX_AGE:-3600}
+      - SSR_CACHE_LISTING_MAX_AGE=${SSR_CACHE_LISTING_MAX_AGE:-600}
+      - SSR_CACHE_DETAIL_MAX_AGE=${SSR_CACHE_DETAIL_MAX_AGE:-1800}
+      - SSR_CACHE_DEFAULT_MAX_AGE=${SSR_CACHE_DEFAULT_MAX_AGE:-300}
+      - SSR_CACHE_STALE_REVALIDATE=${SSR_CACHE_STALE_REVALIDATE:-60}
+    networks:
+      - ryhts
+    depends_on:
+      cms:
+        condition: service_healthy
+
+networks:
+  ryhts:
+    driver: bridge
+
+volumes:
+  cms-data:
