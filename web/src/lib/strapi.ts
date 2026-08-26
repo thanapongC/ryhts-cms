@@ -6,6 +6,7 @@
  */
 
 import type { Locale } from "./i18n";
+import { cacheGet, cacheSet, buildCacheKey } from "./cache";
 
 // ─── Constants ──────────────────────────────────────────────────────
 
@@ -60,44 +61,44 @@ export interface StrapiMedia {
 
 /** shared.seo-meta */
 export interface SeoMeta {
-  meta_title?: string;
-  meta_description?: string;
+  metaTitle?: string;
+  metaDescription?: string;
   keywords?: string;
-  canonical_url?: string;
-  og_title?: string;
-  og_description?: string;
-  og_image?: StrapiMedia | null;
-  og_type?: "website" | "article" | "product";
-  twitter_title?: string;
-  twitter_description?: string;
-  twitter_image?: StrapiMedia | null;
+  canonicalUrl?: string;
+  ogTitle?: string;
+  ogDescription?: string;
+  ogImage?: StrapiMedia | null;
+  ogType?: "website" | "article" | "product";
+  twitterTitle?: string;
+  twitterDescription?: string;
+  twitterImage?: StrapiMedia | null;
   noindex?: boolean;
   nofollow?: boolean;
   noarchive?: boolean;
   nosnippet?: boolean;
-  max_snippet?: number;
-  max_image_preview?: "none" | "standard" | "large";
-  max_video_preview?: number;
-  schema_type?: string;
-  alternate_languages?: Record<string, string> | null;
+  maxSnippet?: number;
+  maxImagePreview?: "none" | "standard" | "large";
+  maxVideoPreview?: number;
+  schemaType?: string;
+  alternateLanguages?: Record<string, string> | null;
   /** @deprecated Use individual boolean fields instead */
   robots?: string;
 }
 
 /** shared.seo-config */
 export interface SeoConfig {
-  site_url?: string;
-  site_name?: string;
-  default_title?: string;
-  default_description?: string;
-  default_og_image?: StrapiMedia | null;
-  brand_name?: string;
-  facebook_url?: string;
-  line_url?: string;
-  twitter_url?: string;
-  google_analytics_id?: string;
-  facebook_pixel_id?: string;
-  twitter_handle?: string;
+  siteUrl?: string;
+  siteName?: string;
+  defaultTitle?: string;
+  defaultDescription?: string;
+  defaultOgImage?: StrapiMedia | null;
+  brandName?: string;
+  facebookUrl?: string;
+  lineUrl?: string;
+  twitterUrl?: string;
+  googleAnalyticsId?: string;
+  facebookPixelId?: string;
+  twitterHandle?: string;
 }
 
 /** shared.contact-info */
@@ -106,8 +107,8 @@ export interface ContactInfo {
   value: string;
   icon?: string;
   url?: string;
-  sort_order?: number;
-  is_active?: boolean;
+  sortOrder?: number;
+  isActive?: boolean;
 }
 
 /** shared.stat-item */
@@ -115,26 +116,26 @@ export interface StatItem {
   label: string;
   value: string;
   icon?: string;
-  sort_order?: number;
-  is_active?: boolean;
+  sortOrder?: number;
+  isActive?: boolean;
 }
 
 /** footer.footer-section */
 export interface FooterSection {
   title: string;
   links?: FooterLink[];
-  sort_order?: number;
-  is_active?: boolean;
+  sortOrder?: number;
+  isActive?: boolean;
 }
 
 /** footer.footer-link */
 export interface FooterLink {
   label: string;
-  product_page?: Product | null;
+  productPage?: Product | null;
   url?: string;
   target?: "_self" | "_blank";
-  sort_order?: number;
-  is_active?: boolean;
+  sortOrder?: number;
+  isActive?: boolean;
 }
 
 /** footer.legal-link */
@@ -142,28 +143,28 @@ export interface LegalLink {
   label: string;
   url: string;
   target?: "_self" | "_blank";
-  sort_order?: number;
-  is_active?: boolean;
+  sortOrder?: number;
+  isActive?: boolean;
 }
 
 /** shared.cookie-consent-settings */
 export interface CookieConsentSettings {
   title?: string;
   description?: string;
-  necessary_label?: string;
-  necessary_description?: string;
-  analytics_label?: string;
-  analytics_description?: string;
-  marketing_label?: string;
-  marketing_description?: string;
-  accept_all_label?: string;
-  reject_all_label?: string;
-  manage_label?: string;
-  save_label?: string;
-  privacy_policy_label?: string;
-  cookie_policy_label?: string;
-  always_on_label?: string;
-  learn_more_label?: string;
+  necessaryLabel?: string;
+  necessaryDescription?: string;
+  analyticsLabel?: string;
+  analyticsDescription?: string;
+  marketingLabel?: string;
+  marketingDescription?: string;
+  acceptAllLabel?: string;
+  rejectAllLabel?: string;
+  manageLabel?: string;
+  saveLabel?: string;
+  privacyPolicyLabel?: string;
+  cookiePolicyLabel?: string;
+  alwaysOnLabel?: string;
+  learnMoreLabel?: string;
 }
 
 /** contact-floating.contact-action */
@@ -172,17 +173,17 @@ export interface ContactAction {
   label: string;
   description?: string;
   url: string;
-  aria_label?: string;
-  open_in_new_tab?: boolean;
-  sort_order?: number;
-  is_active?: boolean;
+  ariaLabel?: string;
+  openInNewTab?: boolean;
+  sortOrder?: number;
+  isActive?: boolean;
 }
 
 /** navigation.nav-child-item */
 export interface NavChildItem {
   label: string;
   url?: string;
-  product_page?: Product | null;
+  productPage?: Product | null;
   target?: "_self" | "_blank";
 }
 
@@ -198,36 +199,36 @@ export interface NavItem {
 export interface NavigationFooterSection {
   title: string;
   links?: NavChildItem[];
-  sort_order?: number;
-  is_active?: boolean;
+  sortOrder?: number;
+  isActive?: boolean;
 }
 
 /** navigation.product-name */
 export interface ProductName {
   name: string;
   url?: string;
-  sort_order?: number;
+  sortOrder?: number;
 }
 
 /** shared.footer-labels */
 export interface FooterLabels {
-  contact_heading?: string;
-  links_heading?: string;
-  about_heading?: string;
-  newsletter_heading?: string;
-  newsletter_placeholder?: string;
-  newsletter_button?: string;
+  contactHeading?: string;
+  linksHeading?: string;
+  aboutHeading?: string;
+  newsletterHeading?: string;
+  newsletterPlaceholder?: string;
+  newsletterButton?: string;
 }
 
 /** shared.button-labels */
 export interface ButtonLabels {
-  contact_us?: string;
-  learn_more?: string;
-  view_all?: string;
-  read_more?: string;
-  back_to_home?: string;
-  call_now?: string;
-  request_quote?: string;
+  contactUs?: string;
+  learnMore?: string;
+  viewAll?: string;
+  readMore?: string;
+  backToHome?: string;
+  callNow?: string;
+  requestQuote?: string;
   download?: string;
 }
 
@@ -235,8 +236,8 @@ export interface ButtonLabels {
 export interface PolicySection {
   title: string;
   content: string;
-  sort_order?: number;
-  is_active?: boolean;
+  sortOrder?: number;
+  isActive?: boolean;
 }
 
 /** privacy.related-link */
@@ -244,24 +245,24 @@ export interface RelatedLink {
   label: string;
   product?: Product | null;
   url?: string;
-  sort_order?: number;
-  is_active?: boolean;
+  sortOrder?: number;
+  isActive?: boolean;
 }
 
 /** free-trial.trust-item */
 export interface TrustItem {
   label: string;
   icon?: string;
-  sort_order?: number;
-  is_active?: boolean;
+  sortOrder?: number;
+  isActive?: boolean;
 }
 
 /** free-trial.form-labels */
 export interface FormLabel {
   label: string;
   placeholder?: string;
-  sort_order?: number;
-  is_active?: boolean;
+  sortOrder?: number;
+  isActive?: boolean;
 }
 
 /** free-trial.trial-feature */
@@ -269,16 +270,16 @@ export interface TrialFeature {
   title: string;
   icon?: string;
   description?: string;
-  sort_order?: number;
-  is_active?: boolean;
+  sortOrder?: number;
+  isActive?: boolean;
 }
 
 /** faq.faq-item */
 export interface FaqItem {
   question: string;
   answer: string;
-  sort_order?: number;
-  is_active?: boolean;
+  sortOrder?: number;
+  isActive?: boolean;
 }
 
 /** support.hero-section */
@@ -286,9 +287,9 @@ export interface SupportHeroSection {
   badge?: string;
   title: string;
   subtitle?: string;
-  faq_cta_label?: string;
-  manual_cta_label?: string;
-  contact_cta_label?: string;
+  faqCtaLabel?: string;
+  manualCtaLabel?: string;
+  contactCtaLabel?: string;
 }
 
 /** support.status-card */
@@ -296,7 +297,7 @@ export interface SupportStatusCard {
   kicker?: string;
   title?: string;
   hours?: string;
-  status_label?: string;
+  statusLabel?: string;
 }
 
 /** support.faq-section */
@@ -304,8 +305,8 @@ export interface SupportFaqSection {
   badge?: string;
   title: string;
   subtitle?: string;
-  empty_prompt?: string;
-  contact_cta_label?: string;
+  emptyPrompt?: string;
+  contactCtaLabel?: string;
 }
 
 /** support.help-center-section */
@@ -319,10 +320,10 @@ export interface SupportHelpCenterSection {
 export interface SupportContactSection {
   badge?: string;
   title: string;
-  address_label?: string;
-  business_hours_label?: string;
-  phone_label?: string;
-  email_label?: string;
+  addressLabel?: string;
+  businessHoursLabel?: string;
+  phoneLabel?: string;
+  emailLabel?: string;
 }
 
 // ─── Content Type Interfaces ────────────────────────────────────────
@@ -331,12 +332,12 @@ export interface SupportContactSection {
 export interface AboutPage {
   title: string;
   subtitle?: string;
-  featured_image?: StrapiMedia | null;
+  featuredImage?: StrapiMedia | null;
   stats?: StatItem[];
   content?: string;
-  team_members?: TeamMember[];
+  teamMembers?: TeamMember[];
   partners?: Partner[];
-  timeline_milestones?: TimelineMilestone[];
+  timelineMilestones?: TimelineMilestone[];
   seo?: SeoMeta | null;
 }
 
@@ -348,9 +349,9 @@ export interface Article {
   slug: string;
   excerpt?: string;
   content?: string;
-  featured_image?: StrapiMedia | null;
+  featuredImage?: StrapiMedia | null;
   author?: string;
-  article_date?: string;
+  articleDate?: string;
   tags?: string[];
   views?: number;
   category?: Category | null;
@@ -383,24 +384,11 @@ export interface Category {
   seo?: SeoMeta | null;
 }
 
-/** api::company-info.company-info */
-export interface CompanyInfo {
-  company_name: string;
-  company_name_en?: string;
-  address?: string;
-  phone?: string;
-  email?: string;
-  business_hours?: string;
-  map_link?: string;
-  customer_count?: number;
-  contact_info?: ContactInfo[];
-}
-
 /** api::contact-page.contact-page */
 export interface ContactPage {
   title: string;
   subtitle?: string;
-  featured_image?: StrapiMedia | null;
+  featuredImage?: StrapiMedia | null;
   content?: string;
   seo?: SeoMeta | null;
 }
@@ -412,12 +400,12 @@ export interface CookieCategory {
   name: string;
   slug: string;
   description?: string;
-  sort_order?: number;
-  is_active?: boolean;
-  is_required?: boolean;
-  is_default_enabled?: boolean;
+  sortOrder?: number;
+  isActive?: boolean;
+  isRequired?: boolean;
+  isDefaultEnabled?: boolean;
   cookies?: CookieEntry[] | null;
-  privacy_policy_url?: string;
+  privacyPolicyUrl?: string;
 }
 
 export interface CookieEntry {
@@ -432,9 +420,9 @@ export interface CookieEntry {
 export interface CookiePolicy {
   title: string;
   description?: string;
-  featured_image?: StrapiMedia | null;
+  featuredImage?: StrapiMedia | null;
   content?: string;
-  last_updated?: string;
+  lastUpdated?: string;
   seo?: SeoMeta | null;
 }
 
@@ -446,25 +434,25 @@ export interface Faq {
   slug: string;
   description?: string;
   items?: FaqItem[];
-  sort_order?: number;
-  is_active?: boolean;
+  sortOrder?: number;
+  isActive?: boolean;
   seo?: SeoMeta | null;
 }
 
 /** api::footer-setting.footer-setting */
 export interface FooterSetting {
-  cta_badge?: string;
-  cta_title?: string;
-  cta_description?: string;
-  primary_cta_label?: string;
-  primary_cta_url?: string;
-  secondary_cta_label?: string;
-  secondary_cta_url?: string;
+  ctaBadge?: string;
+  ctaTitle?: string;
+  ctaDescription?: string;
+  primaryCtaLabel?: string;
+  primaryCtaUrl?: string;
+  secondaryCtaLabel?: string;
+  secondaryCtaUrl?: string;
   stats?: StatItem[];
-  company_description?: string;
-  social_links?: Record<string, string> | null;
-  footer_sections?: FooterSection[];
-  legal_links?: LegalLink[];
+  companyDescription?: string;
+  socialLinks?: Record<string, string> | null;
+  footerSections?: FooterSection[];
+  legalLinks?: LegalLink[];
   copyright?: string;
 }
 
@@ -472,20 +460,20 @@ export interface FooterSetting {
 export interface FreeTrial {
   title: string;
   subtitle?: string;
-  featured_image?: StrapiMedia | null;
-  trust_items?: TrustItem[];
+  featuredImage?: StrapiMedia | null;
+  trustItems?: TrustItem[];
   content?: string;
-  trial_features?: TrialFeature[];
-  form_labels?: FormLabel[];
+  trialFeatures?: TrialFeature[];
+  formLabels?: FormLabel[];
   testimonials?: Testimonial[];
   seo?: SeoMeta | null;
 }
 
 /** api::global-setting.global-setting */
 export interface GlobalSetting {
-  site_name?: string;
-  site_logo?: StrapiMedia | null;
-  contact_info?: ContactInfo[];
+  siteName?: string;
+  siteLogo?: StrapiMedia | null;
+  contactInfo?: ContactInfo[];
   stats?: StatItem[];
   seoConfig?: SeoConfig | null;
 }
@@ -497,22 +485,22 @@ export interface CookieSetting {
 
 /** api::contact-floating.contact-floating */
 export interface ContactFloating {
-  is_enabled?: boolean;
-  button_label?: string;
-  panel_title?: string;
-  panel_description?: string;
-  close_label?: string;
+  isEnabled?: boolean;
+  buttonLabel?: string;
+  panelTitle?: string;
+  panelDescription?: string;
+  closeLabel?: string;
   actions?: ContactAction[];
 }
 
 /** api::navigation.navigation */
 export interface Navigation {
   name: string;
-  header_items?: NavItem[];
-  footer_sections?: NavigationFooterSection[];
-  footer_labels?: FooterLabels | null;
-  product_names?: ProductName[];
-  button_labels?: ButtonLabels | null;
+  headerItems?: NavItem[];
+  footerSections?: NavigationFooterSection[];
+  footerLabels?: FooterLabels | null;
+  productNames?: ProductName[];
+  buttonLabels?: ButtonLabels | null;
 }
 
 /** api::partner.partner */
@@ -520,37 +508,32 @@ export interface Partner {
   id: number;
   documentId: string;
   name: string;
-  website_url?: string;
+  websiteUrl?: string;
   description?: string;
   logo?: StrapiMedia | null;
-  about_page?: AboutPage | null;
-  sort_order?: number;
-  is_active?: boolean;
+  aboutPage?: AboutPage | null;
+  sortOrder?: number;
+  isActive?: boolean;
 }
 
 /** api::pdpa-setting.pdpa-setting */
 export interface PdpaSetting {
-  company_name: string;
-  dpo_name?: string;
-  dpo_position?: string;
-  dpo_email?: string;
-  dpo_phone?: string;
-  contact_info?: ContactInfo[];
-  data_retention_days?: number;
-  data_retention_description?: string;
-  rights_text?: string;
-  third_parties_text?: string;
-  consent_banner_title?: string;
-  consent_banner_description?: string;
-  consent_accept_all_text?: string;
-  consent_reject_all_text?: string;
-  consent_manage_text?: string;
-  consent_save_text?: string;
-  privacy_policy_url?: string;
-  cookie_policy_url?: string;
-  contact_text?: string;
-  applies_to_products?: Product[];
-  is_active?: boolean;
+  companyName: string;
+  dpoName?: string;
+  dpoPosition?: string;
+  dpoEmail?: string;
+  dpoPhone?: string;
+  contactInfo?: ContactInfo[];
+  dataRetentionDays?: number;
+  dataRetentionDescription?: string;
+  rightsText?: string;
+  thirdPartiesText?: string;
+  consentBanner?: CookieConsentSettings | null;
+  privacyPolicyUrl?: string;
+  cookiePolicyUrl?: string;
+  contactText?: string;
+  appliesToProducts?: Product[];
+  isActive?: boolean;
   seo?: SeoMeta | null;
 }
 
@@ -558,14 +541,14 @@ export interface PdpaSetting {
 export interface PrivacyPolicy {
   title: string;
   description?: string;
-  featured_image?: StrapiMedia | null;
+  featuredImage?: StrapiMedia | null;
   content?: string;
-  policy_sections?: PolicySection[];
-  effective_date?: string;
-  last_updated?: string;
-  applies_to_products?: Product[];
-  related_links?: RelatedLink[];
-  contact_info?: ContactInfo[];
+  policySections?: PolicySection[];
+  effectiveDate?: string;
+  lastUpdated?: string;
+  appliesToProducts?: Product[];
+  relatedLinks?: RelatedLink[];
+  contactInfo?: ContactInfo[];
   seo?: SeoMeta | null;
 }
 
@@ -575,32 +558,20 @@ export interface Product {
   documentId: string;
   title: string;
   slug: string;
-  short_description?: string;
+  shortDescription?: string;
   description?: string;
   price?: number;
-  ribbon_type: "wax" | "wax_resin" | "resin";
+  ribbonType: "wax" | "wax_resin" | "resin";
   sizes?: unknown;
   compatibility?: string;
-  is_featured?: boolean;
+  isFeatured?: boolean;
   images?: StrapiMedia[];
   brand?: Brand | null;
   categories?: Category[];
-  privacy_applied_in?: PrivacyPolicy[];
-  pdpa_applied_in?: PdpaSetting[];
+  privacyAppliedIn?: PrivacyPolicy[];
+  pdpaAppliedIn?: PdpaSetting[];
   seo?: SeoMeta | null;
   publishedAt?: string;
-}
-
-/** api::site-setting.site-setting */
-export interface SiteSetting {
-  site_name: string;
-  site_logo?: StrapiMedia | null;
-  site_favicon?: StrapiMedia | null;
-  site_description?: string;
-  currency?: string;
-  phone?: string;
-  email?: string;
-  stats?: StatItem[];
 }
 
 /** api::team-member.team-member */
@@ -611,19 +582,19 @@ export interface TeamMember {
   position?: string;
   bio?: string;
   avatar?: StrapiMedia | null;
-  about_page?: AboutPage | null;
-  sort_order?: number;
-  is_active?: boolean;
+  aboutPage?: AboutPage | null;
+  sortOrder?: number;
+  isActive?: boolean;
 }
 
 /** api::terms-of-service.terms-of-service */
 export interface TermsOfService {
   title: string;
   description?: string;
-  featured_image?: StrapiMedia | null;
+  featuredImage?: StrapiMedia | null;
   content?: string;
-  effective_date?: string;
-  last_updated?: string;
+  effectiveDate?: string;
+  lastUpdated?: string;
   seo?: SeoMeta | null;
 }
 
@@ -637,9 +608,9 @@ export interface Testimonial {
   quote: string;
   rating?: number;
   avatar?: StrapiMedia | null;
-  free_trial_pages?: FreeTrial[];
-  sort_order?: number;
-  is_active?: boolean;
+  freeTrialPages?: FreeTrial[];
+  sortOrder?: number;
+  isActive?: boolean;
 }
 
 /** api::timeline-milestone.timeline-milestone */
@@ -647,37 +618,53 @@ export interface TimelineMilestone {
   id: number;
   documentId: string;
   title: string;
-  milestone_date?: string;
+  milestoneDate?: string;
   description?: string;
   image?: StrapiMedia | null;
-  about_page?: AboutPage | null;
-  sort_order?: number;
-  is_active?: boolean;
+  aboutPage?: AboutPage | null;
+  sortOrder?: number;
+  isActive?: boolean;
 }
 
 /** api::support-page.support-page */
 export interface SupportPage {
-  hero_section?: SupportHeroSection;
-  status_card?: SupportStatusCard;
-  faq_section?: SupportFaqSection;
+  heroSection?: SupportHeroSection;
+  statusCard?: SupportStatusCard;
+  faqSection?: SupportFaqSection;
   faqs?: Faq[];
-  help_center_section?: SupportHelpCenterSection;
-  help_resources?: Faq[];
-  contact_section?: SupportContactSection;
-  contact_settings?: GlobalSetting | null;
+  helpCenterSection?: SupportHelpCenterSection;
+  helpResources?: Faq[];
+  contactSection?: SupportContactSection;
+  contactSettings?: GlobalSetting | null;
   seo?: SeoMeta | null;
 }
 
 // ─── Fetch Engine ───────────────────────────────────────────────────
 
+/**
+ * Default cache TTL in ms.
+ * Configurable via SSR_CACHE_TTL_MS env var (value in seconds).
+ * Override per-call via opts.ttlMs.
+ */
+const CACHE_TTL_MS =
+  (Number(process.env.SSR_CACHE_TTL_MS) || 60) * 1000;
+
 async function fetchAPI<T>(
   path: string,
   params: Record<string, string> = {},
+  opts: { noCache?: boolean; ttlMs?: number } = {},
 ): Promise<T> {
   const url = new URL(`/api${path}`, STRAPI_URL);
   Object.entries(params).forEach(([key, value]) => {
     url.searchParams.set(key, value);
   });
+
+  // --- Cache check ---
+  if (!opts.noCache) {
+    const cacheKey = buildCacheKey(path, params);
+    const cached = cacheGet<T>(cacheKey);
+    if (cached !== undefined) return cached;
+  }
 
   let lastError: Error | null = null;
 
@@ -701,7 +688,15 @@ async function fetchAPI<T>(
         );
       }
 
-      return res.json();
+      const data: T = await res.json();
+
+      // --- Cache store ---
+      if (!opts.noCache) {
+        const cacheKey = buildCacheKey(path, params);
+        cacheSet(cacheKey, data, opts.ttlMs ?? CACHE_TTL_MS);
+      }
+
+      return data;
     } catch (err) {
       lastError = err as Error;
 
@@ -850,27 +845,27 @@ export function normalizeInternalUrl(
  * (integate-rule.md §8)
  */
 export function getLinkUrl(
-  link: { product_page?: { slug?: string } | null; url?: string },
+  link: { productPage?: { slug?: string } | null; url?: string },
   homePrefix: string,
 ): string {
-  if (link.product_page?.slug) return `${homePrefix}${link.product_page.slug}/`;
+  if (link.productPage?.slug) return `${homePrefix}${link.productPage.slug}/`;
   return normalizeInternalUrl(link.url, homePrefix);
 }
 
 // ─── List Helpers (integate-rule.md §7) ─────────────────────────────
 
 /**
- * Filter active items and sort by sort_order.
- * Works for any component with sort_order and is_active fields.
+ * Filter active items and sort by sortOrder.
+ * Works for any component with sortOrder and isActive fields.
  */
-export function filterAndSort<T extends { sort_order?: number; is_active?: boolean }>(
+export function filterAndSort<T extends { sortOrder?: number; isActive?: boolean }>(
   items: T[] | undefined,
 ): T[] {
   if (!items) return [];
   return items
-    .filter((item) => item.is_active !== false)
+    .filter((item) => item.isActive !== false)
     .slice()
-    .sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+    .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
 }
 
 // ─── API Result Wrapper ─────────────────────────────────────────────
