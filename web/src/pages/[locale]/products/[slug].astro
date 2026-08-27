@@ -1,9 +1,14 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
-import { safeGetProductBySlug, getStrapiMedia, getStrapiAbsoluteImageUrl } from "../../../lib/api";
+import {
+  safeGetProductPageBySlug,
+  getStrapiAbsoluteImageUrl,
+  getStrapiMedia,
+  normalizeInternalUrl,
+  filterAndSort,
+} from "../../../lib/api";
 import { isValidLocale, DEFAULT_LOCALE, type Locale } from "../../../lib/i18n";
 import { getOgImageUrl } from "../../../lib/og";
-import { RIBBON_TYPE_LABELS } from "../../../lib/constants";
 import OfflineNotice from "../../../components/OfflineNotice.astro";
 import PageHeader from "../../../components/PageHeader.astro";
 import Breadcrumb from "../../../components/Breadcrumb.astro";
@@ -12,32 +17,59 @@ const lang = (Astro.params.locale as Locale) || DEFAULT_LOCALE;
 if (!isValidLocale(lang)) return Astro.redirect(`/${DEFAULT_LOCALE}/products/${Astro.params.slug}`);
 
 const { slug } = Astro.params;
-const productResult = await safeGetProductBySlug(slug as string, lang);
+const productResult = await safeGetProductPageBySlug(slug as string, lang);
 const product = productResult.data;
 
-if (!product) return Astro.redirect(`/${lang}/products`);
+if (!product || product.isActive === false) return new Response(null, { status: 404 });
 
-const mainImage = getStrapiMedia(product.images?.[0]?.url);
 const seo = product.seo;
+const homePrefix = `/${lang}/`;
+const heroTitle = product.heroTitle || product.pageTitle || product.name;
+const heroDescription = product.heroSubtitle || product.pageDescription || product.shortDesc || "";
+const imageUrl = getStrapiMedia(product.heroBackground?.url || product.thumbnail?.url);
+const sections = filterAndSort(product.sections || []);
+const cardFeatures = Array.isArray(product.cardFeatures)
+  ? product.cardFeatures.filter((feature): feature is string => typeof feature === "string")
+  : [];
+const features = Array.isArray(product.features) ? product.features.filter((item) => typeof item === "string") : [];
+const benefits = Array.isArray(product.benefits) ? product.benefits.filter((item) => typeof item === "string") : [];
+const problems = Array.isArray(product.problems) ? product.problems.filter((item) => typeof item === "string") : [];
+const pcFeatures = Array.isArray(product.pcFeatures) ? product.pcFeatures.filter((item) => typeof item === "string") : [];
+const mobileFeatures = Array.isArray(product.mobileFeatures) ? product.mobileFeatures.filter((item) => typeof item === "string") : [];
+const ctaHref = normalizeInternalUrl(product.ctaButtonUrl || product.heroCtaUrl || "/contact/", homePrefix);
+const contact = product.contactInfo;
+
+const labels = {
+  products: lang === "en" ? "Products & Services" : "สินค้าและบริการ",
+  overview: lang === "en" ? "Overview" : "ภาพรวม",
+  features: lang === "en" ? "Features" : "คุณสมบัติ",
+  benefits: lang === "en" ? "Benefits" : "ประโยชน์",
+  problems: lang === "en" ? "Problems solved" : "ปัญหาที่ช่วยแก้",
+  pc: "Windows / PC",
+  mobile: "Mobile / Handheld",
+  contact: lang === "en" ? "Contact sales" : "ติดต่อฝ่ายขาย",
+  phone: lang === "en" ? "Phone" : "โทรศัพท์",
+  email: lang === "en" ? "Email" : "อีเมล",
+};
 
 const dynamicOgImage = getOgImageUrl({
   baseUrl: Astro.url.origin,
-  title: product.title,
-  subtitle: product.shortDescription || product.brand?.name || "",
+  title: heroTitle,
+  subtitle: heroDescription,
   type: "product",
-  brand: product.brand?.name || "Ryhts Ribbon",
-  category: RIBBON_TYPE_LABELS[product.ribbonType] || product.ribbonType,
+  brand: "Ryhts Ribbon",
+  category: product.name,
 });
 
 const siteUrl = Astro.url.origin;
 ---
 
 <BaseLayout
-  title={seo?.metaTitle || product.title}
-  description={seo?.metaDescription || product.shortDescription}
-  ogImage={getStrapiAbsoluteImageUrl(seo?.ogImage) || dynamicOgImage}
+  title={seo?.metaTitle || heroTitle}
+  description={seo?.metaDescription || heroDescription}
+  ogImage={getStrapiAbsoluteImageUrl(seo?.ogImage) || imageUrl || dynamicOgImage}
   robots={seo?.robots}
-  keywords={seo?.keywords?.split(",").map(k => k.trim()) || []}
+  keywords={seo?.keywords?.split(",").map((keyword) => keyword.trim()) || []}
   locale={lang}
   ogType="product"
   hreflangs={[
@@ -45,70 +77,302 @@ const siteUrl = Astro.url.origin;
     { lang: "en", href: `${siteUrl}/en/products/${slug}` },
     { lang: "x-default", href: `${siteUrl}/th/products/${slug}` },
   ]}
-  product={{ price: product.price?.toString(), currency: 'THB', availability: 'InStock', brand: product.brand?.name }}
   jsonLd={{
     "@context": "https://schema.org",
     "@type": "Product",
-    name: product.title,
-    description: product.shortDescription,
-    image: mainImage || undefined,
-    brand: product.brand ? { "@type": "Brand", name: product.brand.name } : undefined,
+    name: heroTitle,
+    description: heroDescription,
+    image: imageUrl || undefined,
+    brand: { "@type": "Brand", name: "Ryhts Ribbon" },
   }}
 >
-  <PageHeader title={product.title} description={product.shortDescription} />
+  <PageHeader title={heroTitle} description={heroDescription} />
 
-  <section class="section">
+  <section class="section product-page-section">
     <div class="container">
-      <Breadcrumb items={[{ label: "Products", href: `/${lang}/products` }, { label: product.title }]} />
+      <Breadcrumb items={[{ label: labels.products, href: `/${lang}/products/` }, { label: product.pageTitle || product.name }]} />
 
-      {productResult.isOffline && <OfflineNotice title="部分内容不可用" message="Some details may be unavailable." />}
+      {productResult.isOffline && (
+        <OfflineNotice
+          title={lang === "en" ? "CMS content may be unavailable" : "อาจไม่สามารถโหลดข้อมูล CMS ได้"}
+          message={lang === "en" ? "Fallback product content is being shown." : "กำลังแสดงข้อมูลสำรองของหน้าสินค้า"}
+        />
+      )}
 
-      <div class="product-detail">
-        <div class="product-gallery">
-          {mainImage && <div class="gallery-main"><img src={mainImage} alt={product.title} /></div>}
-        </div>
-
-        <div class="product-info">
-          <div class="product-meta">
-            <span class={`badge badge-${product.ribbonType}`}>{RIBBON_TYPE_LABELS[product.ribbonType]}</span>
-            {product.brand && <span class="product-brand-name">{product.brand.name}</span>}
-          </div>
-
-          <h2 class="product-title">{product.title}</h2>
-
-          {product.price > 0 && <div class="product-price"><span class="price-value">฿{product.price.toLocaleString()}</span></div>}
-          {product.shortDescription && <p class="product-desc">{product.shortDescription}</p>}
-
+      <div class="product-hero-card">
+        <div class="product-hero-copy">
+          <span class="product-platform">{product.platform === "web" ? "Web" : product.platform === "windows_pc" ? "Windows" : product.platform === "handheld_mobile" ? "Mobile" : labels.overview}</span>
+          <h2>{product.pageTitle || product.name}</h2>
+          <p>{product.shortDesc || product.pageDescription || heroDescription}</p>
+          {cardFeatures.length > 0 && (
+            <ul class="chip-list">
+              {cardFeatures.map((feature) => <li>{feature}</li>)}
+            </ul>
+          )}
           <div class="product-actions">
-            <a href={`/${lang}/contact`} class="btn btn-primary btn-lg">ติดต่อสอบถาม</a>
-            <a href="tel:0946246649" class="btn btn-outline btn-lg"><i class="fas fa-phone"></i> โทรเลย</a>
+            <a href={ctaHref} class="btn btn-primary btn-lg">{product.heroCtaText || labels.contact}</a>
+            <a href={`/${lang}/products/`} class="btn btn-outline btn-lg">{labels.products}</a>
           </div>
+        </div>
+        <div class="product-visual">
+          {imageUrl ? <img src={imageUrl} alt={heroTitle} loading="lazy" /> : <i class="fas fa-barcode" aria-hidden="true"></i>}
         </div>
       </div>
 
-      {product.description && (
-        <div class="product-full-desc">
-          <h3>รายละเอียดสินค้า</h3>
-          <div class="rich-text" set:html={product.description} />
+      {(features.length > 0 || benefits.length > 0 || problems.length > 0) && (
+        <div class="product-info-grid">
+          {features.length > 0 && (
+            <article class="info-card">
+              <h2>{product.featuresTitle || labels.features}</h2>
+              <ul>{features.map((item) => <li>{item}</li>)}</ul>
+            </article>
+          )}
+          {benefits.length > 0 && (
+            <article class="info-card">
+              <h2>{product.benefitsTitle || labels.benefits}</h2>
+              <ul>{benefits.map((item) => <li>{item}</li>)}</ul>
+            </article>
+          )}
+          {problems.length > 0 && (
+            <article class="info-card">
+              <h2>{labels.problems}</h2>
+              <ul>{problems.map((item) => <li>{item}</li>)}</ul>
+            </article>
+          )}
         </div>
+      )}
+
+      {(pcFeatures.length > 0 || mobileFeatures.length > 0) && (
+        <div class="product-info-grid">
+          {pcFeatures.length > 0 && (
+            <article class="info-card">
+              <h2>{labels.pc}</h2>
+              <ul>{pcFeatures.map((item) => <li>{item}</li>)}</ul>
+            </article>
+          )}
+          {mobileFeatures.length > 0 && (
+            <article class="info-card">
+              <h2>{labels.mobile}</h2>
+              <ul>{mobileFeatures.map((item) => <li>{item}</li>)}</ul>
+            </article>
+          )}
+        </div>
+      )}
+
+      {sections.length > 0 && (
+        <div class="product-sections">
+          {sections.map((section) => (
+            <article class="content-section">
+              <h2>{section.title}</h2>
+              {Array.isArray(section.content) ? (
+                <div class="rich-text">
+                  {section.content.map((block: any) => (
+                    block._type === "block" || block.type === "paragraph"
+                      ? <p>{block.children?.map((child: any) => child.text).join("")}</p>
+                      : null
+                  ))}
+                </div>
+              ) : typeof section.content === "string" ? (
+                <div class="rich-text" set:html={section.content} />
+              ) : null}
+            </article>
+          ))}
+        </div>
+      )}
+
+      {(product.ctaTitle || contact?.phone || contact?.email) && (
+        <section class="product-cta">
+          <div>
+            <h2>{product.ctaTitle || labels.contact}</h2>
+            <p>{product.ctaSubtitle || product.pageDescription}</p>
+            <div class="contact-lines">
+              {contact?.phone && <a href={`tel:${contact.phone.replace(/[^0-9+]/g, "")}`}>{labels.phone}: {contact.phone}</a>}
+              {contact?.email && <a href={`mailto:${contact.email}`}>{labels.email}: {contact.email}</a>}
+            </div>
+          </div>
+          <a href={ctaHref} class="btn btn-white btn-lg">{product.ctaButtonText || labels.contact}</a>
+        </section>
       )}
     </div>
   </section>
 </BaseLayout>
 
 <style>
-  .product-detail { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; margin-bottom: 48px; }
-  .gallery-main { border-radius: var(--radius-lg); overflow: hidden; }
-  .gallery-main img { width: 100%; aspect-ratio: 4/3; object-fit: cover; }
-  .product-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
-  .badge-wax { background: #fef3c7; color: #b45309; }
-  .badge-wax_resin { background: #dbeafe; color: #1e40af; }
-  .badge-resin { background: #dcfce7; color: #166534; }
-  .product-brand-name { font-size: 14px; color: var(--color-text-light); }
-  .product-title { font-size: 28px; font-weight: 700; margin-bottom: 16px; }
-  .price-value { font-size: 28px; font-weight: 700; color: var(--color-primary); }
-  .product-desc { font-size: 16px; color: var(--color-text-secondary); line-height: 1.8; margin-bottom: 24px; }
-  .product-actions { display: flex; gap: 12px; margin-top: 32px; }
-  .product-full-desc { border-top: 1px solid var(--color-border); padding-top: 40px; }
-  @media (max-width: 768px) { .product-detail { grid-template-columns: 1fr; } .product-actions { flex-direction: column; } }
+  .product-hero-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 360px;
+    gap: 36px;
+    align-items: center;
+    padding: 32px;
+    margin-bottom: 40px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-background);
+    box-shadow: var(--shadow);
+  }
+
+  .product-platform {
+    display: inline-flex;
+    width: fit-content;
+    margin-bottom: 14px;
+    padding: 7px 12px;
+    border-radius: 999px;
+    background: var(--color-background-blue);
+    color: var(--color-primary);
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .product-hero-copy h2,
+  .content-section h2,
+  .product-cta h2 {
+    color: var(--color-text-primary);
+    margin-bottom: 14px;
+  }
+
+  .product-hero-copy p,
+  .content-section,
+  .product-cta p {
+    color: var(--color-text-secondary);
+    line-height: 1.75;
+  }
+
+  .product-visual {
+    display: grid;
+    place-items: center;
+    min-height: 260px;
+    border-radius: var(--radius-lg);
+    background: var(--color-background-blue);
+    color: var(--color-primary);
+    font-size: 72px;
+    overflow: hidden;
+  }
+
+  .product-visual img {
+    width: 100%;
+    height: 100%;
+    min-height: 260px;
+    object-fit: cover;
+  }
+
+  .chip-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 22px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .chip-list li {
+    border-radius: 999px;
+    background: var(--color-background-soft);
+    color: var(--color-text-secondary);
+    padding: 8px 12px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .product-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 28px;
+  }
+
+  .product-info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+    margin-bottom: 32px;
+  }
+
+  .info-card {
+    padding: 24px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-background);
+    box-shadow: var(--shadow);
+  }
+
+  .info-card h2 {
+    margin-bottom: 16px;
+    color: var(--color-text-primary);
+    font-size: 20px;
+  }
+
+  .info-card ul {
+    display: grid;
+    gap: 10px;
+    margin: 0;
+    padding-left: 20px;
+    color: var(--color-text-secondary);
+    line-height: 1.65;
+  }
+
+  .product-sections {
+    display: grid;
+    gap: 20px;
+    margin-top: 40px;
+  }
+
+  .content-section {
+    padding: 28px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-background);
+    box-shadow: var(--shadow);
+  }
+
+  .product-cta {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 40px;
+    padding: 32px;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  }
+
+  .product-cta h2 {
+    color: #fff;
+  }
+
+  .product-cta p,
+  .contact-lines a {
+    color: #E0F2FE;
+  }
+
+  .contact-lines {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 14px;
+  }
+
+  .contact-lines a {
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  @media (max-width: 1024px) {
+    .product-hero-card,
+    .product-info-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .product-hero-card,
+    .content-section,
+    .product-cta {
+      padding: 24px;
+    }
+
+    .product-cta {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+  }
 </style>

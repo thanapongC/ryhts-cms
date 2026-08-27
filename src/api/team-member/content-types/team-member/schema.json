@@ -5,51 +5,60 @@
     "singularName": "team-member",
     "pluralName": "team-members",
     "displayName": "Team Member",
-    "description": "Company team members for About page"
+    "description": "Company team members and staff"
   },
   "options": {
-    "draftAndPublish": true
-  },
-  "pluginOptions": {
-    "i18n": {
-      "localized": true
-    }
+    "draftAndPublish": false
   },
   "attributes": {
     "name": {
       "type": "string",
-      "required": true,
-      "description": "Full name of the team member"
-    },
-    "position": {
-      "type": "string",
-      "description": "Job title or position"
-    },
-    "bio": {
-      "type": "text",
-      "description": "Short biography or description"
-    },
-    "avatar": {
-      "type": "media",
-      "multiple": false,
-      "allowedTypes": ["images"],
-      "description": "Profile photo"
-    },
-    "aboutPage": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::about-page.about-page",
-      "inversedBy": "teamMembers"
+      "required": true
     },
     "sortOrder": {
       "type": "integer",
-      "default": 0,
-      "description": "Display order (lower number appears first)"
+      "default": 0
     },
     "isActive": {
       "type": "boolean",
-      "default": true,
-      "description": "Show or hide this team member on frontend"
+      "default": true
+    },
+    "position": {
+      "type": "string",
+      "required": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "bio": {
+      "type": "text",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "photo": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "socialLinks": {
+      "type": "json"
+    },
+    "aboutPages": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::about-us.about-us"
+    }
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
     }
   }
 }

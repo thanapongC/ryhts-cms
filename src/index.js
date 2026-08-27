@@ -34,11 +34,12 @@ module.exports = {
           where: { role: { id: publicRole.id } },
         });
 
-      const existingActions = new Set(
-        existingPerms.map((p) => `${p.action}`)
+      const existingPermsByAction = new Map(
+        existingPerms.map((p) => [`${p.action}`, p])
       );
 
       const permsToCreate = [];
+      const permsToEnable = [];
 
       for (const uid of apiContentTypes) {
         const parts = uid.split('::')[1].split('.');
@@ -50,12 +51,15 @@ module.exports = {
             : [`${baseAction}.find`, `${baseAction}.findOne`];
 
         for (const action of actions) {
-          if (!existingActions.has(action)) {
+          const existingPerm = existingPermsByAction.get(action);
+          if (!existingPerm) {
             permsToCreate.push({
               action,
               role: publicRole.id,
               enabled: true,
             });
+          } else if (existingPerm.enabled !== true) {
+            permsToEnable.push(existingPerm);
           }
         }
       }
@@ -69,57 +73,31 @@ module.exports = {
         strapi.log.info(
           `Bootstrap: enabled ${permsToCreate.length} public API permissions`
         );
-      } else {
+      }
+
+      if (permsToEnable.length > 0) {
+        for (const perm of permsToEnable) {
+          await strapi
+            .query('plugin::users-permissions.permission')
+            .update({
+              where: { id: perm.id },
+              data: { enabled: true },
+            });
+        }
+        strapi.log.info(
+          `Bootstrap: re-enabled ${permsToEnable.length} public API permissions`
+        );
+      }
+
+      if (permsToCreate.length === 0 && permsToEnable.length === 0) {
         strapi.log.info('Bootstrap: public API permissions already configured');
+      } else {
+        strapi.log.info('Bootstrap: public API permissions synchronized');
       }
     } else {
       strapi.log.info('Public role not found, skipping permission setup');
     }
 
-    // ── SSR cache invalidation lifecycle subscriber ────────────────
-    // Automatically calls DELETE /api/cache on the Astro frontend
-    // whenever content is created, updated, or deleted in Strapi.
-
-    const CACHE_FRONTEND_URL =
-      process.env.FRONTEND_URL || 'http://localhost:4321';
-    const CACHE_SECRET = process.env.CACHE_SECRET;
-
-    if (CACHE_SECRET) {
-      // Debounce: batch rapid changes into a single invalidation
-      let invalidateTimer = null;
-
-      const scheduleInvalidation = () => {
-        if (invalidateTimer) clearTimeout(invalidateTimer);
-        invalidateTimer = setTimeout(async () => {
-          try {
-            const res = await fetch(`${CACHE_FRONTEND_URL}/api/cache`, {
-              method: 'DELETE',
-              headers: { 'x-cache-secret': CACHE_SECRET },
-              signal: AbortSignal.timeout(5000),
-            });
-            if (res.ok) {
-              strapi.log.info('Bootstrap: SSR cache invalidated after content change');
-            } else {
-              strapi.log.warn(
-                `Bootstrap: cache invalidation returned ${res.status}`
-              );
-            }
-          } catch (err) {
-            strapi.log.warn(`Bootstrap: cache invalidation failed: ${err.message}`);
-          }
-        }, 500); // 500ms debounce window
-      };
-
-      strapi.db.lifecycles.subscribe({
-        afterCreate: scheduleInvalidation,
-        afterUpdate: scheduleInvalidation,
-        afterDelete: scheduleInvalidation,
-        afterBulkDelete: scheduleInvalidation,
-      });
-
-      strapi.log.info('Bootstrap: SSR cache invalidation lifecycle subscriber registered');
-    } else {
-      strapi.log.info('Bootstrap: CACHE_SECRET not set, skipping cache invalidation subscriber');
-    }
+    strapi.log.info('Bootstrap: frontend cache disabled; cache invalidation subscriber not registered');
   },
 };

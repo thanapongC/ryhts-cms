@@ -1,30 +1,37 @@
 {
-  "collectionName": "components_footer_footer_section",
+  "collectionName": "components_footer_footer_sections",
   "info": {
     "displayName": "Footer Section",
-    "description": "A column/group of links in the footer"
+    "icon": "list",
+    "description": "A footer column with ordered links"
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
   },
   "attributes": {
     "title": {
       "type": "string",
       "required": true,
-      "description": "Section heading (e.g. Products, Company, Support)"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "sortOrder": {
+      "type": "integer",
+      "default": 0
+    },
+    "isActive": {
+      "type": "boolean",
+      "default": true
     },
     "links": {
       "type": "component",
       "repeatable": true,
-      "component": "footer.footer-link",
-      "description": "Links in this section"
-    },
-    "sortOrder": {
-      "type": "integer",
-      "default": 0,
-      "description": "Display order (lower number appears first)"
-    },
-    "isActive": {
-      "type": "boolean",
-      "default": true,
-      "description": "Show or hide this footer section"
+      "component": "footer.footer-link"
     }
   }
 }

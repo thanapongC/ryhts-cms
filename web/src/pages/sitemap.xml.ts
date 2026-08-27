@@ -11,7 +11,7 @@
  * - Each URL includes `lastmod`, `changefreq`, `priority`, and hreflang alternates
  * - `lastmod` is generated from the current build/request date
  * - English priority is `0.1` lower than Thai, with minimum `0.1`
- * - Sitemap response cache header is `public, max-age=3600`
+ * - Sitemap response caching is disabled so CMS changes are reflected immediately.
  */
 
 import type { APIRoute } from "astro";
@@ -129,7 +129,7 @@ function escapeXml(str: string): string {
  * GET /sitemap.xml
  *
  * Returns XML sitemap with Thai and English URLs.
- * Cache header: public, max-age=3600
+ * Cache header: no-store
  */
 export const GET: APIRoute = async () => {
   // Generate URLs for both locales
@@ -142,12 +142,14 @@ export const GET: APIRoute = async () => {
   // Build XML
   const xml = buildSitemapXml(allUrls);
 
-  // Return with cache header
+  // Return without caching so CMS visibility changes are reflected immediately.
   return new Response(xml, {
     status: 200,
     headers: {
       "Content-Type": "application/xml; charset=utf-8",
-      "Cache-Control": "public, max-age=3600",
+      "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0, s-maxage=0",
+      "Pragma": "no-cache",
+      "Expires": "0",
     },
   });
 };

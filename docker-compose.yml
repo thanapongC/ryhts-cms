@@ -1,17 +1,17 @@
 services:
-  cms:
+  ryhts-cms:
     build:
       context: .
       dockerfile: Dockerfile
-    image: ${DOCKER_IMAGE_PREFIX:-ryhts-ribbon}:cms
+    image: ${DOCKER_IMAGE_PREFIX:-ryhts-ribbon}:ryhtscms
     container_name: ryhts-cms
     restart: unless-stopped
     ports:
-      - "${CMS_PORT:-1337}:1337"
+      - "${CMS_PORT:-1338}:1337"
     env_file:
       - .env
     environment:
-      - FRONTEND_URL=http://web:3000
+      - FRONTEND_URL=http://ryhts-web:3000
       - CACHE_SECRET=${CACHE_SECRET:-}
     volumes:
       - cms-data:/app/public/uploads
@@ -23,21 +23,21 @@ services:
       timeout: 10s
       retries: 3
 
-  web:
+  ryhts-web:
     build:
       context: ./web
       dockerfile: Dockerfile
       args:
-        PUBLIC_STRAPI_URL: ${PUBLIC_STRAPI_URL:-http://cms:1337}
+        PUBLIC_STRAPI_URL: ${PUBLIC_STRAPI_URL:-http://ryhts-cms:1337}
         STRAPI_API_TOKEN: ${STRAPI_API_TOKEN:-}
         CMS_CONTENT_VERSION: ${WEB_CONTENT_VERSION:-local}
-    image: ${DOCKER_IMAGE_PREFIX:-ryhts-ribbon}:web
+    image: ${DOCKER_IMAGE_PREFIX:-ryhts-ribbon}:ryhtsweb
     container_name: ryhts-web
     restart: unless-stopped
     ports:
-      - "${WEB_PORT:-3000}:3000"
+      - "${WEB_PORT:-3008}:3000"
     environment:
-      - PUBLIC_STRAPI_URL=${PUBLIC_STRAPI_URL:-http://cms:1337}
+      - PUBLIC_STRAPI_URL=${PUBLIC_STRAPI_URL:-http://ryhts-cms:1337}
       - STRAPI_API_TOKEN=${STRAPI_API_TOKEN:-}
       - GMAIL_SMTP_USER=${GMAIL_SMTP_USER:-}
       - GMAIL_SMTP_PASSWORD=${GMAIL_SMTP_PASSWORD:-}
@@ -52,7 +52,7 @@ services:
     networks:
       - ryhts
     depends_on:
-      cms:
+      ryhts-cms:
         condition: service_healthy
 
 networks:

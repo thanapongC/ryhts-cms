@@ -6,13 +6,15 @@
  *   features?: Array<{ icon: string; title: string; description: string }>
  */
 interface Feature {
-  icon: string;
+  icon?: string;
   title: string;
   description: string;
 }
 
 interface Props {
   features?: Feature[];
+  title?: string;
+  subtitle?: string;
 }
 
 const defaultFeatures: Feature[] = [
@@ -38,21 +40,27 @@ const defaultFeatures: Feature[] = [
   },
 ];
 
-const { features = defaultFeatures } = Astro.props;
+const {
+  features = defaultFeatures,
+  title = "ทำไมต้องเลือก Ryhts",
+  subtitle = "มุ่งมั่นพัฒนาสินค้านำเข้าที่ได้มาตรฐาน และให้บริการที่ตอบโจทย์",
+} = Astro.props;
+
+const iconFallbacks = ["fas fa-award", "fas fa-headset", "fas fa-boxes-stacked", "fas fa-truck-fast"];
 ---
 
 <section class="section section-alt">
   <div class="container">
     <div class="text-center" style="margin-bottom: 48px;">
-      <h2 class="section-title">ทำไมต้องเลือก Ryhts</h2>
-      <p class="section-subtitle">มุ่งมั่นพัฒนาสินค้านำเข้าที่ได้มาตรฐาน และให้บริการที่ตอบโจทย์</p>
+      <h2 class="section-title">{title}</h2>
+      <p class="section-subtitle">{subtitle}</p>
     </div>
 
     <div class="features-grid">
-      {features.map((feature) => (
+      {features.map((feature, index) => (
         <div class="feature-card">
           <div class="feature-icon">
-            <i class={feature.icon}></i>
+            <i class={feature.icon || iconFallbacks[index % iconFallbacks.length]}></i>
           </div>
           <h3>{feature.title}</h3>
           <p>{feature.description}</p>

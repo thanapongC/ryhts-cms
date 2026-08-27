@@ -5,28 +5,50 @@
     "singularName": "support-page",
     "pluralName": "support-pages",
     "displayName": "Page - Support",
-    "description": "Support page content: hero, FAQ, help center, contact"
+    "description": "Customer support landing page with hero, FAQ, help resources, contact information, and SEO"
   },
   "options": {
     "draftAndPublish": true
   },
-  "pluginOptions": {
-    "i18n": {
-      "localized": true
-    }
-  },
   "attributes": {
+    "isPageEnabled": {
+      "type": "boolean",
+      "default": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
+    },
     "heroSection": {
       "type": "component",
-      "component": "support.hero-section"
+      "repeatable": false,
+      "component": "support.hero-section",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "statusCard": {
       "type": "component",
-      "component": "support.status-card"
+      "repeatable": false,
+      "component": "support.status-card",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "faqSection": {
       "type": "component",
-      "component": "support.faq-section"
+      "repeatable": false,
+      "component": "support.faq-section",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "faqs": {
       "type": "relation",
@@ -35,20 +57,32 @@
     },
     "helpCenterSection": {
       "type": "component",
-      "component": "support.help-center-section"
+      "repeatable": false,
+      "component": "support.help-center-section",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "helpResources": {
       "type": "relation",
       "relation": "manyToMany",
-      "target": "api::faq.faq"
+      "target": "api::help-item.help-item"
     },
     "contactSection": {
       "type": "component",
-      "component": "support.contact-section"
+      "repeatable": false,
+      "component": "support.contact-section",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "contactSettings": {
       "type": "relation",
-      "relation": "manyToOne",
+      "relation": "oneToOne",
       "target": "api::global-setting.global-setting"
     },
     "seo": {
@@ -60,6 +94,11 @@
           "localized": true
         }
       }
+    }
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
     }
   }
 }

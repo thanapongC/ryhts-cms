@@ -1,64 +1,97 @@
 {
-  "collectionName": "components_shared_seo_config",
+  "collectionName": "components_shared_seo_configs",
   "info": {
     "displayName": "SEO Config",
-    "description": "Site-wide SEO defaults, social profiles, and analytics (used only in Global Setting)"
+    "icon": "globe",
+    "description": "Site-wide SEO configuration: site name, defaults, social links"
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
   },
   "attributes": {
     "siteUrl": {
       "type": "string",
-      "description": "Canonical site URL (e.g. https://ryhts.com)"
+      "required": true
     },
     "siteName": {
       "type": "string",
-      "description": "Site name for structured data and OG"
+      "required": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "defaultTitle": {
       "type": "string",
-      "description": "Default meta title when pages do not provide one"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "defaultDescription": {
       "type": "text",
-      "description": "Default meta description when pages do not provide one"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "defaultOgImage": {
       "type": "media",
       "multiple": false,
-      "allowedTypes": ["images"],
-      "description": "Fallback OG image when pages do not provide one"
+      "allowedTypes": [
+        "images"
+      ]
     },
     "brandName": {
       "type": "string",
-      "description": "Brand name for structured data"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "facebookUrl": {
-      "type": "string",
-      "description": "Facebook profile URL"
+      "type": "string"
     },
     "lineUrl": {
-      "type": "string",
-      "description": "LINE Official Account URL"
+      "type": "string"
     },
-    "twitterUrl": {
-      "type": "string",
-      "description": "Twitter profile URL"
+    "linkedinUrl": {
+      "type": "string"
     },
-    "googleAnalyticsId": {
-      "type": "string",
-      "description": "Google Analytics measurement ID"
-    },
-    "facebookPixelId": {
-      "type": "string",
-      "description": "Facebook Pixel ID"
+    "youtubeUrl": {
+      "type": "string"
     },
     "twitterHandle": {
-      "type": "string",
-      "description": "Twitter handle for cards"
+      "type": "string"
     },
-    "isActive": {
-      "type": "boolean",
-      "default": true,
-      "description": "Enable or disable this SEO config"
+    "googleAnalyticsId": {
+      "type": "string"
+    },
+    "facebookPixelId": {
+      "type": "string"
+    },
+    "robotsUserAgent": {
+      "type": "string",
+      "default": "*"
+    },
+    "robotsAllowPaths": {
+      "type": "json"
+    },
+    "robotsDisallowPaths": {
+      "type": "json"
+    },
+    "robotsSitemapUrl": {
+      "type": "string"
+    },
+    "robotsCrawlDelay": {
+      "type": "integer",
+      "default": 1
     }
   }
 }

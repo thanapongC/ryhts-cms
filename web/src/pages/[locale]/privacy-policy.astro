@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { safeGetPrivacyPolicy, getStrapiAbsoluteImageUrl } from "../../lib/api";
+import { safeGetPrivacyPolicy, getStrapiAbsoluteImageUrl, isPageDisabled } from "../../lib/api";
 import { isValidLocale, DEFAULT_LOCALE, type Locale } from "../../lib/i18n";
 import OfflineNotice from "../../components/OfflineNotice.astro";
 import PrivacyPolicyContent from "../../components/PrivacyPolicyContent.astro";
@@ -10,16 +10,19 @@ if (!isValidLocale(lang)) return Astro.redirect(`/${DEFAULT_LOCALE}/privacy-poli
 
 const policyResult = await safeGetPrivacyPolicy(lang);
 const policy = policyResult.data;
+if (policyResult.ok && isPageDisabled(policy)) return new Response(null, { status: 404 });
 
 const seo = policy?.seo;
 const isOffline = policyResult.isOffline;
+const pageTitle = policy?.heroTitle || policy?.title || (lang === "en" ? "Privacy Policy" : "นโยบายความเป็นส่วนตัว");
+const pageDescription = policy?.heroSubtitle || policy?.description || "";
 
 const siteUrl = Astro.url.origin;
 ---
 
 <BaseLayout
-  title={seo?.metaTitle || policy?.title || (lang === "en" ? "Privacy Policy" : "นโยบายความเป็นส่วนตัว")}
-  description={seo?.metaDescription || policy?.description || ""}
+  title={seo?.metaTitle || pageTitle}
+  description={seo?.metaDescription || pageDescription}
   ogImage={getStrapiAbsoluteImageUrl(seo?.ogImage) || undefined}
   robots={seo?.robots}
   keywords={seo?.keywords?.split(",").map((k: string) => k.trim()) || []}
@@ -32,8 +35,8 @@ const siteUrl = Astro.url.origin;
   jsonLd={{
     "@context": "https://schema.org",
     "@type": "WebPage",
-    name: policy?.title || "Privacy Policy",
-    description: seo?.metaDescription || "",
+    name: pageTitle,
+    description: seo?.metaDescription || pageDescription,
   }}
 >
   {isOffline && !policy ? (
@@ -42,6 +45,6 @@ const siteUrl = Astro.url.origin;
       message={lang === "en" ? "Privacy policy may be unavailable." : "Privacy policy may be unavailable."}
     />
   ) : (
-    <PrivacyPolicyContent lang={lang} policy={policy} />
+    <PrivacyPolicyContent lang={lang} policy={policy} pageType="privacy" />
   )}
 </BaseLayout>

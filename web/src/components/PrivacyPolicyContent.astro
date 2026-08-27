@@ -9,21 +9,34 @@
  *   lang: Locale
  *   policy: PrivacyPolicy | null
  */
-import { getStrapiMedia, getStrapiAbsoluteImageUrl, filterAndSort, normalizeInternalUrl, type PrivacyPolicy } from "../lib/api";
+import { getStrapiAbsoluteImageUrl, filterAndSort, normalizeInternalUrl, type PrivacyPolicy, type TermsOfService } from "../lib/api";
 
 interface Props {
   lang: "th" | "en";
-  policy: PrivacyPolicy | null;
+  policy: PrivacyPolicy | TermsOfService | null;
+  pageType?: "privacy" | "terms";
 }
 
-const { lang, policy } = Astro.props;
+const { lang, policy, pageType = "privacy" } = Astro.props;
 
 const t = { home: `/${lang}/` };
 const seo = policy?.seo;
-const policySections = filterAndSort(policy?.policySections);
+const policySections = filterAndSort(policy?.sections || policy?.policySections);
 const relatedLinks = filterAndSort(policy?.relatedLinks);
 const appliesToProducts = policy?.appliesToProducts || [];
-const contactInfo = policy?.contactInfo || [];
+const contactInfo = policy?.legalContactInfo || policy?.contactInfo?.[0] || null;
+const fallbackTitle = pageType === "terms"
+  ? (lang === "en" ? "Terms of Service" : "ข้อกำหนดการใช้บริการ")
+  : (lang === "en" ? "Privacy Policy" : "นโยบายความเป็นส่วนตัว");
+const pageTitle = policy?.heroTitle || policy?.title || fallbackTitle;
+const pageDescription = policy?.heroSubtitle || policy?.description || "";
+const tocTitle = policy?.tocTitle || (lang === "en" ? "Contents" : "สารบัญ");
+const appliesToTitle = policy?.appliesToTitle || (lang === "en" ? "Applies to products" : "มีผลกับสินค้า");
+const relatedLinksTitle = policy?.relatedLinksTitle || (lang === "en" ? "Related Policies" : "นโยบายที่เกี่ยวข้อง");
+const contactTitle = policy?.legalContactTitle || (lang === "en" ? "Contact Us" : "ติดต่อเรา");
+const contactDescription = policy?.legalContactDescription || (lang === "en"
+  ? "If you have questions about this policy, please contact us."
+  : "หากมีคำถามเกี่ยวกับนโยบายนี้ กรุณาติดต่อเรา");
 
 function formatDate(dateStr: string): string {
   if (!dateStr) return "";
@@ -38,14 +51,20 @@ function getProductUrl(product: { slug?: string }): string {
   if (product?.slug) return `${t.home}products/${product.slug}/`;
   return "#";
 }
+
+function getProductLabel(product: { pageTitle?: string; name?: string; title?: string }): string {
+  return product.pageTitle || product.name || product.title || "";
+}
 ---
 
 <div class="pp-hero">
   <div class="container">
     {policy?.featuredImage && (
-      <img src={getStrapiAbsoluteImageUrl(policy.featuredImage)} alt={policy?.title || ""} class="pp-hero-image" />
+      <img src={getStrapiAbsoluteImageUrl(policy.featuredImage)} alt={pageTitle} class="pp-hero-image" />
     )}
-    <h1>{policy?.title || (lang === "en" ? "Privacy Policy" : "นโยบายความเป็นส่วนตัว")}</h1>
+    {policy?.heroBadge && <span class="pp-badge">{policy.heroBadge}</span>}
+    <h1>{pageTitle}</h1>
+    {pageDescription && <p class="pp-hero-description">{pageDescription}</p>}
     <div class="pp-dates">
       {policy?.effectiveDate && (
         <span>{lang === "en" ? "Effective" : "มีผลบังคับใช้"}: {formatDate(policy.effectiveDate)}</span>
@@ -62,23 +81,23 @@ function getProductUrl(product: { slug?: string }): string {
     <nav class="breadcrumb" aria-label="Breadcrumb">
       <a href={t.home}>{lang === "en" ? "Home" : "หน้าแรก"}</a>
       <span>/</span>
-      <span>{lang === "en" ? "Privacy Policy" : "นโยบายความเป็นส่วนตัว"}</span>
+      <span>{pageTitle}</span>
     </nav>
 
     <!-- Summary -->
-    {policy?.description && (
+    {pageDescription && (
       <div class="pp-summary">
-        <p>{policy.description}</p>
+        <p>{pageDescription}</p>
       </div>
     )}
 
     <!-- Applies To Products -->
     {appliesToProducts.length > 0 && (
       <div class="pp-products">
-        <h3>{lang === "en" ? "Applies to products" : "มีผลกับสินค้า"}</h3>
+        <h3>{appliesToTitle}</h3>
         <div class="pp-product-chips">
           {appliesToProducts.map((product) => (
-            <a href={getProductUrl(product)} class="pp-chip">{product.title}</a>
+            <a href={getProductUrl(product)} class="pp-chip">{getProductLabel(product)}</a>
           ))}
         </div>
       </div>
@@ -89,7 +108,7 @@ function getProductUrl(product: { slug?: string }): string {
       <div class="pp-sections">
         <!-- Table of Contents -->
         <nav class="pp-toc">
-          <h3>{lang === "en" ? "Contents" : "สารบัญ"}</h3>
+          <h3>{tocTitle}</h3>
           <ol>
             {policySections.map((section) => (
               <li>
@@ -119,7 +138,7 @@ function getProductUrl(product: { slug?: string }): string {
     <!-- Related Links -->
     {relatedLinks.length > 0 && (
       <div class="pp-related">
-        <h3>{lang === "en" ? "Related Policies" : "นโยบายที่เกี่ยวข้อง"}</h3>
+        <h3>{relatedLinksTitle}</h3>
         <div class="pp-related-list">
           {relatedLinks.map((link) => (
             <a href={normalizeInternalUrl(link.url, t.home)} class="pp-related-link">
@@ -132,23 +151,47 @@ function getProductUrl(product: { slug?: string }): string {
     )}
 
     <!-- Contact Information -->
-    {contactInfo.length > 0 && (
+    {contactInfo && (
       <div class="pp-contact">
-        <h3>{lang === "en" ? "Contact Us" : "ติดต่อเรา"}</h3>
-        <p>{lang === "en"
-          ? "If you have questions about this policy, please contact us."
-          : "หากมีคำถามเกี่ยวกับนโยบายนี้ กรุณาติดต่อเรา"
-        }</p>
+        <h3>{contactTitle}</h3>
+        <p>{contactDescription}</p>
         <div class="pp-contact-items">
-          {contactInfo.map((item) => (
+          {contactInfo.companyName && (
             <div class="pp-contact-item">
-              {item.icon && <i class={`fas fa-${item.icon}`}></i>}
+              <i class="fas fa-building"></i>
               <div>
-                {item.label && <strong>{item.label}</strong>}
-                <span>{item.value}</span>
+                <strong>{lang === "en" ? "Company" : "บริษัท"}</strong>
+                <span>{contactInfo.companyName}</span>
               </div>
             </div>
-          ))}
+          )}
+          {contactInfo.email && (
+            <div class="pp-contact-item">
+              <i class="fas fa-envelope"></i>
+              <div>
+                <strong>Email</strong>
+                <span>{contactInfo.email}</span>
+              </div>
+            </div>
+          )}
+          {contactInfo.phone && (
+            <div class="pp-contact-item">
+              <i class="fas fa-phone"></i>
+              <div>
+                <strong>{lang === "en" ? "Phone" : "โทรศัพท์"}</strong>
+                <span>{contactInfo.phone}</span>
+              </div>
+            </div>
+          )}
+          {contactInfo.businessHours && (
+            <div class="pp-contact-item">
+              <i class="fas fa-clock"></i>
+              <div>
+                <strong>{lang === "en" ? "Business Hours" : "เวลาทำการ"}</strong>
+                <span>{contactInfo.businessHours}</span>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     )}
@@ -174,6 +217,24 @@ function getProductUrl(product: { slug?: string }): string {
     font-size: 36px;
     margin-bottom: 12px;
     color: #FFFFFF;
+  }
+
+  .pp-badge {
+    display: inline-flex;
+    margin-bottom: 16px;
+    padding: 6px 14px;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 999px;
+    color: #FFFFFF;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .pp-hero-description {
+    max-width: 760px;
+    margin: 0 auto 16px;
+    color: #E0F2FE;
+    line-height: 1.7;
   }
 
   .pp-dates {

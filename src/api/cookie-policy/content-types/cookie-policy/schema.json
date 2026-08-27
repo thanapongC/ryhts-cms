@@ -5,49 +5,128 @@
     "singularName": "cookie-policy",
     "pluralName": "cookie-policies",
     "displayName": "Page - Cookie Policy",
-    "description": "Cookie policy page content - detailed cookie information"
+    "description": "Cookie Policy page content, category cards, CTA labels, and SEO"
   },
   "options": {
     "draftAndPublish": true
   },
-  "pluginOptions": {
-    "i18n": {
-      "localized": true
-    }
-  },
   "attributes": {
-    "title": {
+    "isPageEnabled": {
+      "type": "boolean",
+      "default": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
+    },
+    "heroBadge": {
       "type": "string",
-      "required": true,
-      "default": "Cookie Policy"
-    },
-    "description": {
-      "type": "text",
-      "description": "Short summary of the cookie policy"
-    },
-    "featuredImage": {
-      "type": "media",
-      "multiple": false,
-      "allowedTypes": ["images"],
-      "description": "Hero or featured image"
-    },
-    "content": {
-      "type": "richtext",
-      "description": "Full cookie policy content"
-    },
-    "lastUpdated": {
-      "type": "date",
-      "description": "When the cookie policy was last updated"
-    },
-    "seo": {
-      "type": "component",
-      "repeatable": false,
-      "component": "shared.seo-meta",
       "pluginOptions": {
         "i18n": {
           "localized": true
         }
       }
+    },
+    "heroTitle": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "heroSubtitle": {
+      "type": "text",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "lastUpdated": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "categoriesBadge": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "categoriesTitle": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "categoriesDescription": {
+      "type": "text",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "categories": {
+      "type": "component",
+      "repeatable": true,
+      "component": "cookie.policy-category"
+    },
+    "sections": {
+      "type": "component",
+      "repeatable": true,
+      "component": "privacy.policy-section"
+    },
+    "manageTitle": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "manageDescription": {
+      "type": "text",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "manageButtonLabel": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "backToTopLabel": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "seo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.seo-meta"
+    }
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
     }
   }
 }

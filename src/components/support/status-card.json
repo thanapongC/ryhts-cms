@@ -1,39 +1,47 @@
 {
-  "collectionName": "components_support_status_card",
+  "collectionName": "components_support_status_cards",
   "info": {
     "displayName": "Support Status Card",
+    "icon": "headset",
     "description": "Support team availability card shown beside the hero"
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
   },
   "attributes": {
     "kicker": {
       "type": "string",
-      "localized": true,
-      "description": "Small label above the card title"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "title": {
       "type": "string",
-      "localized": true,
-      "description": "Card heading text"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "hours": {
       "type": "string",
-      "localized": true,
-      "description": "Business hours display text"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "statusLabel": {
       "type": "string",
-      "localized": true,
-      "description": "Status badge text (e.g. Online, Available)"
-    },
-    "sortOrder": {
-      "type": "integer",
-      "default": 0,
-      "description": "Display order (lower number appears first)"
-    },
-    "isActive": {
-      "type": "boolean",
-      "default": true,
-      "description": "Show or hide this status card"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     }
   }
 }

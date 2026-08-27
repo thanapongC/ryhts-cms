@@ -1,40 +1,41 @@
 {
-  "collectionName": "components_navigation_nav_item",
+  "collectionName": "components_navigation_nav_items",
   "info": {
     "displayName": "Nav Item",
-    "description": "A header navigation menu item with optional dropdown children"
+    "icon": "caretRight",
+    "description": "A single navigation link with optional nested children"
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
   },
   "attributes": {
     "label": {
       "type": "string",
       "required": true,
-      "description": "Navigation link text"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "url": {
       "type": "string",
-      "description": "Link URL (used when no children)"
+      "required": true
     },
     "target": {
       "type": "enumeration",
-      "enum": ["_self", "_blank"],
-      "default": "_self",
-      "description": "Link target (_self or _blank)"
+      "enum": [
+        "_self",
+        "_blank"
+      ],
+      "default": "_self"
     },
     "children": {
       "type": "component",
       "repeatable": true,
-      "component": "navigation.nav-child-item",
-      "description": "Dropdown sub-items"
-    },
-    "sortOrder": {
-      "type": "integer",
-      "default": 0,
-      "description": "Display order (lower number appears first)"
-    },
-    "isActive": {
-      "type": "boolean",
-      "default": true,
-      "description": "Show or hide this nav item"
+      "component": "navigation.nav-child-item"
     }
   }
 }

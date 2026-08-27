@@ -6,17 +6,17 @@
  * Design: rules/design-rule.md §8 (Header/Navigation)
  */
 
-import { safeGetFooterSetting, safeGetGlobalSetting, getStrapiMedia } from "../lib/api";
+import { safeGetContactFloating, safeGetCookieSetting, safeGetFooterSetting, safeGetGlobalSetting, getStrapiMedia } from "../lib/api";
 import { detectLocale, type Locale } from "../lib/i18n";
 import { siteConfig, generateHreflangs, type HreflangLink, type OgType } from "../lib/seo";
 import ErrorBanner from "../components/ErrorBanner.astro";
 import CookieConsent from "../components/CookieConsent.astro";
-import SearchOverlay from "../components/SearchOverlay.astro";
-import LanguageSwitcher from "../components/LanguageSwitcher.astro";
 import SeoHead from "../components/SeoHead.astro";
 import OrganizationSchema from "../components/seo/OrganizationSchema.astro";
 import WebSiteSchema from "../components/seo/WebSiteSchema.astro";
+import SiteHeader from "../components/SiteHeader.astro";
 import Footer from "../components/Footer.astro";
+import FloatingContact from "../components/FloatingContact.astro";
 
 interface ArticleMeta {
   publishedTime?: string;
@@ -88,10 +88,14 @@ const locale = (propLocale || urlLocale || detectedLocale) as Locale;
 
 const footerResult = await safeGetFooterSetting(locale);
 const globalResult = await safeGetGlobalSetting(locale);
+const contactFloatingResult = await safeGetContactFloating(locale);
+const cookieSettingResult = await safeGetCookieSetting(locale);
 
 const footerSetting = footerResult.data;
 const globalSetting = globalResult.data;
-const isOffline = footerResult.isOffline || globalResult.isOffline;
+const contactFloating = contactFloatingResult.data;
+const cookieSetting = cookieSettingResult.data;
+const isOffline = footerResult.isOffline || globalResult.isOffline || contactFloatingResult.isOffline || cookieSettingResult.isOffline;
 
 const siteName = globalSetting?.siteName || siteConfig.siteName;
 const siteDescription = globalSetting?.seoConfig?.defaultDescription || siteConfig.defaultDescription;
@@ -103,14 +107,6 @@ const logoUrl = getStrapiMedia(globalSetting?.siteLogo?.url);
 const globalOgImage = getStrapiMedia(globalResult.data?.seoConfig?.defaultOgImage?.url);
 const defaultOgImage = globalOgImage || globalSetting?.siteLogo?.url || "/og-default.svg";
 const resolvedOgImage = ogImage || defaultOgImage;
-
-const navItems = [
-  { label: "Home", href: `/${locale}/` },
-  { label: "About us", href: `/${locale}/about` },
-  { label: "Products", href: `/${locale}/products` },
-  { label: "Articles", href: `/${locale}/articles` },
-  { label: "Contact us", href: `/${locale}/contact` },
-];
 
 // Generate hreflang tags using SEO module
 const currentPath = Astro.url.pathname;
@@ -166,59 +162,12 @@ const resolvedHreflangs = hreflangs || defaultHreflangs;
     <!-- Offline Banner -->
     {isOffline && <ErrorBanner message="Unable to connect to the server. Some content may be outdated." />}
 
-    <!-- Header (design-rule.md §8) -->
-    <header class:list={["site-header", { "has-banner": isOffline }]} id="site-header">
-      <div class="container header-inner">
-        <a href="/" class="logo" aria-label={siteName}>
-          {logoUrl ? (
-            <img src={logoUrl} alt={siteName} height="40" />
-          ) : (
-            <span class="logo-text">{siteName}</span>
-          )}
-        </a>
-
-        <nav class="main-nav" id="main-nav" aria-label="Main navigation">
-          {navItems.map((item) => (
-            <a
-              href={item.href}
-              class:list={["nav-link", { active: Astro.url.pathname === item.href || (item.href !== "/" && Astro.url.pathname.startsWith(item.href)) }]}
-            >
-              {item.label}
-            </a>
-          ))}
-        </nav>
-
-        <div class="header-right">
-          <LanguageSwitcher currentLocale={locale} />
-          <SearchOverlay />
-          
-          <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Toggle menu" aria-expanded="false">
-            <i class="fas fa-bars"></i>
-          </button>
-        </div>
-      </div>
-
-      <!-- Mobile Menu -->
-      <div class="mobile-nav" id="mobile-nav" aria-hidden="true">
-        <div class="mobile-nav-header">
-          <span class="logo-text">{siteName}</span>
-          <button class="mobile-menu-close" id="mobile-menu-close" aria-label="Close menu">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-        <nav class="mobile-nav-links" aria-label="Mobile navigation">
-          {navItems.map((item) => (
-            <a
-              href={item.href}
-              class:list={["mobile-nav-link", { active: Astro.url.pathname === item.href }]}
-            >
-              {item.label}
-            </a>
-          ))}
-        </nav>
-        
-      </div>
-    </header>
+    <SiteHeader
+      locale={locale}
+      isOffline={isOffline}
+      logoUrl={logoUrl}
+      siteName={siteName}
+    />
 
     <!-- Main Content -->
     <main>
@@ -235,280 +184,13 @@ const resolvedHreflangs = hreflangs || defaultHreflangs;
       siteDescription={siteDescription}
     />
 
+    <FloatingContact contactFloating={contactFloating} />
+
     <!-- Cookie Consent -->
-    <CookieConsent />
+    <CookieConsent locale={locale} cookieSetting={cookieSetting} />
 
     <style is:global>
       @import "../styles/global.css";
-
-      /* ─── Header (design-rule.md §8) ──────────────────────────────── */
-      .site-header {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        z-index: var(--z-header);
-        background: rgba(255, 255, 255, 0.97);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border-bottom: 1px solid var(--color-border-light);
-        transition: all var(--transition);
-      }
-
-      .site-header.has-banner {
-        top: 68px;
-      }
-
-      .site-header.scrolled {
-        box-shadow: var(--shadow);
-      }
-
-      .header-inner {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        height: var(--header-height);
-      }
-
-      /* ─── Logo ────────────────────────────────────────────────────── */
-      .logo {
-        display: flex;
-        align-items: center;
-        text-decoration: none;
-        transition: opacity var(--transition);
-      }
-
-      .logo:hover {
-        opacity: 0.9;
-      }
-
-      .logo-text {
-        font-size: 22px;
-        font-weight: 700;
-        color: var(--color-primary);
-        letter-spacing: -0.5px;
-      }
-
-      /* ─── Navigation (design-rule.md §8) ──────────────────────────── */
-      .main-nav {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-      }
-
-      .nav-link {
-        padding: 8px 16px;
-        color: var(--color-text-primary);
-        font-size: 15px;
-        font-weight: 500;
-        border-radius: var(--radius-sm);
-        transition: all var(--transition);
-        text-decoration: none;
-        position: relative;
-      }
-
-      .nav-link:hover {
-        color: var(--color-primary);
-        background: var(--color-background-blue);
-      }
-
-      .nav-link.active {
-        color: var(--color-primary);
-        background: var(--color-background-blue);
-      }
-
-      .nav-link::after {
-        content: "";
-        position: absolute;
-        bottom: 0;
-        left: 50%;
-        width: 0;
-        height: 2px;
-        background: var(--color-primary);
-        transition: all var(--transition);
-        transform: translateX(-50%);
-      }
-
-      .nav-link:hover::after,
-      .nav-link.active::after {
-        width: 60%;
-      }
-
-      .header-right {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-
-      .header-phone {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        color: var(--color-text-primary);
-        font-size: 14px;
-        font-weight: 500;
-        text-decoration: none;
-        transition: color var(--transition);
-      }
-
-      .header-phone:hover {
-        color: var(--color-primary);
-      }
-
-      .header-phone i {
-        color: var(--color-primary);
-      }
-
-      .mobile-menu-toggle {
-        display: none;
-        background: none;
-        border: none;
-        font-size: 22px;
-        color: var(--color-text-primary);
-        cursor: pointer;
-        padding: 8px;
-        transition: color var(--transition);
-      }
-
-      .mobile-menu-toggle:hover {
-        color: var(--color-primary);
-      }
-
-      /* ─── Mobile Nav (design-rule.md §25) ──────────────────────────── */
-      .mobile-nav {
-        position: fixed;
-        top: 0;
-        right: -100%;
-        width: 300px;
-        height: 100vh;
-        background: var(--color-background);
-        z-index: var(--z-mobile-nav);
-        box-shadow: var(--shadow-elevated);
-        transition: right var(--transition);
-        display: flex;
-        flex-direction: column;
-        padding: 24px;
-      }
-
-      .mobile-nav[aria-hidden="false"] {
-        right: 0;
-      }
-
-      .mobile-nav-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 32px;
-      }
-
-      .mobile-menu-close {
-        background: none;
-        border: none;
-        font-size: 24px;
-        color: var(--color-text-primary);
-        cursor: pointer;
-        transition: color var(--transition);
-      }
-
-      .mobile-menu-close:hover {
-        color: var(--color-primary);
-      }
-
-      .mobile-nav-links {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-      }
-
-      .mobile-nav-link {
-        padding: 12px 16px;
-        color: var(--color-text-primary);
-        font-size: 16px;
-        font-weight: 500;
-        border-radius: var(--radius-sm);
-        text-decoration: none;
-        transition: all var(--transition);
-      }
-
-      .mobile-nav-link:hover,
-      .mobile-nav-link.active {
-        color: var(--color-primary);
-        background: var(--color-background-blue);
-      }
-
-      .mobile-nav-phone {
-        margin-top: auto;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 12px 16px;
-        background: var(--color-background-blue);
-        color: var(--color-primary);
-        border-radius: var(--radius-sm);
-        font-weight: 500;
-        text-decoration: none;
-        transition: all var(--transition);
-      }
-
-      .mobile-nav-phone:hover {
-        background: var(--color-primary);
-        color: var(--color-text-on-blue);
-      }
-
-      /* ─── Responsive (design-rule.md §25) ──────────────────────────── */
-      @media (max-width: 768px) {
-        .main-nav { display: none; }
-        .header-phone span { display: none; }
-        .mobile-menu-toggle { display: block; }
-
-        body { padding-top: var(--header-height); }
-        .site-header.has-banner { top: 0; }
-      }
     </style>
-
-    <script>
-      // Header scroll effect
-      const header = document.getElementById("site-header");
-
-      window.addEventListener("scroll", () => {
-        if (window.scrollY > 50) {
-          header?.classList.add("scrolled");
-        } else {
-          header?.classList.remove("scrolled");
-        }
-      });
-
-      // Mobile menu
-      const menuToggle = document.getElementById("mobile-menu-toggle");
-      const menuClose = document.getElementById("mobile-menu-close");
-      const mobileNav = document.getElementById("mobile-nav");
-
-      menuToggle?.addEventListener("click", () => {
-        const isOpen = mobileNav?.getAttribute("aria-hidden") === "false";
-        mobileNav?.setAttribute("aria-hidden", String(isOpen));
-        menuToggle?.setAttribute("aria-expanded", String(!isOpen));
-      });
-
-      menuClose?.addEventListener("click", () => {
-        mobileNav?.setAttribute("aria-hidden", "true");
-        menuToggle?.setAttribute("aria-expanded", "false");
-      });
-
-      // Close mobile menu when clicking a link
-      mobileNav?.querySelectorAll("a").forEach((link) => {
-        link.addEventListener("click", () => {
-          mobileNav?.setAttribute("aria-hidden", "true");
-          menuToggle?.setAttribute("aria-expanded", "false");
-        });
-      });
-
-      // Close mobile menu on escape key
-      document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape" && mobileNav?.getAttribute("aria-hidden") === "false") {
-          mobileNav?.setAttribute("aria-hidden", "true");
-          menuToggle?.setAttribute("aria-expanded", "false");
-        }
-      });
-    </script>
   </body>
 </html>

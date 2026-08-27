@@ -1,0 +1,263 @@
+---
+import { filterAndSort, type ContactFloating, type ContactAction } from "../lib/api";
+
+interface Props {
+  contactFloating: ContactFloating | null;
+}
+
+const { contactFloating } = Astro.props;
+const actions = filterAndSort(contactFloating?.actions);
+
+function getIcon(type: ContactAction["type"]) {
+  const icons: Record<ContactAction["type"], { prefix: "fas" | "fab"; name: string }> = {
+    phone: { prefix: "fas", name: "phone" },
+    line: { prefix: "fab", name: "line" },
+    email: { prefix: "fas", name: "envelope" },
+    facebook: { prefix: "fab", name: "facebook-f" },
+    map: { prefix: "fas", name: "map-marker-alt" },
+    custom: { prefix: "fas", name: "arrow-up-right-from-square" },
+  };
+  return icons[type] || icons.custom;
+}
+---
+
+{contactFloating?.isEnabled !== false && actions.length > 0 && (
+  <div class="floating-contact" data-floating-contact>
+    <button
+      class="floating-contact-toggle"
+      type="button"
+      aria-expanded="false"
+      aria-controls="floating-contact-panel"
+      data-floating-contact-toggle
+    >
+      <i class="fas fa-headset" aria-hidden="true"></i>
+      <span>{contactFloating?.buttonLabel || "Contact"}</span>
+    </button>
+
+    <div class="floating-contact-panel" id="floating-contact-panel" hidden data-floating-contact-panel>
+      <div class="floating-contact-header">
+        <div>
+          {contactFloating?.panelTitle && <h2>{contactFloating.panelTitle}</h2>}
+          {contactFloating?.panelDescription && <p>{contactFloating.panelDescription}</p>}
+        </div>
+        <button class="floating-contact-close" type="button" aria-label={contactFloating?.closeLabel || "Close"} data-floating-contact-close>
+          <i class="fas fa-times" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <div class="floating-contact-actions">
+        {actions.map((action) => (
+          <a
+            class:list={["floating-contact-action", `is-${action.type}`]}
+            href={action.url}
+            target={action.openInNewTab ? "_blank" : undefined}
+            rel={action.openInNewTab ? "noopener noreferrer" : undefined}
+            aria-label={action.ariaLabel || action.label}
+          >
+            <span class="floating-contact-icon">
+              <i class={`${getIcon(action.type).prefix} fa-${getIcon(action.type).name}`} aria-hidden="true"></i>
+            </span>
+            <span class="floating-contact-copy">
+              <strong>{action.label}</strong>
+              {action.description && <small>{action.description}</small>}
+            </span>
+            <i class="fas fa-chevron-right floating-contact-arrow" aria-hidden="true"></i>
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>
+)}
+
+<style>
+  .floating-contact {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: calc(var(--z-header) + 20);
+    display: grid;
+    justify-items: end;
+    gap: 12px;
+  }
+
+  .floating-contact-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 52px;
+    padding: 0 18px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--color-primary);
+    color: var(--color-text-on-blue);
+    box-shadow: 0 14px 36px rgba(1, 127, 228, 0.28);
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform var(--transition), background var(--transition), box-shadow var(--transition);
+  }
+
+  .floating-contact-toggle:hover {
+    background: var(--color-primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 18px 44px rgba(1, 127, 228, 0.34);
+  }
+
+  .floating-contact-toggle:focus-visible,
+  .floating-contact-close:focus-visible,
+  .floating-contact-action:focus-visible {
+    outline: 3px solid rgba(1, 127, 228, 0.25);
+    outline-offset: 3px;
+  }
+
+  .floating-contact-panel {
+    width: min(360px, calc(100vw - 40px));
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-background);
+    box-shadow: var(--shadow-elevated);
+  }
+
+  .floating-contact-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    justify-content: space-between;
+    padding: 20px 20px 16px;
+    border-bottom: 1px solid var(--color-border-light);
+  }
+
+  .floating-contact-header h2 {
+    margin: 0 0 6px;
+    color: var(--color-text-primary);
+    font-size: 18px;
+    line-height: 1.3;
+  }
+
+  .floating-contact-header p {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+  .floating-contact-close {
+    display: inline-grid;
+    width: 36px;
+    height: 36px;
+    place-items: center;
+    flex: 0 0 auto;
+    border: 1px solid var(--color-border);
+    border-radius: 50%;
+    background: var(--color-background-soft);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: all var(--transition);
+  }
+
+  .floating-contact-close:hover {
+    border-color: var(--color-border-blue);
+    color: var(--color-primary);
+    background: var(--color-background-blue);
+  }
+
+  .floating-contact-actions {
+    display: grid;
+    gap: 2px;
+    padding: 10px;
+  }
+
+  .floating-contact-action {
+    display: grid;
+    grid-template-columns: 44px 1fr 18px;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border-radius: var(--radius-sm);
+    color: var(--color-text-primary);
+    text-decoration: none;
+    transition: background var(--transition), color var(--transition);
+  }
+
+  .floating-contact-action:hover {
+    background: var(--color-background-blue);
+    color: var(--color-primary);
+  }
+
+  .floating-contact-icon {
+    display: grid;
+    width: 44px;
+    height: 44px;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--color-background-blue);
+    color: var(--color-primary);
+  }
+
+  .floating-contact-action.is-line .floating-contact-icon {
+    background: #e9fbef;
+    color: #06c755;
+  }
+
+  .floating-contact-action.is-facebook .floating-contact-icon {
+    background: #eff6ff;
+    color: #1877f2;
+  }
+
+  .floating-contact-copy {
+    display: grid;
+    min-width: 0;
+    gap: 2px;
+  }
+
+  .floating-contact-copy strong {
+    font-size: 14px;
+    line-height: 1.35;
+  }
+
+  .floating-contact-copy small {
+    color: var(--color-text-muted);
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  .floating-contact-arrow {
+    color: var(--color-text-muted);
+    font-size: 12px;
+  }
+
+  @media (max-width: 768px) {
+    .floating-contact {
+      right: 16px;
+      bottom: 16px;
+    }
+
+    .floating-contact-toggle {
+      min-height: 48px;
+      padding: 0 16px;
+    }
+  }
+</style>
+
+<script>
+  const root = document.querySelector("[data-floating-contact]");
+  const toggle = root?.querySelector("[data-floating-contact-toggle]");
+  const close = root?.querySelector("[data-floating-contact-close]");
+  const panel = root?.querySelector("[data-floating-contact-panel]");
+
+  function setOpen(isOpen: boolean) {
+    panel?.toggleAttribute("hidden", !isOpen);
+    toggle?.setAttribute("aria-expanded", String(isOpen));
+  }
+
+  toggle?.addEventListener("click", () => {
+    setOpen(panel?.hasAttribute("hidden") === true);
+  });
+
+  close?.addEventListener("click", () => setOpen(false));
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") setOpen(false);
+  });
+</script>

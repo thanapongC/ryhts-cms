@@ -19,16 +19,46 @@ interface Props {
 
 const { lang, page } = Astro.props;
 
-const pageTitle = page?.title || (lang === "en" ? "About Ryhts" : "เกี่ยวกับ Ryhts");
+const pageTitle = page?.pageTitle || page?.title || (lang === "en" ? "About Ryhts" : "เกี่ยวกับ Ryhts");
+const pageDescription = page?.pageDescription || page?.subtitle;
 const featuredImage = page?.featuredImage ? getStrapiAbsoluteImageUrl(page.featuredImage) : "";
 const stats = filterAndSort(page?.stats);
 const teamMembers = filterAndSort(page?.teamMembers);
 const partners = filterAndSort(page?.partners);
-const milestones = filterAndSort(page?.timelineMilestones);
+const milestones = filterAndSort(page?.milestones || page?.timelineMilestones);
 
 const fallbackContent = lang === "en"
   ? "Ryhts is a premier distributor of thermal transfer ribbons for barcode printers."
   : "ไรต์ส (Ryhts) เราคือผู้จำหน่ายริบบอนสำหรับเครื่องพิมพ์บาร์โค้ดทุกขนาด นำเข้าสินค้าคุณภาพสูงจากแบรนด์ชั้นนำทั่วโลก";
+
+type RichTextChild = { text?: string };
+type RichTextBlock = {
+  type?: string;
+  style?: string;
+  level?: number;
+  format?: string;
+  children?: Array<RichTextChild & { children?: RichTextChild[] }>;
+};
+
+function getBlockText(block: RichTextBlock) {
+  return block.children?.map((child) => child.text || "").join("") || "";
+}
+
+function getListItems(block: RichTextBlock) {
+  return block.children
+    ?.map((item) => item.children?.map((child) => child.text || "").join("") || item.text || "")
+    .filter(Boolean) || [];
+}
+
+function hasBlocks(value: unknown): value is RichTextBlock[] {
+  return Array.isArray(value) && value.length > 0;
+}
+
+const richSections = [
+  { title: lang === "en" ? "Company Overview" : "ภาพรวมบริษัท", content: page?.companyIntro },
+  { title: lang === "en" ? "Mission" : "พันธกิจ", content: page?.mission },
+  { title: lang === "en" ? "Vision" : "วิสัยทัศน์", content: page?.vision },
+].filter((section) => hasBlocks(section.content) || typeof section.content === "string");
 ---
 
 <!-- Hero Image -->
@@ -41,12 +71,64 @@ const fallbackContent = lang === "en"
 <!-- Page Content or Fallback -->
 {page?.content ? (
   <div class="rich-text about-content" set:html={page.content} />
+) : richSections.length > 0 ? (
+  <div class="about-default">
+    <div class="about-grid">
+      <div class="about-text">
+        <h2>{pageTitle}</h2>
+        {pageDescription && <p class="about-subtitle">{pageDescription}</p>}
+
+        <div class="about-rich-sections">
+          {richSections.map((section) => (
+            <section class="about-rich-section">
+              <h3>{section.title}</h3>
+              {hasBlocks(section.content) ? (
+                <div class="rich-text about-rich-content">
+                  {section.content.map((block) => {
+                    const type = block.type || block.style || "paragraph";
+                    const text = getBlockText(block);
+
+                    if (!text && type !== "list") return null;
+                    if (type === "heading") {
+                      return block.level && block.level <= 2 ? <h2>{text}</h2> : <h3>{text}</h3>;
+                    }
+                    if (type === "quote") return <blockquote>{text}</blockquote>;
+                    if (type === "list") {
+                      const items = getListItems(block);
+                      return block.format === "ordered" ? (
+                        <ol>{items.map((item) => <li>{item}</li>)}</ol>
+                      ) : (
+                        <ul>{items.map((item) => <li>{item}</li>)}</ul>
+                      );
+                    }
+                    return <p>{text}</p>;
+                  })}
+                </div>
+              ) : (
+                <div class="rich-text about-rich-content" set:html={section.content as string} />
+              )}
+            </section>
+          ))}
+        </div>
+      </div>
+      {stats.length > 0 && (
+        <div class="about-stats">
+          {stats.map((stat) => (
+            <div class="stat-item">
+              <span class="stat-number">{stat.value}</span>
+              <span class="stat-label">{stat.label}</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  </div>
 ) : (
   <div class="about-default">
     <div class="about-grid">
       <div class="about-text">
-        <h2>{page?.title || (lang === "en" ? "About Ryhts" : "เกี่ยวกับ Ryhts")}</h2>
-        {page?.subtitle && <p class="about-subtitle">{page.subtitle}</p>}
+        <h2>{pageTitle}</h2>
+        {pageDescription && <p class="about-subtitle">{pageDescription}</p>}
         <p>{fallbackContent}</p>
       </div>
       {stats.length > 0 && (
@@ -66,12 +148,13 @@ const fallbackContent = lang === "en"
 <!-- Team Members -->
 {teamMembers.length > 0 && (
   <div class="team-section">
-    <h2>{lang === "en" ? "Our Team" : "ทีมงานของเรา"}</h2>
+    <h2>{page?.teamTitle || (lang === "en" ? "Our Team" : "ทีมงานของเรา")}</h2>
+    {page?.teamSubtitle && <p class="section-subtitle">{page.teamSubtitle}</p>}
     <div class="team-grid">
       {teamMembers.map((member) => (
         <div class="team-card">
-          {member.avatar && (
-            <img src={getStrapiMedia(member.avatar.url)} alt={member.name} />
+          {(member.photo || member.avatar) && (
+            <img src={getStrapiMedia((member.photo || member.avatar)?.url)} alt={member.name} />
           )}
           <h3>{member.name}</h3>
           {member.position && <p class="team-position">{member.position}</p>}
@@ -85,7 +168,8 @@ const fallbackContent = lang === "en"
 <!-- Partners -->
 {partners.length > 0 && (
   <div class="partners-section">
-    <h2>{lang === "en" ? "Our Partners" : "พันธมิตรของเรา"}</h2>
+    <h2>{page?.partnerTitle || (lang === "en" ? "Our Partners" : "พันธมิตรของเรา")}</h2>
+    {page?.partnerSubtitle && <p class="section-subtitle">{page.partnerSubtitle}</p>}
     <div class="partners-grid">
       {partners.map((partner) => (
         <a class="partner-card" href={partner.websiteUrl || "#"} target={partner.websiteUrl ? "_blank" : undefined} rel={partner.websiteUrl ? "noopener noreferrer" : undefined}>
@@ -102,13 +186,14 @@ const fallbackContent = lang === "en"
 <!-- Timeline / History -->
 {milestones.length > 0 && (
   <div class="timeline-section">
-    <h2>{lang === "en" ? "Our History" : "ประวัติบริษัท"}</h2>
+    <h2>{page?.timelineTitle || (lang === "en" ? "Our History" : "ประวัติบริษัท")}</h2>
+    {page?.timelineSubtitle && <p class="section-subtitle">{page.timelineSubtitle}</p>}
     <div class="timeline">
       {milestones.map((m) => (
         <div class="timeline-item">
           <div class="timeline-marker" />
           <div class="timeline-content">
-            {m.milestoneDate && <span class="timeline-date">{m.milestoneDate}</span>}
+            {(m.year || m.milestoneDate || m.date) && <span class="timeline-date">{m.year || m.milestoneDate || m.date}</span>}
             <h3>{m.title}</h3>
             {m.description && <p>{m.description}</p>}
           </div>
@@ -157,6 +242,39 @@ const fallbackContent = lang === "en"
     font-size: 16px;
     color: var(--color-text-secondary);
     line-height: 1.8;
+  }
+
+  .about-rich-sections {
+    display: grid;
+    gap: 28px;
+  }
+
+  .about-rich-section h3 {
+    font-size: 20px;
+    color: var(--color-text-primary);
+    margin-bottom: 10px;
+  }
+
+  .about-rich-content {
+    color: var(--color-text-secondary);
+    line-height: 1.8;
+  }
+
+  .about-rich-content :global(p) {
+    margin: 0 0 14px;
+  }
+
+  .about-rich-content :global(ul),
+  .about-rich-content :global(ol) {
+    margin: 0 0 16px;
+    padding-left: 1.4rem;
+  }
+
+  .section-subtitle {
+    max-width: 720px;
+    color: var(--color-text-secondary);
+    margin: -12px 0 24px;
+    line-height: 1.7;
   }
 
   .stat-item {

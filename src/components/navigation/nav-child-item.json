@@ -1,40 +1,40 @@
 {
-  "collectionName": "components_navigation_nav_child_item",
+  "collectionName": "components_navigation_nav_child_items",
   "info": {
     "displayName": "Nav Child Item",
-    "description": "A nested navigation link inside a dropdown menu"
+    "icon": "caretRight",
+    "description": "A second-level navigation link"
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
   },
   "attributes": {
     "label": {
       "type": "string",
       "required": true,
-      "description": "Link text"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "url": {
-      "type": "string",
-      "description": "Link URL (manual fallback)"
+      "type": "string"
     },
     "productPage": {
       "type": "relation",
       "relation": "manyToOne",
-      "target": "api::product.product",
-      "description": "Link to a Product Page (preferred over manual URL)"
+      "target": "api::product-page.product-page"
     },
     "target": {
       "type": "enumeration",
-      "enum": ["_self", "_blank"],
-      "default": "_self",
-      "description": "Link target (_self or _blank)"
-    },
-    "sortOrder": {
-      "type": "integer",
-      "default": 0,
-      "description": "Display order (lower number appears first)"
-    },
-    "isActive": {
-      "type": "boolean",
-      "default": true,
-      "description": "Show or hide this child item"
+      "enum": [
+        "_self",
+        "_blank"
+      ],
+      "default": "_self"
     }
   }
 }

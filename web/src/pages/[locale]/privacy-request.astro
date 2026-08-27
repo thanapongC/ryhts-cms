@@ -1,0 +1,410 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import OfflineNotice from "../../components/OfflineNotice.astro";
+import { safeGetPrivacyRequest, getStrapiAbsoluteImageUrl, filterAndSort, isPageDisabled } from "../../lib/api";
+import { isValidLocale, DEFAULT_LOCALE, type Locale } from "../../lib/i18n";
+
+const lang = (Astro.params.locale as Locale) || DEFAULT_LOCALE;
+if (!isValidLocale(lang)) return Astro.redirect(`/${DEFAULT_LOCALE}/privacy-request`);
+
+const pageResult = await safeGetPrivacyRequest(lang);
+const page = pageResult.data;
+if (pageResult.ok && isPageDisabled(page)) return new Response(null, { status: 404 });
+const settings = page?.settings;
+const seo = page?.seo;
+const tips = filterAndSort(settings?.beforeSubmitTips || []);
+const requestTypes = filterAndSort(settings?.requestTypes || []);
+const contact = settings?.legalContactInfo;
+const siteUrl = Astro.url.origin;
+
+const fallbackTitle = lang === "en" ? "Personal Data Request" : "คำขอข้อมูลส่วนบุคคล";
+const fallbackDescription = lang === "en"
+  ? "Submit a request about your personal data handled by Ryhts."
+  : "ส่งคำขอเกี่ยวกับข้อมูลส่วนบุคคลที่ Ryhts ดูแล";
+---
+
+<BaseLayout
+  title={seo?.metaTitle || settings?.privacyRequestTitle || fallbackTitle}
+  description={seo?.metaDescription || settings?.privacyRequestDesc || fallbackDescription}
+  ogImage={getStrapiAbsoluteImageUrl(seo?.ogImage) || undefined}
+  robots={seo?.robots}
+  keywords={seo?.keywords?.split(",").map((keyword) => keyword.trim()) || []}
+  locale={lang}
+  hreflangs={[
+    { lang: "th", href: `${siteUrl}/th/privacy-request` },
+    { lang: "en", href: `${siteUrl}/en/privacy-request` },
+    { lang: "x-default", href: `${siteUrl}/th/privacy-request` },
+  ]}
+  jsonLd={{
+    "@context": "https://schema.org",
+    "@type": seo?.schemaType || "ContactPage",
+    name: seo?.metaTitle || settings?.privacyRequestTitle || fallbackTitle,
+    description: seo?.metaDescription || settings?.privacyRequestDesc || fallbackDescription,
+  }}
+>
+  <section class="privacy-request-hero">
+    <div class="container privacy-request-hero-inner">
+      <div>
+        {settings?.heroBadge && <span class="eyebrow">{settings.heroBadge}</span>}
+        <h1>{settings?.privacyRequestTitle || fallbackTitle}</h1>
+        <p>{settings?.privacyRequestDesc || fallbackDescription}</p>
+      </div>
+      <div class="privacy-request-summary" aria-label={lang === "en" ? "Request summary" : "สรุปข้อมูลคำขอ"}>
+        <div>
+          <span><i class="fas fa-clock" aria-hidden="true"></i></span>
+          <strong>{settings?.responseTimeLabel || (lang === "en" ? "Response time" : "ระยะเวลาดำเนินการ")}</strong>
+          <p>{settings?.responseTimeDescription || (lang === "en" ? "Within 30 days after complete information is received." : "ภายใน 30 วันหลังได้รับข้อมูลครบถ้วน")}</p>
+        </div>
+        <div>
+          <span><i class="fas fa-shield-halved" aria-hidden="true"></i></span>
+          <strong>{settings?.secureNoteLabel || (lang === "en" ? "Protected information" : "ข้อมูลปลอดภัย")}</strong>
+          <p>{settings?.secureNoteDescription || (lang === "en" ? "Used only to verify identity and process your request." : "ใช้เพื่อยืนยันตัวตนและดำเนินการตามคำขอเท่านั้น")}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section privacy-request-section">
+    <div class="container">
+      {pageResult.isOffline && (
+        <OfflineNotice
+          title={lang === "en" ? "CMS content may be unavailable" : "อาจไม่สามารถโหลดข้อมูล CMS ได้"}
+          message={lang === "en" ? "Fallback privacy request content is being shown." : "กำลังแสดงข้อมูลสำรองของหน้าคำขอข้อมูลส่วนบุคคล"}
+        />
+      )}
+
+      <div class="privacy-request-grid">
+        <aside class="request-aside">
+          <div class="info-panel">
+            <h2>{settings?.beforeSubmitTitle || (lang === "en" ? "Before submitting" : "ก่อนส่งคำขอ")}</h2>
+            <p>{settings?.beforeSubmitDescription}</p>
+            {tips.length > 0 && (
+              <ul class="tip-list">
+                {tips.map((tip) => (
+                  <li class={`tip-item accent-${tip.accent || "red"}`}>
+                    <i class="fas fa-check" aria-hidden="true"></i>
+                    <span>{tip.text}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          <div class="info-panel contact-panel">
+            <h2>{settings?.dpoContactLabel || (lang === "en" ? "Contact DPO" : "ติดต่อ DPO")}</h2>
+            {contact?.companyName && <strong>{contact.companyName}</strong>}
+            {settings?.dpoPhone && (
+              <p>
+                <span>{settings?.phoneLabel || (lang === "en" ? "Phone" : "โทรศัพท์")}</span>
+                <a href={`tel:${settings.dpoPhone.replace(/[^0-9+]/g, "")}`}>{settings.dpoPhone}</a>
+              </p>
+            )}
+            {settings?.dpoEmail && (
+              <p>
+                <span>{settings?.emailLabel || (lang === "en" ? "Email" : "อีเมล")}</span>
+                <a href={`mailto:${settings.dpoEmail}`}>{settings.dpoEmail}</a>
+              </p>
+            )}
+            {contact?.businessHours && (
+              <p>
+                <span>{settings?.businessHoursLabel || (lang === "en" ? "Business hours" : "เวลาทำการ")}</span>
+                <em>{contact.businessHours}</em>
+              </p>
+            )}
+          </div>
+        </aside>
+
+        <form class="request-form" method="post" action="#">
+          {settings?.formBadge && <span class="eyebrow">{settings.formBadge}</span>}
+          <h2>{settings?.formTitle || fallbackTitle}</h2>
+          {settings?.requiredFieldsNote && <p class="required-note">{settings.requiredFieldsNote}</p>}
+
+          <label>
+            <span>{settings?.formNameLabel || (lang === "en" ? "Full name *" : "ชื่อ-นามสกุล *")}</span>
+            <input name="name" type="text" placeholder={settings?.formNamePlaceholder} required />
+          </label>
+
+          <div class="form-row">
+            <label>
+              <span>{settings?.formEmailLabel || (lang === "en" ? "Email *" : "อีเมล *")}</span>
+              <input name="email" type="email" placeholder={settings?.formEmailPlaceholder} required />
+            </label>
+            <label>
+              <span>{settings?.formPhoneLabel || (lang === "en" ? "Phone" : "เบอร์โทรศัพท์")}</span>
+              <input name="phone" type="tel" placeholder={settings?.formPhonePlaceholder} />
+            </label>
+          </div>
+
+          <label>
+            <span>{settings?.formCompanyLabel || (lang === "en" ? "Company" : "บริษัท")}</span>
+            <input name="company" type="text" placeholder={settings?.formCompanyPlaceholder} />
+          </label>
+
+          <label>
+            <span>{settings?.formRequestTypeLabel || (lang === "en" ? "Request type *" : "ประเภทคำขอ *")}</span>
+            <select name="requestType" required>
+              <option value="">{settings?.formRequestTypePlaceholder || (lang === "en" ? "Select request type" : "เลือกประเภทคำขอ")}</option>
+              {requestTypes.map((option) => (
+                <option value={option.value}>{option.label}</option>
+              ))}
+            </select>
+          </label>
+
+          <label>
+            <span>{settings?.formMessageLabel || (lang === "en" ? "Request details *" : "รายละเอียดคำขอ *")}</span>
+            <textarea name="message" rows="5" placeholder={settings?.formMessagePlaceholder} required></textarea>
+          </label>
+
+          <label>
+            <span>{settings?.formAdditionalInfoLabel || (lang === "en" ? "Additional information" : "ข้อมูลเพิ่มเติม")}</span>
+            <textarea name="additionalInfo" rows="3" placeholder={settings?.formAdditionalInfoPlaceholder}></textarea>
+          </label>
+
+          {settings?.formNote && <p class="form-note">{settings.formNote}</p>}
+          <button type="submit" class="btn btn-primary btn-lg">
+            {settings?.formSubmitLabel || (lang === "en" ? "Submit request" : "ส่งคำขอ")}
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .privacy-request-hero {
+    padding: 140px 0 72px;
+    background: linear-gradient(180deg, var(--color-background) 0%, var(--color-background-soft) 100%);
+    border-bottom: 1px solid var(--color-border-light);
+  }
+
+  .privacy-request-hero-inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 380px;
+    gap: 48px;
+    align-items: center;
+  }
+
+  .eyebrow {
+    display: inline-flex;
+    width: fit-content;
+    margin-bottom: 14px;
+    padding: 7px 12px;
+    border-radius: 999px;
+    background: var(--color-background-blue);
+    color: var(--color-primary);
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .privacy-request-hero h1 {
+    max-width: 760px;
+    margin-bottom: 18px;
+    color: var(--color-text-primary);
+    font-size: 44px;
+    line-height: 1.18;
+  }
+
+  .privacy-request-hero p {
+    max-width: 760px;
+    color: var(--color-text-secondary);
+    font-size: 17px;
+    line-height: 1.8;
+  }
+
+  .privacy-request-summary,
+  .info-panel,
+  .request-form {
+    background: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+  }
+
+  .privacy-request-summary {
+    display: grid;
+    gap: 18px;
+    padding: 24px;
+  }
+
+  .privacy-request-summary div {
+    display: grid;
+    grid-template-columns: 44px 1fr;
+    gap: 6px 14px;
+  }
+
+  .privacy-request-summary span {
+    grid-row: span 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--color-background-blue);
+    color: var(--color-primary);
+  }
+
+  .privacy-request-summary strong,
+  .info-panel h2,
+  .request-form h2 {
+    color: var(--color-text-primary);
+  }
+
+  .privacy-request-summary p,
+  .info-panel p,
+  .request-form p {
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+  }
+
+  .privacy-request-section {
+    background: var(--color-background);
+  }
+
+  .privacy-request-grid {
+    display: grid;
+    grid-template-columns: 360px minmax(0, 1fr);
+    gap: 32px;
+    align-items: start;
+  }
+
+  .request-aside {
+    display: grid;
+    gap: 20px;
+  }
+
+  .info-panel,
+  .request-form {
+    padding: 28px;
+  }
+
+  .tip-list {
+    display: grid;
+    gap: 12px;
+    margin: 22px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .tip-item {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    gap: 10px;
+    align-items: start;
+    color: var(--color-text-secondary);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .tip-item i {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--color-background-blue);
+    color: var(--color-primary);
+    font-size: 12px;
+  }
+
+  .tip-item.accent-orange i {
+    background: #FFF7ED;
+    color: #EA580C;
+  }
+
+  .contact-panel p {
+    display: grid;
+    gap: 4px;
+    margin-top: 14px;
+  }
+
+  .contact-panel span {
+    color: var(--color-text-muted);
+    font-size: 13px;
+  }
+
+  .contact-panel a {
+    color: var(--color-primary);
+    text-decoration: none;
+  }
+
+  .contact-panel em {
+    color: var(--color-text-secondary);
+    font-style: normal;
+  }
+
+  .request-form {
+    display: grid;
+    gap: 20px;
+  }
+
+  .required-note,
+  .form-note {
+    color: var(--color-text-muted);
+    font-size: 14px;
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+  }
+
+  .request-form label {
+    display: grid;
+    gap: 8px;
+  }
+
+  .request-form label span {
+    color: var(--color-text-primary);
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .request-form input,
+  .request-form select,
+  .request-form textarea {
+    width: 100%;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-background);
+    color: var(--color-text-primary);
+    font: inherit;
+    padding: 12px 14px;
+    transition: border-color var(--transition), box-shadow var(--transition);
+  }
+
+  .request-form textarea {
+    resize: vertical;
+  }
+
+  .request-form input:focus,
+  .request-form select:focus,
+  .request-form textarea:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 4px rgba(1, 127, 228, 0.15);
+  }
+
+  @media (max-width: 1024px) {
+    .privacy-request-hero-inner,
+    .privacy-request-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .privacy-request-hero {
+      padding: 120px 0 48px;
+    }
+
+    .privacy-request-hero h1 {
+      font-size: 30px;
+    }
+
+    .form-row {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

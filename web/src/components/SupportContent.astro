@@ -11,7 +11,7 @@
  *   lang: Locale
  *   page: SupportPage | null
  */
-import { filterAndSort, type SupportPage } from "../lib/api";
+import { filterAndSort, normalizeInternalUrl, type SupportPage } from "../lib/api";
 
 interface Props {
   lang: "th" | "en";
@@ -29,7 +29,7 @@ const contactSection = page?.contactSection;
 const contactSettings = page?.contactSettings;
 
 const faqs = filterAndSort(page?.faqs);
-const helpResources = filterAndSort(page?.help_resources);
+const helpResources = filterAndSort(page?.helpResources);
 
 const fallbackHero = {
   badge: lang === "en" ? "Support" : "ศูนย์ช่วยเหลือ",
@@ -81,6 +81,11 @@ const quickHelpLinks = [
   { icon: "shield-alt", label: "PDPA", url: `/${lang}/pdpa` },
   { icon: "file-contract", label: lang === "en" ? "Terms of Service" : "ข้อกำหนดการใช้งาน", url: `/${lang}/terms-of-service` },
 ];
+
+const homePrefix = `/${lang}/`;
+const contactInfo = contactSettings?.contactInfo;
+const displayPhone = contactInfo?.phone || "094-624-6649";
+const displayEmail = contactInfo?.email || "sales@ryhts.com";
 ---
 
 <!-- Hero -->
@@ -94,11 +99,11 @@ const quickHelpLinks = [
         <div class="sup-hero-ctas">
           <a href="#faq-section" class="btn btn-primary">
             <i class="fas fa-question-circle"></i>
-            {displayHero.faq_cta_label || fallbackHero.faq_cta_label}
+            {displayHero.faqCtaLabel || fallbackHero.faqCtaLabel}
           </a>
           <a href="#contact-section" class="btn btn-outline">
             <i class="fas fa-headset"></i>
-            {displayHero.contact_cta_label || fallbackHero.contact_cta_label}
+            {displayHero.contactCtaLabel || fallbackHero.contactCtaLabel}
           </a>
         </div>
       </div>
@@ -149,20 +154,14 @@ const quickHelpLinks = [
         {faqs.map((faq) => (
           <details class="sup-faq-item">
             <summary class="sup-faq-question">
-              {faq.title}
+              <span>
+                {faq.category && <small>{faq.category}</small>}
+                {faq.question}
+              </span>
               <i class="fas fa-chevron-down"></i>
             </summary>
             <div class="sup-faq-answer">
-              {faq.items && faq.items.length > 0 ? (
-                faq.items.filter(item => item.isActive !== false).sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0)).map((item) => (
-                  <div class="sup-faq-qa">
-                    <strong>{item.question}</strong>
-                    <div class="rich-text" set:html={item.answer} />
-                  </div>
-                ))
-              ) : (
-                <div class="rich-text" set:html={faq.description} />
-              )}
+              <div class="rich-text" set:html={faq.answer} />
             </div>
           </details>
         ))}
@@ -170,9 +169,9 @@ const quickHelpLinks = [
     ) : (
       <div class="sup-empty">
         <i class="fas fa-search"></i>
-        <p>{displayFaqSection.empty_prompt}</p>
+        <p>{displayFaqSection.emptyPrompt}</p>
         <a href="#contact-section" class="btn btn-outline btn-sm">
-          {displayFaqSection.contact_cta_label}
+          {displayFaqSection.contactCtaLabel}
         </a>
       </div>
     )}
@@ -191,17 +190,14 @@ const quickHelpLinks = [
 
       <div class="sup-help-grid">
         {helpResources.map((resource) => (
-          <div class="sup-help-card">
+          <a class="sup-help-card" href={normalizeInternalUrl(resource.url, homePrefix)}>
             <h3>{resource.title}</h3>
             {resource.description && <p>{resource.description}</p>}
-            {resource.items && resource.items.length > 0 && (
-              <ul class="sup-help-items">
-                {resource.items.filter(item => item.isActive !== false).slice(0, 5).map((item) => (
-                  <li>{item.question}</li>
-                ))}
-              </ul>
-            )}
-          </div>
+            <span>
+              {resource.linkText || (lang === "en" ? "Open resource" : "ดูข้อมูล")}
+              <i class="fas fa-arrow-right"></i>
+            </span>
+          </a>
         ))}
       </div>
     </div>
@@ -217,43 +213,64 @@ const quickHelpLinks = [
     </div>
 
     <div class="sup-contact-grid">
-      {contactSettings?.contactInfo && contactSettings.contactInfo.length > 0 ? (
-        contactSettings.contactInfo.map((item) => (
+      {contactInfo ? (
+        <>
           <div class="sup-contact-item">
-            {item.icon && <div class="sup-contact-icon"><i class={`fas fa-${item.icon}`}></i></div>}
+            <div class="sup-contact-icon"><i class="fas fa-map-marker-alt"></i></div>
             <div>
-              {item.label && <strong>{item.label}</strong>}
-              <span>{item.value}</span>
+              <strong>{displayContactSection.addressLabel}</strong>
+              <span>{contactInfo.address || contactInfo.companyName || (lang === "en" ? "Ryhts Ribbon" : "ไรต์ส ริบบอน")}</span>
             </div>
           </div>
-        ))
+          <div class="sup-contact-item">
+            <div class="sup-contact-icon"><i class="fas fa-phone"></i></div>
+            <div>
+              <strong>{displayContactSection.phoneLabel}</strong>
+              <span><a href={`tel:${displayPhone.replace(/[^+\d]/g, "")}`}>{displayPhone}</a></span>
+            </div>
+          </div>
+          <div class="sup-contact-item">
+            <div class="sup-contact-icon"><i class="fas fa-envelope"></i></div>
+            <div>
+              <strong>{displayContactSection.emailLabel}</strong>
+              <span><a href={`mailto:${displayEmail}`}>{displayEmail}</a></span>
+            </div>
+          </div>
+          <div class="sup-contact-item">
+            <div class="sup-contact-icon"><i class="fas fa-clock"></i></div>
+            <div>
+              <strong>{displayContactSection.businessHoursLabel}</strong>
+              <span>{contactInfo.businessHours || (lang === "en" ? "Mon - Fri, 8:30 AM - 5:30 PM" : "จันทร์ - ศุกร์, 08:30 - 17:30 น.")}</span>
+            </div>
+          </div>
+        </>
       ) : (
         <>
           <div class="sup-contact-item">
             <div class="sup-contact-icon"><i class="fas fa-map-marker-alt"></i></div>
             <div>
-              <strong>{displayContactSection.address_label}</strong>
+              <strong>{displayContactSection.addressLabel}</strong>
               <span>{lang === "en" ? "Ryhts Ribbon Co., Ltd." : "บริษัท ไรต์ส ริบบอน จำกัด"}</span>
             </div>
           </div>
           <div class="sup-contact-item">
             <div class="sup-contact-icon"><i class="fas fa-phone"></i></div>
             <div>
-              <strong>{displayContactSection.phone_label}</strong>
-              <span><a href="tel:02-123-4567">02-123-4567</a></span>
+              <strong>{displayContactSection.phoneLabel}</strong>
+              <span><a href="tel:0946246649">094-624-6649</a></span>
             </div>
           </div>
           <div class="sup-contact-item">
             <div class="sup-contact-icon"><i class="fas fa-envelope"></i></div>
             <div>
-              <strong>{displayContactSection.email_label}</strong>
-              <span><a href="mailto:support@ryhts.co.th">support@ryhts.co.th</a></span>
+              <strong>{displayContactSection.emailLabel}</strong>
+              <span><a href="mailto:sales@ryhts.com">sales@ryhts.com</a></span>
             </div>
           </div>
           <div class="sup-contact-item">
             <div class="sup-contact-icon"><i class="fas fa-clock"></i></div>
             <div>
-              <strong>{displayContactSection.business_hours_label}</strong>
+              <strong>{displayContactSection.businessHoursLabel}</strong>
               <span>{lang === "en" ? "Mon - Fri, 8:30 AM - 5:30 PM" : "จันทร์ - ศุกร์, 08:30 - 17:30 น."}</span>
             </div>
           </div>
@@ -455,6 +472,17 @@ const quickHelpLinks = [
     list-style: none;
   }
 
+  .sup-faq-question span {
+    display: grid;
+    gap: 4px;
+  }
+
+  .sup-faq-question small {
+    color: var(--color-primary);
+    font-size: 12px;
+    font-weight: 600;
+  }
+
   .sup-faq-question::-webkit-details-marker {
     display: none;
   }
@@ -511,11 +539,21 @@ const quickHelpLinks = [
   }
 
   .sup-help-card {
+    display: block;
     background: var(--color-background);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-lg);
     padding: 32px;
     box-shadow: var(--shadow);
+    color: inherit;
+    text-decoration: none;
+    transition: all var(--transition);
+  }
+
+  .sup-help-card:hover {
+    border-color: var(--color-border-blue);
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
   }
 
   .sup-help-card h3 {
@@ -530,20 +568,13 @@ const quickHelpLinks = [
     margin-bottom: 16px;
   }
 
-  .sup-help-items {
-    list-style: none;
-    padding: 0;
-  }
-
-  .sup-help-items li {
-    padding: 8px 0;
-    border-bottom: 1px solid var(--color-border-light);
+  .sup-help-card span {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
     font-size: 14px;
-    color: var(--color-text-secondary);
-  }
-
-  .sup-help-items li:last-child {
-    border-bottom: none;
+    font-weight: 600;
+    color: var(--color-primary);
   }
 
   /* Contact Section */

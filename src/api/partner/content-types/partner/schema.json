@@ -5,51 +5,48 @@
     "singularName": "partner",
     "pluralName": "partners",
     "displayName": "Partner",
-    "description": "Business partners for About page"
+    "description": "Business partners and client logos"
   },
   "options": {
-    "draftAndPublish": true
-  },
-  "pluginOptions": {
-    "i18n": {
-      "localized": true
-    }
+    "draftAndPublish": false
   },
   "attributes": {
     "name": {
       "type": "string",
       "required": true,
-      "description": "Partner company name"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
-    "websiteUrl": {
-      "type": "string",
-      "description": "Partner website URL"
+    "sortOrder": {
+      "type": "integer",
+      "default": 0
     },
-    "description": {
-      "type": "text",
-      "description": "Brief description of the partnership"
+    "isActive": {
+      "type": "boolean",
+      "default": true
     },
     "logo": {
       "type": "media",
       "multiple": false,
-      "allowedTypes": ["images"],
-      "description": "Partner logo image"
+      "allowedTypes": [
+        "images"
+      ]
     },
-    "aboutPage": {
+    "websiteUrl": {
+      "type": "string"
+    },
+    "aboutPages": {
       "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::about-page.about-page",
-      "inversedBy": "partners"
-    },
-    "sortOrder": {
-      "type": "integer",
-      "default": 0,
-      "description": "Display order (lower number appears first)"
-    },
-    "isActive": {
-      "type": "boolean",
-      "default": true,
-      "description": "Show or hide this partner on frontend"
+      "relation": "manyToMany",
+      "target": "api::about-us.about-us"
+    }
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
     }
   }
 }

@@ -1,36 +1,43 @@
 {
-  "collectionName": "components_shared_page_section_item",
+  "collectionName": "components_shared_page_section_items",
   "info": {
     "displayName": "Page Section Item",
+    "icon": "alignLeft",
     "description": "A single section with title, content, and optional image for product pages"
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
   },
   "attributes": {
     "title": {
       "type": "string",
       "required": true,
-      "localized": true,
-      "description": "Section heading text"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "content": {
       "type": "blocks",
-      "localized": true,
-      "description": "Section content in rich text blocks"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "image": {
       "type": "media",
       "multiple": false,
-      "allowedTypes": ["images"],
-      "description": "Optional image for this section"
+      "allowedTypes": [
+        "images"
+      ]
     },
     "sortOrder": {
       "type": "integer",
-      "default": 0,
-      "description": "Display order (lower number appears first)"
-    },
-    "isActive": {
-      "type": "boolean",
-      "default": true,
-      "description": "Show or hide this section"
+      "default": 0
     }
   }
 }

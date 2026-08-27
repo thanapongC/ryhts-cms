@@ -1,40 +1,48 @@
 {
-  "collectionName": "components_footer_footer_link",
+  "collectionName": "components_footer_footer_links",
   "info": {
     "displayName": "Footer Link",
-    "description": "Individual link in a footer section"
+    "icon": "link",
+    "description": "A footer navigation link. Use either URL or Product Page relation."
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
   },
   "attributes": {
     "label": {
       "type": "string",
       "required": true,
-      "description": "Link text (e.g. Products, About Us)"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "sortOrder": {
+      "type": "integer",
+      "default": 0
+    },
+    "isActive": {
+      "type": "boolean",
+      "default": true
     },
     "productPage": {
       "type": "relation",
       "relation": "manyToOne",
-      "target": "api::product.product",
-      "description": "Link to a Product Page (preferred over manual URL)"
+      "target": "api::product-page.product-page"
     },
     "url": {
-      "type": "string",
-      "description": "Manual link URL (fallback if no product relation)"
+      "type": "string"
     },
     "target": {
       "type": "enumeration",
-      "enum": ["_self", "_blank"],
-      "default": "_self",
-      "description": "Link target (_self or _blank)"
-    },
-    "sortOrder": {
-      "type": "integer",
-      "default": 0,
-      "description": "Display order (lower number appears first)"
-    },
-    "isActive": {
-      "type": "boolean",
-      "default": true,
-      "description": "Show or hide this link"
+      "enum": [
+        "_self",
+        "_blank"
+      ],
+      "default": "_self"
     }
   }
 }

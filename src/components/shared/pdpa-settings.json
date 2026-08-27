@@ -2,48 +2,315 @@
   "collectionName": "components_shared_pdpa_settings",
   "info": {
     "displayName": "PDPA Settings",
+    "icon": "fileText",
     "description": "PDPA compliance settings: privacy request form labels, legal contact info"
   },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
   "attributes": {
-    "heroBadge": { "type": "string", "localized": true },
-    "privacyRequestTitle": { "type": "string", "localized": true },
-    "privacyRequestDesc": { "type": "text", "localized": true },
-    "responseTimeLabel": { "type": "string", "localized": true },
-    "responseTimeDescription": { "type": "text", "localized": true },
-    "secureNoteLabel": { "type": "string", "localized": true },
-    "secureNoteDescription": { "type": "text", "localized": true },
-    "dpoContactLabel": { "type": "string", "localized": true },
-    "phoneLabel": { "type": "string", "localized": true },
-    "emailLabel": { "type": "string", "localized": true },
-    "businessHoursLabel": { "type": "string", "localized": true },
-    "beforeSubmitTitle": { "type": "string", "localized": true },
-    "beforeSubmitDescription": { "type": "text", "localized": true },
-    "beforeSubmitTips": { "type": "component", "repeatable": true, "component": "privacy.request-tip" },
-    "formBadge": { "type": "string", "localized": true },
-    "formTitle": { "type": "string", "localized": true },
-    "requiredFieldsNote": { "type": "string", "localized": true },
-    "formNameLabel": { "type": "string", "localized": true },
-    "formNamePlaceholder": { "type": "string", "localized": true },
-    "formEmailLabel": { "type": "string", "localized": true },
-    "formEmailPlaceholder": { "type": "string", "localized": true },
-    "formPhoneLabel": { "type": "string", "localized": true },
-    "formPhonePlaceholder": { "type": "string", "localized": true },
-    "formCompanyLabel": { "type": "string", "localized": true },
-    "formCompanyPlaceholder": { "type": "string", "localized": true },
-    "formRequestTypeLabel": { "type": "string", "localized": true },
-    "formRequestTypePlaceholder": { "type": "string", "localized": true },
-    "requestTypes": { "type": "component", "repeatable": true, "component": "privacy.request-type-option" },
-    "formMessageLabel": { "type": "string", "localized": true },
-    "formMessagePlaceholder": { "type": "text", "localized": true },
-    "formAdditionalInfoLabel": { "type": "string", "localized": true },
-    "formAdditionalInfoPlaceholder": { "type": "text", "localized": true },
-    "formNote": { "type": "text", "localized": true },
-    "formSubmitLabel": { "type": "string", "localized": true },
-    "formSubmittingLabel": { "type": "string", "localized": true },
-    "formSuccessTitle": { "type": "string", "localized": true },
-    "formSuccessMessage": { "type": "text", "localized": true },
-    "dpoEmail": { "type": "email" },
-    "dpoPhone": { "type": "string" },
-    "legalContactInfo": { "type": "component", "component": "shared.contact-info" }
+    "heroBadge": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "privacyRequestTitle": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "privacyRequestDesc": {
+      "type": "text",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "responseTimeLabel": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "responseTimeDescription": {
+      "type": "text",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "secureNoteLabel": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "secureNoteDescription": {
+      "type": "text",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "dpoContactLabel": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "phoneLabel": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "emailLabel": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "businessHoursLabel": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "beforeSubmitTitle": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "beforeSubmitDescription": {
+      "type": "text",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "beforeSubmitTips": {
+      "type": "component",
+      "repeatable": true,
+      "component": "privacy.request-tip"
+    },
+    "formBadge": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "formTitle": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "requiredFieldsNote": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "formNameLabel": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "formNamePlaceholder": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "formEmailLabel": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "formEmailPlaceholder": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "formPhoneLabel": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "formPhonePlaceholder": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "formCompanyLabel": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "formCompanyPlaceholder": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "formRequestTypeLabel": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "formRequestTypePlaceholder": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "requestTypes": {
+      "type": "component",
+      "repeatable": true,
+      "component": "privacy.request-type-option"
+    },
+    "formMessageLabel": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "formMessagePlaceholder": {
+      "type": "text",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "formAdditionalInfoLabel": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "formAdditionalInfoPlaceholder": {
+      "type": "text",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "formNote": {
+      "type": "text",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "formSubmitLabel": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "formSubmittingLabel": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "formSuccessTitle": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "formSuccessMessage": {
+      "type": "text",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "dpoEmail": {
+      "type": "email"
+    },
+    "dpoPhone": {
+      "type": "string"
+    },
+    "legalContactInfo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.contact-info"
+    }
   }
 }

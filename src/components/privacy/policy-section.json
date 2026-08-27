@@ -1,29 +1,64 @@
 {
-  "collectionName": "components_privacy_policy_section",
+  "collectionName": "components_privacy_policy_sections",
   "info": {
     "displayName": "Policy Section",
-    "description": "A section of the privacy policy with heading and content"
+    "icon": "file"
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
   },
   "attributes": {
     "title": {
       "type": "string",
       "required": true,
-      "description": "Section heading (e.g. Data Collection, Third Parties)"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
-    "content": {
-      "type": "richtext",
-      "required": true,
-      "description": "Section content in rich text"
+    "slug": {
+      "type": "uid"
+    },
+    "summary": {
+      "type": "text",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "icon": {
+      "type": "enumeration",
+      "enum": [
+        "shield",
+        "database",
+        "users",
+        "cookie",
+        "lock",
+        "mail",
+        "file"
+      ],
+      "default": "file"
+    },
+    "isHighlighted": {
+      "type": "boolean",
+      "default": false
     },
     "sortOrder": {
       "type": "integer",
-      "default": 0,
-      "description": "Display order (lower number appears first)"
+      "default": 0
     },
-    "isActive": {
-      "type": "boolean",
-      "default": true,
-      "description": "Show or hide this section"
+    "content": {
+      "type": "text",
+      "required": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     }
   }
 }

@@ -10,11 +10,6 @@
       "required": true,
       "description": "The question text"
     },
-    "answer": {
-      "type": "richtext",
-      "required": true,
-      "description": "The answer content"
-    },
     "sortOrder": {
       "type": "integer",
       "default": 0,
@@ -24,6 +19,11 @@
       "type": "boolean",
       "default": true,
       "description": "Show or hide this FAQ item"
+    },
+    "answer": {
+      "type": "richtext",
+      "required": true,
+      "description": "The answer content"
     }
   }
 }

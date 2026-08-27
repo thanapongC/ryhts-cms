@@ -1,54 +1,180 @@
 import type { Schema, Struct } from '@strapi/strapi';
 
-export interface ContactFloatingContactAction extends Struct.ComponentSchema {
-  collectionName: 'components_contact_floating_contact_action';
+export interface BlogHeroSection extends Struct.ComponentSchema {
+  collectionName: 'components_blog_hero_sections';
   info: {
-    description: 'An action button in the floating contact widget';
-    displayName: 'Contact Action';
+    description: 'Hero copy for the blog listing page';
+    displayName: 'Blog Hero Section';
+    icon: 'newspaper';
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
   };
   attributes: {
-    ariaLabel: Schema.Attribute.String;
-    description: Schema.Attribute.Text;
+    badge: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    description: Schema.Attribute.Text &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+  };
+}
+
+export interface BlogListingSection extends Struct.ComponentSchema {
+  collectionName: 'components_blog_listing_sections';
+  info: {
+    description: 'Listing section copy and empty state for the blog page';
+    displayName: 'Blog Listing Section';
+    icon: 'list';
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
+  attributes: {
+    breadcrumbLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    emptyDescription: Schema.Attribute.Text &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    emptyTitle: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    offlineMessage: Schema.Attribute.Text &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    offlineTitle: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+  };
+}
+
+export interface ContactFloatingContactAction extends Struct.ComponentSchema {
+  collectionName: 'components_contact_floating_contact_actions';
+  info: {
+    displayName: 'Contact Action';
+    icon: 'phone';
+  };
+  attributes: {
+    ariaLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    description: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
-    label: Schema.Attribute.String & Schema.Attribute.Required;
+    label: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     openInNewTab: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     type: Schema.Attribute.Enumeration<
-      ['phone', 'email', 'line', 'whatsapp', 'link']
+      ['phone', 'line', 'email', 'facebook', 'map', 'custom']
     > &
-      Schema.Attribute.Required;
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'custom'>;
     url: Schema.Attribute.String & Schema.Attribute.Required;
   };
 }
 
 export interface CookiePolicyCategory extends Struct.ComponentSchema {
-  collectionName: 'components_cookie_policy_category';
+  collectionName: 'components_cookie_policy_categories';
   info: {
     description: 'Cookie category card for the Cookie Policy page';
     displayName: 'Cookie Policy Category';
+    icon: 'cookie';
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
   };
   attributes: {
-    accent: Schema.Attribute.Enumeration<['red', 'orange']>;
-    description: Schema.Attribute.Text;
+    accent: Schema.Attribute.Enumeration<['red', 'orange']> &
+      Schema.Attribute.DefaultTo<'red'>;
+    description: Schema.Attribute.Text &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     icon: Schema.Attribute.Enumeration<
       ['shield', 'settings', 'analytics', 'marketing']
-    >;
+    > &
+      Schema.Attribute.DefaultTo<'shield'>;
     isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
-    title: Schema.Attribute.String;
+    title: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
   };
 }
 
 export interface DownloadsReleaseChange extends Struct.ComponentSchema {
-  collectionName: 'components_downloads_release_change';
+  collectionName: 'components_downloads_release_changes';
   info: {
-    description: 'A single change item in a release notes entry';
     displayName: 'Release Change';
+    icon: 'check';
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
   };
   attributes: {
-    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
-    text: Schema.Attribute.String & Schema.Attribute.Required;
+    text: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
   };
 }
 
@@ -67,15 +193,30 @@ export interface FaqFaqItem extends Struct.ComponentSchema {
 }
 
 export interface FooterFooterLink extends Struct.ComponentSchema {
-  collectionName: 'components_footer_footer_link';
+  collectionName: 'components_footer_footer_links';
   info: {
-    description: 'Individual link in a footer section';
+    description: 'A footer navigation link. Use either URL or Product Page relation.';
     displayName: 'Footer Link';
+    icon: 'link';
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
   };
   attributes: {
     isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
-    label: Schema.Attribute.String & Schema.Attribute.Required;
-    productPage: Schema.Attribute.Relation<'manyToOne', 'api::product.product'>;
+    label: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    productPage: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::product-page.product-page'
+    >;
     sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     target: Schema.Attribute.Enumeration<['_self', '_blank']> &
       Schema.Attribute.DefaultTo<'_self'>;
@@ -84,28 +225,51 @@ export interface FooterFooterLink extends Struct.ComponentSchema {
 }
 
 export interface FooterFooterSection extends Struct.ComponentSchema {
-  collectionName: 'components_footer_footer_section';
+  collectionName: 'components_footer_footer_sections';
   info: {
-    description: 'A column/group of links in the footer';
+    description: 'A footer column with ordered links';
     displayName: 'Footer Section';
+    icon: 'list';
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
   };
   attributes: {
     isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     links: Schema.Attribute.Component<'footer.footer-link', true>;
     sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
-    title: Schema.Attribute.String & Schema.Attribute.Required;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
   };
 }
 
 export interface FooterLegalLink extends Struct.ComponentSchema {
-  collectionName: 'components_footer_legal_link';
+  collectionName: 'components_footer_legal_links';
   info: {
-    description: 'Legal page link in the footer (Privacy Policy, Terms, etc.)';
     displayName: 'Legal Link';
+    icon: 'link';
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
   };
   attributes: {
     isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
-    label: Schema.Attribute.String & Schema.Attribute.Required;
+    label: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     target: Schema.Attribute.Enumeration<['_self', '_blank']> &
       Schema.Attribute.DefaultTo<'_self'>;
@@ -116,71 +280,238 @@ export interface FooterLegalLink extends Struct.ComponentSchema {
 export interface FreeTrialFormLabels extends Struct.ComponentSchema {
   collectionName: 'components_free_trial_form_labels';
   info: {
-    description: 'Localized labels for the Free Trial signup form';
     displayName: 'Form Labels';
+    icon: 'write';
   };
   attributes: {
-    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
-    label: Schema.Attribute.String & Schema.Attribute.Required;
-    placeholder: Schema.Attribute.String;
-    sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    addressLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    addressPlaceholder: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    businessDetailsLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    businessDetailsPlaceholder: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    companyLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    companyPlaceholder: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    emailLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    emailPlaceholder: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    fullNameLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    fullNamePlaceholder: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    marketingConsentDescription: Schema.Attribute.Text &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    marketingConsentLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    phoneLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    phonePlaceholder: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    positionLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    positionPlaceholder: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    privacyConsentPrefix: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    privacyConsentSuffix: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    privacyPolicyLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    privacyPolicyUrl: Schema.Attribute.String;
+    submitLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    successMessage: Schema.Attribute.Text &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    successTitle: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
   };
 }
 
 export interface FreeTrialTrialFeature extends Struct.ComponentSchema {
-  collectionName: 'components_free_trial_trial_feature';
+  collectionName: 'components_free_trial_trial_features';
   info: {
-    description: 'Feature highlight for Free Trial page';
     displayName: 'Trial Feature';
+    icon: 'star';
   };
   attributes: {
-    description: Schema.Attribute.Text;
-    icon: Schema.Attribute.String;
+    description: Schema.Attribute.Text &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
-    title: Schema.Attribute.String & Schema.Attribute.Required;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
   };
 }
 
 export interface FreeTrialTrustItem extends Struct.ComponentSchema {
-  collectionName: 'components_free_trial_trust_item';
+  collectionName: 'components_free_trial_trust_items';
   info: {
-    description: 'Trust signal for Free Trial page (e.g. No credit card, Free trial)';
     displayName: 'Trust Item';
+    icon: 'check';
   };
   attributes: {
-    icon: Schema.Attribute.String;
     isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
-    label: Schema.Attribute.String & Schema.Attribute.Required;
+    label: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
   };
 }
 
 export interface NavigationFooterSection extends Struct.ComponentSchema {
-  collectionName: 'components_navigation_footer_section';
+  collectionName: 'components_navigation_footer_sections';
   info: {
-    description: 'A column/group of links in the footer navigation';
-    displayName: 'Navigation Footer Section';
+    description: 'A footer column grouping navigation links under a title';
+    displayName: 'Footer Section';
+    icon: 'list';
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
   };
   attributes: {
-    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
-    links: Schema.Attribute.Component<'navigation.nav-child-item', true>;
-    sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
-    title: Schema.Attribute.String & Schema.Attribute.Required;
+    links: Schema.Attribute.Component<'navigation.nav-item', true>;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
   };
 }
 
 export interface NavigationNavChildItem extends Struct.ComponentSchema {
-  collectionName: 'components_navigation_nav_child_item';
+  collectionName: 'components_navigation_nav_child_items';
   info: {
-    description: 'A nested navigation link inside a dropdown menu';
+    description: 'A second-level navigation link';
     displayName: 'Nav Child Item';
+    icon: 'caretRight';
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
   };
   attributes: {
-    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
-    label: Schema.Attribute.String & Schema.Attribute.Required;
-    productPage: Schema.Attribute.Relation<'manyToOne', 'api::product.product'>;
-    sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    label: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    productPage: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::product-page.product-page'
+    >;
     target: Schema.Attribute.Enumeration<['_self', '_blank']> &
       Schema.Attribute.DefaultTo<'_self'>;
     url: Schema.Attribute.String;
@@ -188,103 +519,198 @@ export interface NavigationNavChildItem extends Struct.ComponentSchema {
 }
 
 export interface NavigationNavItem extends Struct.ComponentSchema {
-  collectionName: 'components_navigation_nav_item';
+  collectionName: 'components_navigation_nav_items';
   info: {
-    description: 'A header navigation menu item with optional dropdown children';
+    description: 'A single navigation link with optional nested children';
     displayName: 'Nav Item';
+    icon: 'caretRight';
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
   };
   attributes: {
     children: Schema.Attribute.Component<'navigation.nav-child-item', true>;
-    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
-    label: Schema.Attribute.String & Schema.Attribute.Required;
-    sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    label: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     target: Schema.Attribute.Enumeration<['_self', '_blank']> &
       Schema.Attribute.DefaultTo<'_self'>;
-    url: Schema.Attribute.String;
+    url: Schema.Attribute.String & Schema.Attribute.Required;
   };
 }
 
 export interface NavigationProductName extends Struct.ComponentSchema {
-  collectionName: 'components_navigation_product_name';
+  collectionName: 'components_navigation_product_names';
   info: {
-    description: 'Product name mapping for navigation display';
+    description: 'A product name and URL for navigation';
     displayName: 'Product Name';
+    icon: 'cube';
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
   };
   attributes: {
-    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
-    name: Schema.Attribute.String & Schema.Attribute.Required;
+    name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
-    url: Schema.Attribute.String;
+    url: Schema.Attribute.String & Schema.Attribute.Required;
   };
 }
 
 export interface PricingPlanFeature extends Struct.ComponentSchema {
-  collectionName: 'components_pricing_plan_feature';
+  collectionName: 'components_pricing_plan_features';
   info: {
     description: 'Links a pricing feature to a plan with an included/not-included status';
     displayName: 'Plan Feature';
+    icon: 'check';
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
   };
   attributes: {
-    feature: Schema.Attribute.Relation<'manyToOne', 'api::faq.faq'>;
+    feature: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::pricing-feature.pricing-feature'
+    >;
     included: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
-    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
-    note: Schema.Attribute.String;
-    sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    note: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
   };
 }
 
 export interface PrivacyPolicySection extends Struct.ComponentSchema {
-  collectionName: 'components_privacy_policy_section';
+  collectionName: 'components_privacy_policy_sections';
   info: {
-    description: 'A section of the privacy policy with heading and content';
     displayName: 'Policy Section';
+    icon: 'file';
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
   };
   attributes: {
-    content: Schema.Attribute.RichText & Schema.Attribute.Required;
-    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    content: Schema.Attribute.Text &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    icon: Schema.Attribute.Enumeration<
+      ['shield', 'database', 'users', 'cookie', 'lock', 'mail', 'file']
+    > &
+      Schema.Attribute.DefaultTo<'file'>;
+    isHighlighted: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    slug: Schema.Attribute.UID;
     sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
-    title: Schema.Attribute.String & Schema.Attribute.Required;
+    summary: Schema.Attribute.Text &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
   };
 }
 
 export interface PrivacyRelatedLink extends Struct.ComponentSchema {
-  collectionName: 'components_privacy_related_link';
+  collectionName: 'components_privacy_related_links';
   info: {
-    description: 'Related link for privacy policy (e.g. product-specific policies)';
+    description: 'A related legal or privacy page link';
     displayName: 'Related Link';
+    icon: 'link';
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
   };
   attributes: {
     isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
-    label: Schema.Attribute.String & Schema.Attribute.Required;
-    product: Schema.Attribute.Relation<'manyToOne', 'api::product.product'>;
+    label: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
-    url: Schema.Attribute.String;
+    url: Schema.Attribute.String & Schema.Attribute.Required;
   };
 }
 
 export interface PrivacyRequestTip extends Struct.ComponentSchema {
-  collectionName: 'components_privacy_request_tip';
+  collectionName: 'components_privacy_request_tips';
   info: {
     description: 'Before-submit checklist item for the Privacy Request page';
     displayName: 'Privacy Request Tip';
+    icon: 'checkCircle';
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
   };
   attributes: {
-    accent: Schema.Attribute.Enumeration<['red', 'orange']>;
+    accent: Schema.Attribute.Enumeration<['red', 'orange']> &
+      Schema.Attribute.DefaultTo<'red'>;
     isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
-    text: Schema.Attribute.Text;
+    text: Schema.Attribute.Text &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
   };
 }
 
 export interface PrivacyRequestTypeOption extends Struct.ComponentSchema {
-  collectionName: 'components_privacy_request_type_option';
+  collectionName: 'components_privacy_request_type_options';
   info: {
     description: 'Selectable request type option for the Privacy Request form';
     displayName: 'Privacy Request Type Option';
+    icon: 'bulletList';
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
   };
   attributes: {
     isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
-    label: Schema.Attribute.String;
+    label: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     value: Schema.Attribute.Enumeration<
       [
@@ -296,105 +722,346 @@ export interface PrivacyRequestTypeOption extends Struct.ComponentSchema {
         'withdrawal',
       ]
     > &
-      Schema.Attribute.Required;
+      Schema.Attribute.DefaultTo<'access'>;
   };
 }
 
 export interface SharedButtonLabels extends Struct.ComponentSchema {
   collectionName: 'components_shared_button_labels';
   info: {
-    description: 'Shared CTA and action button labels across the site';
+    description: 'Global button and CTA labels';
     displayName: 'Button Labels';
+    icon: 'cursor';
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
   };
   attributes: {
-    backToHome: Schema.Attribute.String;
-    callNow: Schema.Attribute.String;
-    contactUs: Schema.Attribute.String;
-    download: Schema.Attribute.String;
-    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
-    learnMore: Schema.Attribute.String;
-    readMore: Schema.Attribute.String;
-    requestQuote: Schema.Attribute.String;
-    viewAll: Schema.Attribute.String;
+    contactOrderLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    freeTrialLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    readMoreLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    subscribeLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    tryFreeLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    viewAllLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    viewDetailsLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
   };
 }
 
 export interface SharedContactInfo extends Struct.ComponentSchema {
-  collectionName: 'components_shared_contact_info';
+  collectionName: 'components_shared_contact_infos';
   info: {
-    description: 'Contact information display with icon and label';
+    description: 'Company contact information block';
     displayName: 'Contact Info';
+    icon: 'phone';
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
   };
   attributes: {
-    icon: Schema.Attribute.String;
-    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
-    label: Schema.Attribute.String & Schema.Attribute.Required;
-    sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
-    url: Schema.Attribute.String;
-    value: Schema.Attribute.String & Schema.Attribute.Required;
+    address: Schema.Attribute.Text &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    businessHours: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    companyName: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    email: Schema.Attribute.Email;
+    mapUrl: Schema.Attribute.String;
+    phone: Schema.Attribute.String;
+    socialLinks: Schema.Attribute.JSON;
   };
 }
 
 export interface SharedCookieConsentSettings extends Struct.ComponentSchema {
   collectionName: 'components_shared_cookie_consent_settings';
   info: {
-    description: 'Cookie consent banner labels, descriptions, and action text';
+    description: 'PDPA cookie consent banner configuration';
     displayName: 'Cookie Consent Settings';
+    icon: 'shield';
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
   };
   attributes: {
     acceptAllLabel: Schema.Attribute.String &
-      Schema.Attribute.DefaultTo<'Accept All'>;
-    alwaysOnLabel: Schema.Attribute.String;
-    analyticsDescription: Schema.Attribute.Text;
-    analyticsLabel: Schema.Attribute.String;
-    cookiePolicyLabel: Schema.Attribute.String;
-    description: Schema.Attribute.Text;
-    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
-    learnMoreLabel: Schema.Attribute.String;
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    alwaysOnLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    analyticsDesc: Schema.Attribute.Text &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    analyticsLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    closeLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    cookiePolicyLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    description: Schema.Attribute.Text &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    functionalDesc: Schema.Attribute.Text &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    functionalLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    learnMoreLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     manageLabel: Schema.Attribute.String &
-      Schema.Attribute.DefaultTo<'Manage Preferences'>;
-    marketingDescription: Schema.Attribute.Text;
-    marketingLabel: Schema.Attribute.String;
-    necessaryDescription: Schema.Attribute.Text;
-    necessaryLabel: Schema.Attribute.String;
-    privacyPolicyLabel: Schema.Attribute.String;
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    marketingDesc: Schema.Attribute.Text &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    marketingLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    necessaryDesc: Schema.Attribute.Text &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    necessaryLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    privacyPolicyLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     rejectAllLabel: Schema.Attribute.String &
-      Schema.Attribute.DefaultTo<'Reject All'>;
-    saveLabel: Schema.Attribute.String &
-      Schema.Attribute.DefaultTo<'Save Preferences'>;
-    title: Schema.Attribute.String;
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    savePreferencesLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    title: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
   };
 }
 
 export interface SharedFooterLabels extends Struct.ComponentSchema {
   collectionName: 'components_shared_footer_labels';
   info: {
-    description: 'Shared footer heading and link labels';
+    description: 'Footer section labels and headings';
     displayName: 'Footer Labels';
+    icon: 'tag';
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
   };
   attributes: {
-    aboutHeading: Schema.Attribute.String;
-    contactHeading: Schema.Attribute.String;
-    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
-    linksHeading: Schema.Attribute.String;
-    newsletterButton: Schema.Attribute.String;
-    newsletterHeading: Schema.Attribute.String;
-    newsletterPlaceholder: Schema.Attribute.String;
+    contactInfoTitle: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    contactUsLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    cookiePolicyLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    cookieSettingsLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    copyright: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    dataRequestLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    helpCenterLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    helpTitle: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    manualLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    privacyPolicyLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    privacyTitle: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
   };
 }
 
 export interface SharedPageSectionItem extends Struct.ComponentSchema {
-  collectionName: 'components_shared_page_section_item';
+  collectionName: 'components_shared_page_section_items';
   info: {
     description: 'A single section with title, content, and optional image for product pages';
     displayName: 'Page Section Item';
+    icon: 'alignLeft';
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
   };
   attributes: {
-    content: Schema.Attribute.Blocks;
+    content: Schema.Attribute.Blocks &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     image: Schema.Attribute.Media<'images'>;
-    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
-    title: Schema.Attribute.String & Schema.Attribute.Required;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
   };
 }
 
@@ -403,97 +1070,332 @@ export interface SharedPdpaSettings extends Struct.ComponentSchema {
   info: {
     description: 'PDPA compliance settings: privacy request form labels, legal contact info';
     displayName: 'PDPA Settings';
+    icon: 'fileText';
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
   };
   attributes: {
-    beforeSubmitDescription: Schema.Attribute.Text;
+    beforeSubmitDescription: Schema.Attribute.Text &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     beforeSubmitTips: Schema.Attribute.Component<'privacy.request-tip', true>;
-    beforeSubmitTitle: Schema.Attribute.String;
-    businessHoursLabel: Schema.Attribute.String;
-    dpoContactLabel: Schema.Attribute.String;
+    beforeSubmitTitle: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    businessHoursLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    dpoContactLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     dpoEmail: Schema.Attribute.Email;
     dpoPhone: Schema.Attribute.String;
-    emailLabel: Schema.Attribute.String;
-    formAdditionalInfoLabel: Schema.Attribute.String;
-    formAdditionalInfoPlaceholder: Schema.Attribute.Text;
-    formBadge: Schema.Attribute.String;
-    formCompanyLabel: Schema.Attribute.String;
-    formCompanyPlaceholder: Schema.Attribute.String;
-    formEmailLabel: Schema.Attribute.String;
-    formEmailPlaceholder: Schema.Attribute.String;
-    formMessageLabel: Schema.Attribute.String;
-    formMessagePlaceholder: Schema.Attribute.Text;
-    formNameLabel: Schema.Attribute.String;
-    formNamePlaceholder: Schema.Attribute.String;
-    formNote: Schema.Attribute.Text;
-    formPhoneLabel: Schema.Attribute.String;
-    formPhonePlaceholder: Schema.Attribute.String;
-    formRequestTypeLabel: Schema.Attribute.String;
-    formRequestTypePlaceholder: Schema.Attribute.String;
-    formSubmitLabel: Schema.Attribute.String;
-    formSubmittingLabel: Schema.Attribute.String;
-    formSuccessMessage: Schema.Attribute.Text;
-    formSuccessTitle: Schema.Attribute.String;
-    formTitle: Schema.Attribute.String;
-    heroBadge: Schema.Attribute.String;
+    emailLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    formAdditionalInfoLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    formAdditionalInfoPlaceholder: Schema.Attribute.Text &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    formBadge: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    formCompanyLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    formCompanyPlaceholder: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    formEmailLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    formEmailPlaceholder: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    formMessageLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    formMessagePlaceholder: Schema.Attribute.Text &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    formNameLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    formNamePlaceholder: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    formNote: Schema.Attribute.Text &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    formPhoneLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    formPhonePlaceholder: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    formRequestTypeLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    formRequestTypePlaceholder: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    formSubmitLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    formSubmittingLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    formSuccessMessage: Schema.Attribute.Text &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    formSuccessTitle: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    formTitle: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    heroBadge: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     legalContactInfo: Schema.Attribute.Component<'shared.contact-info', false>;
-    phoneLabel: Schema.Attribute.String;
-    privacyRequestDesc: Schema.Attribute.Text;
-    privacyRequestTitle: Schema.Attribute.String;
+    phoneLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    privacyRequestDesc: Schema.Attribute.Text &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    privacyRequestTitle: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     requestTypes: Schema.Attribute.Component<
       'privacy.request-type-option',
       true
     >;
-    requiredFieldsNote: Schema.Attribute.String;
-    responseTimeDescription: Schema.Attribute.Text;
-    responseTimeLabel: Schema.Attribute.String;
-    secureNoteDescription: Schema.Attribute.Text;
-    secureNoteLabel: Schema.Attribute.String;
+    requiredFieldsNote: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    responseTimeDescription: Schema.Attribute.Text &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    responseTimeLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    secureNoteDescription: Schema.Attribute.Text &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    secureNoteLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
   };
 }
 
 export interface SharedSeoConfig extends Struct.ComponentSchema {
-  collectionName: 'components_shared_seo_config';
+  collectionName: 'components_shared_seo_configs';
   info: {
-    description: 'Site-wide SEO defaults, social profiles, and analytics (used only in Global Setting)';
+    description: 'Site-wide SEO configuration: site name, defaults, social links';
     displayName: 'SEO Config';
+    icon: 'globe';
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
   };
   attributes: {
-    brandName: Schema.Attribute.String;
-    defaultDescription: Schema.Attribute.Text;
+    brandName: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    defaultDescription: Schema.Attribute.Text &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     defaultOgImage: Schema.Attribute.Media<'images'>;
-    defaultTitle: Schema.Attribute.String;
+    defaultTitle: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     facebookPixelId: Schema.Attribute.String;
     facebookUrl: Schema.Attribute.String;
     googleAnalyticsId: Schema.Attribute.String;
-    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     lineUrl: Schema.Attribute.String;
-    siteName: Schema.Attribute.String;
-    siteUrl: Schema.Attribute.String;
+    linkedinUrl: Schema.Attribute.String;
+    robotsAllowPaths: Schema.Attribute.JSON;
+    robotsCrawlDelay: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<1>;
+    robotsDisallowPaths: Schema.Attribute.JSON;
+    robotsSitemapUrl: Schema.Attribute.String;
+    robotsUserAgent: Schema.Attribute.String & Schema.Attribute.DefaultTo<'*'>;
+    siteName: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    siteUrl: Schema.Attribute.String & Schema.Attribute.Required;
     twitterHandle: Schema.Attribute.String;
-    twitterUrl: Schema.Attribute.String;
+    youtubeUrl: Schema.Attribute.String;
   };
 }
 
 export interface SharedSeoMeta extends Struct.ComponentSchema {
-  collectionName: 'components_shared_seo_meta';
+  collectionName: 'components_shared_seo_metas';
   info: {
-    description: 'Page-level SEO metadata for search engines and social sharing';
+    description: 'Reusable SEO metadata: title, description, OG image, schema type';
     displayName: 'SEO Meta';
+    icon: 'search';
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
   };
   attributes: {
     alternateLanguages: Schema.Attribute.JSON;
     canonicalUrl: Schema.Attribute.String;
-    keywords: Schema.Attribute.Text;
+    keywords: Schema.Attribute.Text &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     maxImagePreview: Schema.Attribute.Enumeration<
       ['none', 'standard', 'large']
-    >;
-    maxSnippet: Schema.Attribute.Integer;
-    maxVideoPreview: Schema.Attribute.Integer;
+    > &
+      Schema.Attribute.DefaultTo<'large'>;
+    maxSnippet: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<-1>;
+    maxVideoPreview: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<-1>;
     metaDescription: Schema.Attribute.Text &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 160;
       }>;
     metaTitle: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 70;
       }>;
@@ -501,120 +1403,295 @@ export interface SharedSeoMeta extends Struct.ComponentSchema {
     nofollow: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     noindex: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     nosnippet: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
-    ogDescription: Schema.Attribute.Text;
+    ogDescription: Schema.Attribute.Text &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     ogImage: Schema.Attribute.Media<'images'>;
-    ogTitle: Schema.Attribute.String;
+    ogTitle: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     ogType: Schema.Attribute.Enumeration<['website', 'article', 'product']> &
       Schema.Attribute.DefaultTo<'website'>;
-    schemaType: Schema.Attribute.String;
-    twitterDescription: Schema.Attribute.Text;
-    twitterImage: Schema.Attribute.Media<'images'>;
-    twitterTitle: Schema.Attribute.String;
+    schemaType: Schema.Attribute.Enumeration<
+      [
+        'WebPage',
+        'AboutPage',
+        'ProductPage',
+        'CollectionPage',
+        'FAQPage',
+        'ContactPage',
+        'Article',
+        'SoftwareApplication',
+      ]
+    > &
+      Schema.Attribute.DefaultTo<'WebPage'>;
   };
 }
 
 export interface SharedStatItem extends Struct.ComponentSchema {
-  collectionName: 'components_shared_stat_item';
+  collectionName: 'components_shared_stat_items';
   info: {
-    description: 'Statistics display with number and label';
+    description: 'A single statistic entry with a value and label';
     displayName: 'Stat Item';
+    icon: 'chartCircle';
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
   };
   attributes: {
-    icon: Schema.Attribute.String;
-    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
-    label: Schema.Attribute.String & Schema.Attribute.Required;
+    label: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     value: Schema.Attribute.String & Schema.Attribute.Required;
   };
 }
 
 export interface SupportContactSection extends Struct.ComponentSchema {
-  collectionName: 'components_support_contact_section';
+  collectionName: 'components_support_contact_sections';
   info: {
     description: 'Contact section heading and field labels';
     displayName: 'Support Contact Section';
+    icon: 'phone';
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
   };
   attributes: {
-    addressLabel: Schema.Attribute.String;
-    badge: Schema.Attribute.String;
-    businessHoursLabel: Schema.Attribute.String;
-    emailLabel: Schema.Attribute.String;
-    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
-    phoneLabel: Schema.Attribute.String;
-    sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
-    title: Schema.Attribute.String & Schema.Attribute.Required;
+    addressLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    badge: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    businessHoursLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    emailLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    phoneLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
   };
 }
 
 export interface SupportFaqSection extends Struct.ComponentSchema {
-  collectionName: 'components_support_faq_section';
+  collectionName: 'components_support_faq_sections';
   info: {
     description: 'FAQ section headings and fallback CTA copy';
     displayName: 'Support FAQ Section';
+    icon: 'question';
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
   };
   attributes: {
-    badge: Schema.Attribute.String;
-    contactCtaLabel: Schema.Attribute.String;
-    emptyPrompt: Schema.Attribute.String;
-    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
-    sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
-    subtitle: Schema.Attribute.Text;
-    title: Schema.Attribute.String & Schema.Attribute.Required;
+    badge: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    contactCtaLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    emptyPrompt: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    subtitle: Schema.Attribute.Text &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
   };
 }
 
 export interface SupportHelpCenterSection extends Struct.ComponentSchema {
-  collectionName: 'components_support_help_center_section';
+  collectionName: 'components_support_help_center_sections';
   info: {
     description: 'Help Center heading copy for support resource cards';
     displayName: 'Support Help Center Section';
+    icon: 'book';
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
   };
   attributes: {
-    badge: Schema.Attribute.String;
-    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
-    sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
-    subtitle: Schema.Attribute.Text;
-    title: Schema.Attribute.String & Schema.Attribute.Required;
+    badge: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    subtitle: Schema.Attribute.Text &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
   };
 }
 
 export interface SupportHeroSection extends Struct.ComponentSchema {
-  collectionName: 'components_support_hero_section';
+  collectionName: 'components_support_hero_sections';
   info: {
     description: 'Hero copy and navigation CTA labels for the support page';
     displayName: 'Support Hero Section';
+    icon: 'life-ring';
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
   };
   attributes: {
-    badge: Schema.Attribute.String;
-    contactCtaLabel: Schema.Attribute.String;
-    faqCtaLabel: Schema.Attribute.String;
-    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
-    manualCtaLabel: Schema.Attribute.String;
-    sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
-    subtitle: Schema.Attribute.Text;
-    title: Schema.Attribute.String & Schema.Attribute.Required;
+    badge: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    contactCtaLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    faqCtaLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    manualCtaLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    subtitle: Schema.Attribute.Text &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
   };
 }
 
 export interface SupportStatusCard extends Struct.ComponentSchema {
-  collectionName: 'components_support_status_card';
+  collectionName: 'components_support_status_cards';
   info: {
     description: 'Support team availability card shown beside the hero';
     displayName: 'Support Status Card';
+    icon: 'headset';
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
   };
   attributes: {
-    hours: Schema.Attribute.String;
-    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
-    kicker: Schema.Attribute.String;
-    sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
-    statusLabel: Schema.Attribute.String;
-    title: Schema.Attribute.String;
+    hours: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    kicker: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    statusLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    title: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
   };
 }
 
 declare module '@strapi/strapi' {
   export namespace Public {
     export interface ComponentSchemas {
+      'blog.hero-section': BlogHeroSection;
+      'blog.listing-section': BlogListingSection;
       'contact-floating.contact-action': ContactFloatingContactAction;
       'cookie.policy-category': CookiePolicyCategory;
       'downloads.release-change': DownloadsReleaseChange;

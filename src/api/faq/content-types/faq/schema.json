@@ -5,55 +5,50 @@
     "singularName": "faq",
     "pluralName": "faqs",
     "displayName": "FAQ",
-    "description": "Frequently asked questions"
+    "description": "Frequently Asked Questions"
   },
   "options": {
-    "draftAndPublish": true
-  },
-  "pluginOptions": {
-    "i18n": {
-      "localized": true
-    }
+    "draftAndPublish": false
   },
   "attributes": {
-    "title": {
+    "question": {
       "type": "string",
       "required": true,
-      "description": "FAQ group or page title"
-    },
-    "slug": {
-      "type": "uid",
-      "targetField": "title"
-    },
-    "description": {
-      "type": "text",
-      "description": "Brief description of this FAQ group"
-    },
-    "items": {
-      "type": "component",
-      "repeatable": true,
-      "component": "faq.faq-item",
-      "description": "FAQ question and answer pairs"
-    },
-    "sortOrder": {
-      "type": "integer",
-      "default": 0,
-      "description": "Display order (lower number appears first)"
-    },
-    "isActive": {
-      "type": "boolean",
-      "default": true,
-      "description": "Show or hide this FAQ group on frontend"
-    },
-    "seo": {
-      "type": "component",
-      "repeatable": false,
-      "component": "shared.seo-meta",
       "pluginOptions": {
         "i18n": {
           "localized": true
         }
       }
+    },
+    "sortOrder": {
+      "type": "integer",
+      "default": 0
+    },
+    "isActive": {
+      "type": "boolean",
+      "default": true
+    },
+    "answer": {
+      "type": "text",
+      "required": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "category": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    }
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
     }
   }
 }

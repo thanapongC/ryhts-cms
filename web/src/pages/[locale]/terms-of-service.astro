@@ -1,22 +1,26 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { safeGetTermsOfService, getStrapiAbsoluteImageUrl } from "../../lib/api";
+import { safeGetTermsOfService, getStrapiAbsoluteImageUrl, isPageDisabled } from "../../lib/api";
 import { isValidLocale, DEFAULT_LOCALE, type Locale } from "../../lib/i18n";
 import OfflineNotice from "../../components/OfflineNotice.astro";
+import PrivacyPolicyContent from "../../components/PrivacyPolicyContent.astro";
 
 const lang = (Astro.params.locale as Locale) || DEFAULT_LOCALE;
 if (!isValidLocale(lang)) return Astro.redirect(`/${DEFAULT_LOCALE}/terms-of-service`);
 
 const tosResult = await safeGetTermsOfService(lang);
 const tos = tosResult.data;
+if (tosResult.ok && isPageDisabled(tos)) return new Response(null, { status: 404 });
 const seo = tos?.seo;
+const pageTitle = tos?.heroTitle || tos?.title || (lang === "en" ? "Terms of Service" : "ข้อกำหนดการใช้บริการ");
+const pageDescription = tos?.heroSubtitle || tos?.description || "";
 
 const siteUrl = Astro.url.origin;
 ---
 
 <BaseLayout
-  title={seo?.metaTitle || tos?.title || "Terms of Service"}
-  description={seo?.metaDescription || tos?.description || ""}
+  title={seo?.metaTitle || pageTitle}
+  description={seo?.metaDescription || pageDescription}
   ogImage={getStrapiAbsoluteImageUrl(seo?.ogImage) || undefined}
   robots={seo?.robots}
   locale={lang}
@@ -26,23 +30,12 @@ const siteUrl = Astro.url.origin;
     { lang: "x-default", href: `${siteUrl}/th/terms-of-service` },
   ]}
 >
-  <div class="page-header">
-    <div class="container"><h1>{tos?.title || "Terms of Service"}</h1></div>
-  </div>
-
-  <section class="section">
-    <div class="container">
-      <div class="breadcrumb"><a href={`/${lang}/`}>Home</a><span>/</span><span>Terms of Service</span></div>
-      {tosResult.isOffline && <OfflineNotice title="部分内容不可用" message="Terms may be unavailable." />}
-      <div class="policy-content">
-        {tos?.description && <p class="policy-summary">{tos.description}</p>}
-        {tos?.content ? <div class="rich-text" set:html={tos.content} /> : <p>Terms content not yet available.</p>}
-      </div>
-    </div>
-  </section>
+  {tosResult.isOffline && !tos ? (
+    <OfflineNotice
+      title={lang === "en" ? "Unable to load" : "ไม่สามารถโหลดได้"}
+      message={lang === "en" ? "Terms may be unavailable." : "ข้อกำหนดอาจไม่พร้อมใช้งานในขณะนี้"}
+    />
+  ) : (
+    <PrivacyPolicyContent lang={lang} policy={tos} pageType="terms" />
+  )}
 </BaseLayout>
-
-<style>
-  .policy-content { max-width: 800px; }
-  .policy-summary { font-size: 17px; color: var(--color-text-secondary); line-height: 1.8; margin-bottom: 32px; padding: 20px; background: var(--color-bg-light); border-radius: var(--radius); }
-</style>

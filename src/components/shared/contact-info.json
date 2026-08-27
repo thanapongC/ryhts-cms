@@ -1,37 +1,51 @@
 {
-  "collectionName": "components_shared_contact_info",
+  "collectionName": "components_shared_contact_infos",
   "info": {
     "displayName": "Contact Info",
-    "description": "Contact information display with icon and label"
+    "icon": "phone",
+    "description": "Company contact information block"
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
   },
   "attributes": {
-    "label": {
+    "companyName": {
       "type": "string",
-      "required": true,
-      "description": "Field label (e.g. Phone, Email, Address)"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
-    "value": {
+    "address": {
+      "type": "text",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "phone": {
+      "type": "string"
+    },
+    "email": {
+      "type": "email"
+    },
+    "businessHours": {
       "type": "string",
-      "required": true,
-      "description": "Contact value (e.g. phone number, email address)"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
-    "icon": {
-      "type": "string",
-      "description": "Font Awesome icon class (e.g. fa-phone, fa-envelope)"
+    "mapUrl": {
+      "type": "string"
     },
-    "url": {
-      "type": "string",
-      "description": "Clickable link URL (e.g. tel:xxx, mailto:xxx)"
-    },
-    "sortOrder": {
-      "type": "integer",
-      "default": 0,
-      "description": "Display order (lower number appears first)"
-    },
-    "isActive": {
-      "type": "boolean",
-      "default": true,
-      "description": "Show or hide this contact item"
+    "socialLinks": {
+      "type": "json"
     }
   }
 }

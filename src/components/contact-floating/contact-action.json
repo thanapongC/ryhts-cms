@@ -1,48 +1,63 @@
 {
-  "collectionName": "components_contact_floating_contact_action",
+  "collectionName": "components_contact_floating_contact_actions",
   "info": {
     "displayName": "Contact Action",
-    "description": "An action button in the floating contact widget"
+    "icon": "phone"
   },
   "attributes": {
     "type": {
       "type": "enumeration",
-      "enum": ["phone", "email", "line", "whatsapp", "link"],
+      "enum": [
+        "phone",
+        "line",
+        "email",
+        "facebook",
+        "map",
+        "custom"
+      ],
       "required": true,
-      "description": "Action type determines icon and behavior"
+      "default": "custom"
     },
     "label": {
       "type": "string",
       "required": true,
-      "description": "Action button label"
-    },
-    "description": {
-      "type": "text",
-      "description": "Short description shown below the label"
-    },
-    "url": {
-      "type": "string",
-      "required": true,
-      "description": "Action URL (tel:, mailto:, https://, line://)"
-    },
-    "ariaLabel": {
-      "type": "string",
-      "description": "Accessible label for screen readers"
-    },
-    "openInNewTab": {
-      "type": "boolean",
-      "default": false,
-      "description": "Open link in a new browser tab"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "sortOrder": {
       "type": "integer",
-      "default": 0,
-      "description": "Display order (lower number appears first)"
+      "default": 0
     },
     "isActive": {
       "type": "boolean",
-      "default": true,
-      "description": "Show or hide this action"
+      "default": true
+    },
+    "description": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "url": {
+      "type": "string",
+      "required": true
+    },
+    "ariaLabel": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "openInNewTab": {
+      "type": "boolean",
+      "default": false
     }
   }
 }

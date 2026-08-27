@@ -4,36 +4,134 @@
  *
  * Behaviour:
  * - On first visit, shows a sticky bottom banner with Accept All / Reject Optional / Customize
- * - "Customize" opens a modal with per-category toggles fetched from Strapi
+ * - "Customize" opens a modal with per-category toggles from CMS settings
  * - Consent is stored in localStorage under "cookie_consent"
  * - Users can re-open preferences via the "Manage Cookies" link in the footer
  * - Categories marked `is_required` are always enabled and cannot be toggled off
  */
 
-const COOKIE_CONSENT_KEY = "cookie_consent";
-const CONSENT_VERSION = "1"; // bump to re-prompt users
+import type { CookieSetting } from "../lib/api";
+
+interface Props {
+  locale?: "th" | "en";
+  cookieSetting?: CookieSetting | null;
+}
+
+const { locale = "th", cookieSetting } = Astro.props;
+const settings = cookieSetting?.settings;
+const labels = {
+  th: {
+    title: "เราใช้คุกกี้",
+    description: "เราใช้คุกกี้เพื่อปรับปรุงประสบการณ์ วิเคราะห์การใช้งานเว็บไซต์ และนำเสนอเนื้อหาที่เหมาะสม",
+    modalTitle: "ตั้งค่าคุกกี้",
+    modalIntro: "จัดการความยินยอมคุกกี้ของคุณด้านล่าง คุกกี้จำเป็นไม่สามารถปิดได้",
+    acceptAll: "ยอมรับทั้งหมด",
+    rejectOptional: "ปฏิเสธคุกกี้เสริม",
+    customize: "ตั้งค่า",
+    save: "บันทึกการตั้งค่า",
+    close: "ปิด",
+    required: "จำเป็น",
+    privacyPolicy: "นโยบายความเป็นส่วนตัว",
+    necessary: "คุกกี้จำเป็น",
+    necessaryDesc: "จำเป็นต่อการทำงานพื้นฐานของเว็บไซต์",
+    functional: "คุกกี้ฟังก์ชัน",
+    functionalDesc: "ช่วยจดจำการตั้งค่าและปรับปรุงประสบการณ์การใช้งาน",
+    analytics: "คุกกี้วิเคราะห์",
+    analyticsDesc: "ช่วยให้เราเข้าใจวิธีที่ผู้เยี่ยมชมใช้งานเว็บไซต์",
+    marketing: "คุกกี้การตลาด",
+    marketingDesc: "ใช้เพื่อแสดงเนื้อหาและโฆษณาที่เกี่ยวข้อง",
+  },
+  en: {
+    title: "We use cookies",
+    description: "We use cookies to improve your experience, analyze site traffic, and serve relevant content.",
+    modalTitle: "Cookie Preferences",
+    modalIntro: "Manage your cookie preferences below. Required cookies are necessary for the site to function and cannot be disabled.",
+    acceptAll: "Accept All",
+    rejectOptional: "Reject Optional",
+    customize: "Customize",
+    save: "Save Preferences",
+    close: "Close",
+    required: "Required",
+    privacyPolicy: "Privacy Policy",
+    necessary: "Necessary",
+    necessaryDesc: "Essential cookies for the site to function properly.",
+    functional: "Functional",
+    functionalDesc: "Remember preferences and improve the browsing experience.",
+    analytics: "Analytics",
+    analyticsDesc: "Help us understand how visitors interact with the site.",
+    marketing: "Marketing",
+    marketingDesc: "Used to deliver relevant content and advertising.",
+  },
+}[locale];
+
+const copy = {
+  title: settings?.title || labels.title,
+  description: settings?.description || labels.description,
+  modalTitle: settings?.manageLabel || labels.modalTitle,
+  modalIntro: settings?.description || labels.modalIntro,
+  acceptAll: settings?.acceptAllLabel || labels.acceptAll,
+  rejectOptional: settings?.rejectAllLabel || labels.rejectOptional,
+  customize: settings?.manageLabel || labels.customize,
+  save: settings?.savePreferencesLabel || labels.save,
+  close: settings?.closeLabel || labels.close,
+  required: settings?.alwaysOnLabel || labels.required,
+  privacyPolicy: settings?.privacyPolicyLabel || labels.privacyPolicy,
+};
+
+const categories = [
+  {
+    slug: "necessary",
+    name: settings?.necessaryLabel || labels.necessary,
+    description: settings?.necessaryDesc || labels.necessaryDesc,
+    isRequired: true,
+    isDefaultEnabled: true,
+  },
+  {
+    slug: "functional",
+    name: settings?.functionalLabel || labels.functional,
+    description: settings?.functionalDesc || labels.functionalDesc,
+    isRequired: false,
+    isDefaultEnabled: false,
+  },
+  {
+    slug: "analytics",
+    name: settings?.analyticsLabel || labels.analytics,
+    description: settings?.analyticsDesc || labels.analyticsDesc,
+    isRequired: false,
+    isDefaultEnabled: false,
+  },
+  {
+    slug: "marketing",
+    name: settings?.marketingLabel || labels.marketing,
+    description: settings?.marketingDesc || labels.marketingDesc,
+    isRequired: false,
+    isDefaultEnabled: false,
+  },
+];
+
+const cookiePolicyHref = `/${locale}/cookie-policy/`;
+const privacyPolicyHref = `/${locale}/privacy-policy/`;
 ---
 
 <!-- Banner -->
-<div id="cookie-banner" class="cookie-banner" role="dialog" aria-label="Cookie consent" hidden>
+<div id="cookie-banner" class="cookie-banner" role="dialog" aria-label={copy.title} hidden>
   <div class="container cookie-banner-inner">
     <div class="cookie-banner-text">
       <div class="cookie-banner-icon">
         <i class="fas fa-cookie-bite"></i>
       </div>
       <div>
-        <p class="cookie-banner-title">We use cookies</p>
+        <p class="cookie-banner-title">{copy.title}</p>
         <p class="cookie-banner-desc">
-          We use cookies to improve your experience, analyze site traffic, and serve targeted content.
-          You can accept all, reject optional, or customize your preferences.
-          <a href="/privacy-policy" target="_blank">Privacy Policy</a>
+          {copy.description}
+          <a href={privacyPolicyHref} target="_blank">{copy.privacyPolicy}</a>
         </p>
       </div>
     </div>
     <div class="cookie-banner-actions">
-      <button id="cookie-reject" class="btn btn-sm btn-outline">Reject Optional</button>
-      <button id="cookie-customize" class="btn btn-sm btn-outline">Customize</button>
-      <button id="cookie-accept-all" class="btn btn-sm btn-primary">Accept All</button>
+      <button id="cookie-reject" class="btn btn-sm btn-outline">{copy.rejectOptional}</button>
+      <button id="cookie-customize" class="btn btn-sm btn-outline">{copy.customize}</button>
+      <button id="cookie-accept-all" class="btn btn-sm btn-primary">{copy.acceptAll}</button>
     </div>
   </div>
 </div>
@@ -41,18 +139,18 @@ const CONSENT_VERSION = "1"; // bump to re-prompt users
 <!-- Preferences Modal -->
 <div id="cookie-modal" class="cookie-modal" hidden>
   <div class="cookie-modal-backdrop" id="cookie-modal-backdrop"></div>
-  <div class="cookie-modal-content" role="dialog" aria-label="Cookie preferences">
+  <div class="cookie-modal-content" role="dialog" aria-label={copy.modalTitle}>
     <div class="cookie-modal-header">
-      <h3><i class="fas fa-cog"></i> Cookie Preferences</h3>
-      <button id="cookie-modal-close" class="cookie-modal-close" aria-label="Close">
+      <h3><i class="fas fa-cog"></i> {copy.modalTitle}</h3>
+      <button id="cookie-modal-close" class="cookie-modal-close" aria-label={copy.close}>
         <i class="fas fa-times"></i>
       </button>
     </div>
 
     <div class="cookie-modal-body">
       <p class="cookie-modal-intro">
-        Manage your cookie preferences below. Required cookies are necessary for the site to function
-        and cannot be disabled.
+        {copy.modalIntro}
+        <a href={cookiePolicyHref}>{settings?.cookiePolicyLabel || "Cookie Policy"}</a>
       </p>
 
       <div id="cookie-categories-list" class="cookie-categories-list">
@@ -66,10 +164,12 @@ const CONSENT_VERSION = "1"; // bump to re-prompt users
     </div>
 
     <div class="cookie-modal-footer">
-      <button id="cookie-save-prefs" class="btn btn-primary">Save Preferences</button>
+      <button id="cookie-save-prefs" class="btn btn-primary">{copy.save}</button>
     </div>
   </div>
 </div>
+
+<script type="application/json" id="cookie-categories-data" set:html={JSON.stringify({ categories, requiredLabel: copy.required })} />
 
 <style>
   /* ─── Banner ──────────────────────────────────────────────────── */
@@ -453,19 +553,19 @@ const CONSENT_VERSION = "1"; // bump to re-prompt users
     if (!listEl) return;
 
     try {
-      const res = await fetch("/api/cookie-categories?sort=sort_order:asc&populate=*");
-      if (!res.ok) throw new Error("Failed to load");
-      const json = await res.json();
-      const categories = json.data || [];
+      const raw = document.getElementById("cookie-categories-data")?.textContent || "{}";
+      const json = JSON.parse(raw);
+      const categories = json.categories || [];
+      const requiredLabel = json.requiredLabel || "Required";
 
       const stored = getStoredConsent();
 
       listEl.innerHTML = categories
         .map((cat: any) => {
           const isChecked = stored
-            ? stored.categories[cat.slug] ?? cat.is_default_enabled
-            : cat.is_default_enabled;
-          const isRequired = cat.is_required;
+            ? stored.categories[cat.slug] ?? cat.isDefaultEnabled
+            : cat.isDefaultEnabled;
+          const isRequired = cat.isRequired;
 
           return `
             <div class="cookie-category">
@@ -473,7 +573,7 @@ const CONSENT_VERSION = "1"; // bump to re-prompt users
                 <div class="cookie-category-info">
                   <div class="cookie-category-name">
                     ${cat.name}
-                    ${isRequired ? '<span class="cookie-category-required">Required</span>' : ""}
+                    ${isRequired ? `<span class="cookie-category-required">${requiredLabel}</span>` : ""}
                   </div>
                   ${cat.description ? `<p class="cookie-category-desc">${cat.description}</p>` : ""}
                 </div>

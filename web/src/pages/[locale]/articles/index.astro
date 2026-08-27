@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
-import { safeGetArticles } from "../../../lib/api";
+import { safeGetArticles, safeGetBlogPage, getStrapiAbsoluteImageUrl, isPageDisabled } from "../../../lib/api";
 import { isValidLocale, DEFAULT_LOCALE, type Locale } from "../../../lib/i18n";
 import OfflineNotice from "../../../components/OfflineNotice.astro";
 import PageHeader from "../../../components/PageHeader.astro";
@@ -11,39 +11,80 @@ const lang = (Astro.params.locale as Locale) || DEFAULT_LOCALE;
 if (!isValidLocale(lang)) return Astro.redirect(`/${DEFAULT_LOCALE}/articles`);
 
 const articlesResult = await safeGetArticles(lang, 1, 24);
+const blogPageResult = await safeGetBlogPage(lang);
 const articles = articlesResult.data?.data || [];
-const isOffline = articlesResult.isOffline;
+const blogPage = blogPageResult.data;
+if (blogPageResult.ok && isPageDisabled(blogPage)) return new Response(null, { status: 404 });
+const isOffline = articlesResult.isOffline || blogPageResult.isOffline;
+
+const fallbackHero = {
+  title: lang === "en" ? "Ryhts articles and updates" : "บทความและข่าวสารจาก Ryhts",
+  description: lang === "en"
+    ? "Read practical ribbon selection guides, barcode printing tips, and product updates for reliable label production."
+    : "ติดตามคำแนะนำการเลือกริบบอน เทคนิคงานพิมพ์บาร์โค้ด และข่าวสารสินค้าสำหรับธุรกิจที่ต้องการงานพิมพ์คมชัดและเชื่อถือได้",
+};
+
+const fallbackListing = {
+  breadcrumbLabel: lang === "en" ? "Articles" : "บทความ",
+  emptyTitle: lang === "en" ? "No articles available yet" : "ยังไม่มีบทความในขณะนี้",
+  emptyDescription: lang === "en"
+    ? "Check back later for Ryhts news, guides, and product updates."
+    : "กลับมาใหม่อีกครั้งเพื่ออ่านข่าวสารและคู่มือจาก Ryhts",
+  offlineTitle: lang === "en" ? "Unable to load articles" : "ไม่สามารถโหลดบทความได้",
+  offlineMessage: lang === "en"
+    ? "Please check your connection and try again."
+    : "กรุณาตรวจสอบการเชื่อมต่อและลองอีกครั้ง",
+};
+
+const hero = {
+  ...fallbackHero,
+  ...blogPage?.heroSection,
+};
+const listing = {
+  ...fallbackListing,
+  ...blogPage?.listingSection,
+};
+const seo = blogPage?.seo;
 
 const siteUrl = Astro.url.origin;
 ---
 
 <BaseLayout
-  title="Articles"
-  description="ติดตามข่าวสารและบทความเกี่ยวกับริบบอน"
+  title={seo?.metaTitle || hero.title}
+  description={seo?.metaDescription || hero.description}
+  ogImage={getStrapiAbsoluteImageUrl(seo?.ogImage) || undefined}
+  robots={seo?.robots}
+  keywords={seo?.keywords?.split(",").map((keyword) => keyword.trim()) || []}
   locale={lang}
   hreflangs={[
     { lang: "th", href: `${siteUrl}/th/articles` },
     { lang: "en", href: `${siteUrl}/en/articles` },
     { lang: "x-default", href: `${siteUrl}/th/articles` },
   ]}
-  jsonLd={{ "@context": "https://schema.org", "@type": "CollectionPage", name: "Articles" }}
+  jsonLd={{
+    "@context": "https://schema.org",
+    "@type": seo?.schemaType || "CollectionPage",
+    name: seo?.metaTitle || hero.title,
+    description: seo?.metaDescription || hero.description,
+  }}
 >
-  <PageHeader title="บทความและข่าวสาร" description="ติดตามข่าวสารและบทความเกี่ยวกับริบบอน" />
+  <PageHeader title={hero.title} description={hero.description} />
 
   <section class="section">
     <div class="container">
-      <Breadcrumb items={[{ label: "Articles" }]} />
+      <Breadcrumb items={[{ label: listing.breadcrumbLabel }]} />
 
       {isOffline && articles.length === 0 ? (
-        <OfflineNotice title="ไม่สามารถโหลดบทความได้" message="Unable to load articles." />
+        <OfflineNotice title={listing.offlineTitle} message={listing.offlineMessage} />
       ) : articles.length > 0 ? (
         <div class="articles-grid">
-          {articles.map((article) => <ArticleCard article={article} />)}
+          {articles.map((article) => <ArticleCard article={article} locale={lang} />)}
         </div>
       ) : (
         <div class="empty-state">
           <i class="fas fa-newspaper" style="font-size: 48px; color: var(--color-primary);"></i>
-          <p>ยังไม่มีบทความในขณะนี้</p>
+          <h2>{listing.emptyTitle}</h2>
+          <p>{listing.emptyDescription}</p>
         </div>
       )}
     </div>

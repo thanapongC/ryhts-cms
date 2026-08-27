@@ -1,30 +1,43 @@
 {
-  "collectionName": "components_privacy_request_type_option",
+  "collectionName": "components_privacy_request_type_options",
   "info": {
     "displayName": "Privacy Request Type Option",
+    "icon": "bulletList",
     "description": "Selectable request type option for the Privacy Request form"
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
   },
   "attributes": {
     "value": {
       "type": "enumeration",
-      "enum": ["access", "correction", "deletion", "restriction", "objection", "withdrawal"],
-      "required": true,
-      "description": "Request type value identifier"
+      "enum": [
+        "access",
+        "correction",
+        "deletion",
+        "restriction",
+        "objection",
+        "withdrawal"
+      ],
+      "default": "access"
     },
     "label": {
       "type": "string",
-      "localized": true,
-      "description": "Display label for this request type"
-    },
-    "isActive": {
-      "type": "boolean",
-      "default": true,
-      "description": "Show or hide this option"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "sortOrder": {
       "type": "integer",
-      "default": 0,
-      "description": "Display order (lower number appears first)"
+      "default": 0
+    },
+    "isActive": {
+      "type": "boolean",
+      "default": true
     }
   }
 }

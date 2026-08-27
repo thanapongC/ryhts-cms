@@ -2,45 +2,70 @@
   "collectionName": "components_shared_button_labels",
   "info": {
     "displayName": "Button Labels",
-    "description": "Shared CTA and action button labels across the site"
+    "icon": "cursor",
+    "description": "Global button and CTA labels"
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
   },
   "attributes": {
-    "contactUs": {
+    "freeTrialLabel": {
       "type": "string",
-      "description": "Contact us button label"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
-    "learnMore": {
+    "viewDetailsLabel": {
       "type": "string",
-      "description": "Learn more button label"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
-    "viewAll": {
+    "readMoreLabel": {
       "type": "string",
-      "description": "View all button label"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
-    "readMore": {
+    "contactOrderLabel": {
       "type": "string",
-      "description": "Read more button label"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
-    "backToHome": {
+    "tryFreeLabel": {
       "type": "string",
-      "description": "Back to home button label"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
-    "callNow": {
+    "viewAllLabel": {
       "type": "string",
-      "description": "Call now button label"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
-    "requestQuote": {
+    "subscribeLabel": {
       "type": "string",
-      "description": "Request quote button label"
-    },
-    "download": {
-      "type": "string",
-      "description": "Download button label"
-    },
-    "isActive": {
-      "type": "boolean",
-      "default": true,
-      "description": "Show or hide these button labels"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     }
   }
 }

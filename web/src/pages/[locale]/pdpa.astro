@@ -1,22 +1,26 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { safeGetPdpaSetting, getStrapiAbsoluteImageUrl } from "../../lib/api";
+import { safeGetPrivacyPolicy, getStrapiAbsoluteImageUrl, isPageDisabled } from "../../lib/api";
 import { isValidLocale, DEFAULT_LOCALE, type Locale } from "../../lib/i18n";
 import OfflineNotice from "../../components/OfflineNotice.astro";
+import PrivacyPolicyContent from "../../components/PrivacyPolicyContent.astro";
 
 const lang = (Astro.params.locale as Locale) || DEFAULT_LOCALE;
 if (!isValidLocale(lang)) return Astro.redirect(`/${DEFAULT_LOCALE}/pdpa`);
 
-const pdpaResult = await safeGetPdpaSetting(lang);
+const pdpaResult = await safeGetPrivacyPolicy(lang);
 const pdpa = pdpaResult.data;
+if (pdpaResult.ok && isPageDisabled(pdpa)) return new Response(null, { status: 404 });
 const seo = pdpa?.seo;
+const pageTitle = pdpa?.heroTitle || pdpa?.title || (lang === "en" ? "PDPA Policy" : "นโยบายคุ้มครองข้อมูลส่วนบุคคล");
+const pageDescription = pdpa?.heroSubtitle || pdpa?.description || "";
 
 const siteUrl = Astro.url.origin;
 ---
 
 <BaseLayout
-  title={seo?.metaTitle || pdpa?.companyName || "PDPA"}
-  description={seo?.metaDescription || "PDPA compliance policy"}
+  title={seo?.metaTitle || pageTitle}
+  description={seo?.metaDescription || pageDescription}
   ogImage={getStrapiAbsoluteImageUrl(seo?.ogImage) || undefined}
   robots={seo?.robots}
   locale={lang}
@@ -26,27 +30,12 @@ const siteUrl = Astro.url.origin;
     { lang: "x-default", href: `${siteUrl}/th/pdpa` },
   ]}
 >
-  <div class="page-header">
-    <div class="container"><h1>{pdpa?.companyName || "PDPA"}</h1></div>
-  </div>
-
-  <section class="section">
-    <div class="container">
-      <div class="breadcrumb"><a href={`/${lang}/`}>Home</a><span>/</span><span>PDPA</span></div>
-      {pdpaResult.isOffline && <OfflineNotice title="部分内容不可用" message="PDPA content may be unavailable." />}
-      <div class="policy-content">
-        {pdpa?.rightsText && <div class="policy-section"><h2>สิทธิของท่าน</h2><div class="rich-text" set:html={pdpa.rightsText} /></div>}
-        {pdpa?.thirdPartiesText && <div class="policy-section"><h2>การเปิดเผยข้อมูล</h2><div class="rich-text" set:html={pdpa.thirdPartiesText} /></div>}
-        {pdpa?.dpoName && <div class="dpo-info"><h2>ติดต่อ DPO</h2><p>{pdpa.dpoName} ({pdpa.dpoPosition})</p>{pdpa.dpoEmail && <p>Email: {pdpa.dpoEmail}</p>}</div>}
-      </div>
-    </div>
-  </section>
+  {pdpaResult.isOffline && !pdpa ? (
+    <OfflineNotice
+      title={lang === "en" ? "Unable to load" : "ไม่สามารถโหลดได้"}
+      message={lang === "en" ? "PDPA content may be unavailable." : "เนื้อหา PDPA อาจไม่พร้อมใช้งานในขณะนี้"}
+    />
+  ) : (
+    <PrivacyPolicyContent lang={lang} policy={pdpa} pageType="privacy" />
+  )}
 </BaseLayout>
-
-<style>
-  .policy-content { max-width: 800px; }
-  .policy-section { margin-bottom: 32px; }
-  .policy-section h2 { font-size: 20px; margin-bottom: 12px; }
-  .dpo-info { margin-top: 32px; padding: 20px; background: var(--color-bg-light); border-radius: var(--radius); }
-  .dpo-info h2 { font-size: 20px; margin-bottom: 12px; }
-</style>

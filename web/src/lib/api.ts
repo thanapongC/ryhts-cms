@@ -23,22 +23,42 @@ import {
   // Content types
   type AboutPage,
   type Article,
+  type BlogPage,
   type Brand,
   type Category,
   type ContactPage,
   type ContactFloating,
   type CookieCategory,
   type CookiePolicy,
+  type CookiePolicyCategory,
   type CookieSetting,
+  type DownloadItem,
+  type DownloadsPage,
   type Faq,
+  type HelpItem,
   type FooterSetting,
   type FreeTrial,
   type GlobalSetting,
+  type Homepage,
   type Navigation,
   type Partner,
   type PdpaSetting,
+  type PdpaSettings,
   type PrivacyPolicy,
+  type PrivacyRequest,
+  type PrivacyRequestTip,
+  type PrivacyRequestTypeOption,
   type Product,
+  type ProductPage,
+  type ProductsServices,
+  type Feature,
+  type Benefit,
+  type Video,
+  type PricingFeature,
+  type PricingPlan,
+  type PageSectionItem,
+  type ReleaseChange,
+  type SoftwareRelease,
   type SupportPage,
   type TeamMember,
   type TermsOfService,
@@ -49,6 +69,8 @@ import {
   type SupportFaqSection,
   type SupportHelpCenterSection,
   type SupportContactSection,
+  type BlogHeroSection,
+  type BlogListingSection,
   // Components
   type SeoMeta,
   type SeoConfig,
@@ -74,19 +96,25 @@ import {
 import {
   mockGlobalSetting,
   mockFooterSetting,
-  mockProducts,
-  mockCategories,
+  mockFreeTrial,
   mockArticles,
+  mockArticlesByLocale,
+  mockBlogPage,
   mockAboutPage,
   mockContactPage,
   mockPrivacyPolicy,
-  mockPdpaSetting,
+  mockPrivacyRequest,
   mockTermsOfService,
   mockCookiePolicy,
-  mockCookieCategories,
   mockCookieSetting,
+  mockDownloadItemsByLocale,
+  mockDownloadsPage,
+  mockSoftwareReleasesByLocale,
   mockContactFloating,
+  mockHomepage,
   mockNavigation,
+  mockProductsServices,
+  mockSupportPage,
 } from "./mock-data";
 
 // ─── Re-export helpers for backward compat ──────────────────────────
@@ -101,19 +129,39 @@ export {
   type ApiResult,
   type AboutPage,
   type Article,
+  type BlogPage,
   type Brand,
   type Category,
   type ContactPage,
   type CookieCategory,
   type CookiePolicy,
+  type CookiePolicyCategory,
+  type DownloadItem,
+  type DownloadsPage,
   type Faq,
+  type HelpItem,
   type FooterSetting,
   type FreeTrial,
   type GlobalSetting,
+  type Homepage,
   type Partner,
   type PdpaSetting,
+  type PdpaSettings,
   type PrivacyPolicy,
+  type PrivacyRequest,
+  type PrivacyRequestTip,
+  type PrivacyRequestTypeOption,
   type Product,
+  type ProductPage,
+  type ProductsServices,
+  type Feature,
+  type Benefit,
+  type Video,
+  type PricingFeature,
+  type PricingPlan,
+  type PageSectionItem,
+  type ReleaseChange,
+  type SoftwareRelease,
   type TeamMember,
   type TermsOfService,
   type Testimonial,
@@ -146,7 +194,13 @@ export {
   type SupportFaqSection,
   type SupportHelpCenterSection,
   type SupportContactSection,
+  type BlogHeroSection,
+  type BlogListingSection,
 };
+
+export function isPageDisabled(page: { isPageEnabled?: boolean } | null | undefined): boolean {
+  return page?.isPageEnabled === false;
+}
 
 // ─── Populate Lists (integate-rule.md §3) ───────────────────────────
 //
@@ -170,23 +224,51 @@ const POPULATE = {
     "legalLinks",
   ],
   aboutPage: [
-    "featuredImage",
-    "stats",
     "teamMembers",
-    "teamMembers.avatar",
+    "teamMembers.photo",
     "partners",
     "partners.logo",
-    "timelineMilestones",
-    "timelineMilestones.image",
+    "milestones",
+    "milestones.image",
+    "contactInfo",
     "seo",
     "seo.ogImage",
-    "seo.twitterImage",
+  ],
+  homepage: [
+    "heroBackground",
+    "heroStats",
+    "features",
+    "features.icon",
+    "products",
+    "products.thumbnail",
+    "products.seo",
+    "benefits",
+    "benefits.icon",
+    "video",
+    "video.thumbnail",
+    "testimonials",
+    "testimonials.avatar",
+    "pricingPlans",
+    "pricingPlans.icon",
+    "pricingPlans.features",
+    "pricingPlans.features.feature",
+    "seo",
+    "seo.ogImage",
+  ],
+  blogPage: [
+    "heroSection",
+    "listingSection",
+    "featuredPosts",
+    "featuredPosts.featuredImage",
+    "featuredPosts.category",
+    "featuredPosts.seo",
+    "seo",
+    "seo.ogImage",
   ],
   contactPage: ["featuredImage", "seo", "seo.ogImage"],
   freeTrial: [
-    "featuredImage",
     "trustItems",
-    "trialFeatures",
+    "features",
     "formLabels",
     "testimonials",
     "testimonials.avatar",
@@ -194,21 +276,41 @@ const POPULATE = {
     "seo.ogImage",
   ],
   privacyPolicy: [
-    "featuredImage",
-    "policySections",
+    "sections",
     "appliesToProducts",
+    "appliesToProducts.thumbnail",
     "relatedLinks",
-    "relatedLinks.product",
-    "contactInfo",
+    "legalContactInfo",
     "seo",
     "seo.ogImage",
   ],
-  termsOfService: ["featuredImage", "seo", "seo.ogImage"],
-  cookiePolicy: ["featuredImage", "seo", "seo.ogImage"],
-  pdpaSetting: [
-    "contactInfo",
-    "consentBanner",
+  privacyRequest: [
+    "settings",
+    "settings.beforeSubmitTips",
+    "settings.requestTypes",
+    "settings.legalContactInfo",
+    "seo",
+    "seo.ogImage",
+  ],
+  termsOfService: [
+    "sections",
     "appliesToProducts",
+    "appliesToProducts.thumbnail",
+    "relatedLinks",
+    "legalContactInfo",
+    "seo",
+    "seo.ogImage",
+  ],
+  cookiePolicy: ["categories", "sections", "seo", "seo.ogImage"],
+  downloadsPage: [
+    "documents",
+    "documents.file",
+    "latestVersion",
+    "latestVersion.downloadFile",
+    "latestVersion.changes",
+    "releaseNotes",
+    "releaseNotes.downloadFile",
+    "releaseNotes.changes",
     "seo",
     "seo.ogImage",
   ],
@@ -221,11 +323,30 @@ const POPULATE = {
     "seo",
     "seo.ogImage",
   ],
+  productsServices: [
+    "heroStats",
+    "products",
+    "products.thumbnail",
+    "products.seo",
+    "whyStats",
+    "seo",
+    "seo.ogImage",
+  ],
+  productPage: [
+    "thumbnail",
+    "heroBackground",
+    "sections",
+    "sections.image",
+    "testimonials",
+    "testimonials.avatar",
+    "contactInfo",
+    "seo",
+    "seo.ogImage",
+  ],
   article: ["featuredImage", "category", "seo", "seo.ogImage"],
-  category: ["image", "products", "seo", "seo.ogImage"],
-  brand: ["logo", "products", "seo", "seo.ogImage"],
-  cookieCategory: [],
-  faq: ["items", "seo", "seo.ogImage"],
+  downloadItem: ["file"],
+  softwareRelease: ["downloadFile", "changes"],
+  faq: [],
   testimonial: ["avatar", "freeTrialPages"],
   teamMember: ["avatar", "aboutPage"],
   partner: ["logo", "aboutPage"],
@@ -235,7 +356,6 @@ const POPULATE = {
     "statusCard",
     "faqSection",
     "faqs",
-    "faqs.items",
     "helpCenterSection",
     "helpResources",
     "contactSection",
@@ -265,9 +385,25 @@ export async function getFooterSetting(locale: Locale = "th") {
 }
 
 export async function getAboutPage(locale: Locale = "th") {
-  const res = await fetchStrapiSingle<AboutPage>("about-page", {
+  const res = await fetchStrapiSingle<AboutPage>("about-us", {
     locale,
     populate: [...POPULATE.aboutPage],
+  });
+  return res.data;
+}
+
+export async function getHomepage(locale: Locale = "th") {
+  const res = await fetchStrapiSingle<Homepage>("homepage", {
+    locale,
+    populate: [...POPULATE.homepage],
+  });
+  return res.data;
+}
+
+export async function getBlogPage(locale: Locale = "th") {
+  const res = await fetchStrapiSingle<BlogPage>("blog-page", {
+    locale,
+    populate: [...POPULATE.blogPage],
   });
   return res.data;
 }
@@ -289,15 +425,23 @@ export async function getFreeTrial(locale: Locale = "th") {
 }
 
 export async function getPrivacyPolicy(locale: Locale = "th") {
-  const res = await fetchStrapiSingle<PrivacyPolicy>("privacy-policy", {
+  const res = await fetchStrapiSingle<PrivacyPolicy>("privacy-setting", {
     locale,
     populate: [...POPULATE.privacyPolicy],
   });
   return res.data;
 }
 
+export async function getPrivacyRequest(locale: Locale = "th") {
+  const res = await fetchStrapiSingle<PrivacyRequest>("privacy-request", {
+    locale,
+    populate: [...POPULATE.privacyRequest],
+  });
+  return res.data;
+}
+
 export async function getTermsOfService(locale: Locale = "th") {
-  const res = await fetchStrapiSingle<TermsOfService>("terms-of-service", {
+  const res = await fetchStrapiSingle<TermsOfService>("terms-service", {
     locale,
     populate: [...POPULATE.termsOfService],
   });
@@ -312,10 +456,10 @@ export async function getCookiePolicy(locale: Locale = "th") {
   return res.data;
 }
 
-export async function getPdpaSetting(locale: Locale = "th") {
-  const res = await fetchStrapiSingle<PdpaSetting>("pdpa-setting", {
+export async function getDownloadsPage(locale: Locale = "th") {
+  const res = await fetchStrapiSingle<DownloadsPage>("downloads-page", {
     locale,
-    populate: [...POPULATE.pdpaSetting],
+    populate: [...POPULATE.downloadsPage],
   });
   return res.data;
 }
@@ -340,6 +484,14 @@ export async function getSupportPage(locale: Locale = "th") {
   const res = await fetchStrapiSingle<SupportPage>("support-page", {
     locale,
     populate: [...POPULATE.supportPage],
+  });
+  return res.data;
+}
+
+export async function getProductsServices(locale: Locale = "th") {
+  const res = await fetchStrapiSingle<ProductsServices>("products-services", {
+    locale,
+    populate: [...POPULATE.productsServices],
   });
   return res.data;
 }
@@ -369,56 +521,41 @@ export async function getProducts(
   page = 1,
   pageSize = 12,
 ) {
-  return fetchStrapiCollection<Product>("products", {
+  return fetchStrapiCollection<ProductPage>("product-pages", {
     locale,
-    populate: [...POPULATE.product],
-    sort: "publishedAt:desc",
+    populate: [...POPULATE.productPage],
+    filters: { "filters[isActive][$ne]": "false" },
+    sort: "sortOrder:asc",
     pagination: { page, pageSize },
   });
 }
 
 export async function getFeaturedProducts(locale: Locale = "th") {
-  const res = await fetchStrapiCollection<Product>("products", {
+  const res = await fetchStrapiCollection<ProductPage>("product-pages", {
     locale,
-    populate: [...POPULATE.product],
-    filters: { "filters[isFeatured][$eq]": "true" },
-    sort: "publishedAt:desc",
+    populate: [...POPULATE.productPage],
+    filters: { "filters[isActive][$ne]": "false" },
+    sort: "sortOrder:asc",
   });
   return res.data;
 }
 
 export async function getProductBySlug(slug: string, locale: Locale = "th") {
-  const res = await fetchStrapiCollection<Product>("products", {
+  const res = await fetchStrapiCollection<ProductPage>("product-pages", {
     locale,
-    populate: [...POPULATE.product],
-    filters: { "filters[slug][$eq]": slug },
+    populate: [...POPULATE.productPage],
+    filters: { "filters[slug][$eq]": slug, "filters[isActive][$ne]": "false" },
   });
   return res.data?.[0] || null;
 }
 
-export async function getCategories(locale: Locale = "th") {
-  const res = await fetchStrapiCollection<Category>("categories", {
+export async function getProductPageBySlug(slug: string, locale: Locale = "th") {
+  const res = await fetchStrapiCollection<ProductPage>("product-pages", {
     locale,
-    populate: [...POPULATE.category],
-  });
-  return res.data;
-}
-
-export async function getCategoryBySlug(slug: string, locale: Locale = "th") {
-  const res = await fetchStrapiCollection<Category>("categories", {
-    locale,
-    populate: [...POPULATE.category],
-    filters: { "filters[slug][$eq]": slug },
+    populate: [...POPULATE.productPage],
+    filters: { "filters[slug][$eq]": slug, "filters[isActive][$ne]": "false" },
   });
   return res.data?.[0] || null;
-}
-
-export async function getBrands(locale: Locale = "th") {
-  const res = await fetchStrapiCollection<Brand>("brands", {
-    locale,
-    populate: [...POPULATE.brand],
-  });
-  return res.data;
 }
 
 export async function getArticles(
@@ -426,32 +563,39 @@ export async function getArticles(
   page = 1,
   pageSize = 12,
 ) {
-  return fetchStrapiCollection<Article>("articles", {
+  return fetchStrapiCollection<Article>("blog-posts", {
     locale,
     populate: [...POPULATE.article],
+    filters: { "filters[isActive][$ne]": "false" },
     sort: "publishedAt:desc",
     pagination: { page, pageSize },
   });
 }
 
 export async function getArticleBySlug(slug: string, locale: Locale = "th") {
-  const res = await fetchStrapiCollection<Article>("articles", {
+  const res = await fetchStrapiCollection<Article>("blog-posts", {
     locale,
     populate: [...POPULATE.article],
-    filters: { "filters[slug][$eq]": slug },
+    filters: { "filters[slug][$eq]": slug, "filters[isActive][$ne]": "false" },
   });
   return res.data?.[0] || null;
 }
 
-export async function getCookieCategories(locale: Locale = "th") {
-  const res = await fetchStrapiCollection<CookieCategory>(
-    "cookie-categories",
-    {
-      locale,
-      populate: [...POPULATE.cookieCategory],
-      sort: "sortOrder:asc",
-    },
-  );
+export async function getDownloadItems(locale: Locale = "th") {
+  const res = await fetchStrapiCollection<DownloadItem>("download-items", {
+    locale,
+    populate: [...POPULATE.downloadItem],
+    sort: "sortOrder:asc",
+  });
+  return res.data;
+}
+
+export async function getSoftwareReleases(locale: Locale = "th") {
+  const res = await fetchStrapiCollection<SoftwareRelease>("software-releases", {
+    locale,
+    populate: [...POPULATE.softwareRelease],
+    sort: "releaseDate:desc",
+  });
   return res.data;
 }
 
@@ -469,7 +613,7 @@ export async function getFaq(locale: Locale = "th") {
 // CMS value → i18n/static value → safe default
 
 export async function safeGetGlobalSetting(locale: Locale = "th") {
-  return safeFetch(() => getGlobalSetting(locale), mockGlobalSetting);
+  return safeFetch(() => getGlobalSetting(locale), mockGlobalSetting[locale]);
 }
 
 export async function safeGetFooterSetting(locale: Locale = "th") {
@@ -477,46 +621,49 @@ export async function safeGetFooterSetting(locale: Locale = "th") {
 }
 
 export async function safeGetAboutPage(locale: Locale = "th") {
-  return safeFetch(() => getAboutPage(locale), mockAboutPage);
+  return safeFetch(() => getAboutPage(locale), mockAboutPage[locale]);
+}
+
+export async function safeGetHomepage(locale: Locale = "th") {
+  return safeFetch(() => getHomepage(locale), mockHomepage[locale]);
+}
+
+export async function safeGetBlogPage(locale: Locale = "th") {
+  return safeFetch(() => getBlogPage(locale), mockBlogPage[locale]);
 }
 
 export async function safeGetContactPage(locale: Locale = "th") {
-  return safeFetch(() => getContactPage(locale), mockContactPage);
+  return safeFetch(() => getContactPage(locale), mockContactPage[locale]);
 }
 
 export async function safeGetFreeTrial(locale: Locale = "th") {
-  return safeFetch(
-    () => getFreeTrial(locale),
-    null as FreeTrial | null,
-  );
+  return safeFetch(() => getFreeTrial(locale), mockFreeTrial[locale]);
 }
 
 export async function safeGetPrivacyPolicy(locale: Locale = "th") {
-  return safeFetch(() => getPrivacyPolicy(locale), mockPrivacyPolicy);
+  return safeFetch(() => getPrivacyPolicy(locale), mockPrivacyPolicy[locale]);
+}
+
+export async function safeGetPrivacyRequest(locale: Locale = "th") {
+  return safeFetch(() => getPrivacyRequest(locale), mockPrivacyRequest[locale]);
 }
 
 export async function safeGetTermsOfService(locale: Locale = "th") {
-  return safeFetch(() => getTermsOfService(locale), mockTermsOfService);
+  return safeFetch(() => getTermsOfService(locale), mockTermsOfService[locale]);
 }
 
 export async function safeGetCookiePolicy(locale: Locale = "th") {
-  return safeFetch(() => getCookiePolicy(locale), mockCookiePolicy);
+  return safeFetch(() => getCookiePolicy(locale), mockCookiePolicy[locale]);
 }
 
-export async function safeGetPdpaSetting(locale: Locale = "th") {
-  return safeFetch(() => getPdpaSetting(locale), mockPdpaSetting);
+export async function safeGetDownloadsPage(locale: Locale = "th") {
+  return safeFetch(() => getDownloadsPage(locale), mockDownloadsPage[locale]);
 }
 
 export async function safeGetFeaturedProducts(locale: Locale = "th") {
   return safeFetch(
-    async () => {
-      const data = await getFeaturedProducts(locale);
-      if (!data || data.length === 0) {
-        return mockProducts.filter((p) => p.isFeatured);
-      }
-      return data;
-    },
-    mockProducts.filter((p) => p.isFeatured),
+    () => getFeaturedProducts(locale),
+    filterAndSort(mockProductsServices[locale].products || []),
   );
 }
 
@@ -525,32 +672,19 @@ export async function safeGetProducts(
   page = 1,
   pageSize = 12,
 ) {
+  const fallbackProducts = filterAndSort(mockProductsServices[locale].products || []);
   return safeFetch(
     async () => {
-      const result = await getProducts(locale, page, pageSize);
-      if (!result.data || result.data.length === 0) {
-        return {
-          data: mockProducts,
-          meta: {
-            pagination: {
-              page: 1,
-              pageSize,
-              pageCount: 1,
-              total: mockProducts.length,
-            },
-          },
-        };
-      }
-      return result;
+      return getProducts(locale, page, pageSize);
     },
     {
-      data: mockProducts,
+      data: fallbackProducts,
       meta: {
         pagination: {
           page: 1,
           pageSize,
           pageCount: 1,
-          total: mockProducts.length,
+          total: fallbackProducts.length,
         },
       },
     },
@@ -558,14 +692,7 @@ export async function safeGetProducts(
 }
 
 export async function safeGetCategories(locale: Locale = "th") {
-  return safeFetch(
-    async () => {
-      const data = await getCategories(locale);
-      if (!data || data.length === 0) return mockCategories;
-      return data;
-    },
-    mockCategories,
-  );
+  return safeFetch(async () => [], []);
 }
 
 export async function safeGetArticles(
@@ -573,32 +700,19 @@ export async function safeGetArticles(
   page = 1,
   pageSize = 12,
 ) {
+  const fallbackArticles = mockArticlesByLocale[locale];
   return safeFetch(
     async () => {
-      const result = await getArticles(locale, page, pageSize);
-      if (!result.data || result.data.length === 0) {
-        return {
-          data: mockArticles,
-          meta: {
-            pagination: {
-              page: 1,
-              pageSize,
-              pageCount: 1,
-              total: mockArticles.length,
-            },
-          },
-        };
-      }
-      return result;
+      return getArticles(locale, page, pageSize);
     },
     {
-      data: mockArticles,
+      data: fallbackArticles,
       meta: {
         pagination: {
           page: 1,
           pageSize,
           pageCount: 1,
-          total: mockArticles.length,
+          total: fallbackArticles.length,
         },
       },
     },
@@ -609,13 +723,27 @@ export async function safeGetProductBySlug(
   slug: string,
   locale: Locale = "th",
 ) {
+  const fallbackProducts = mockProductsServices[locale].products || [];
   return safeFetch(
     async () => {
       const data = await getProductBySlug(slug, locale);
-      if (!data) return mockProducts.find((p) => p.slug === slug) || null;
-      return data;
+      return data || null;
     },
-    mockProducts.find((p) => p.slug === slug) || null,
+    fallbackProducts.find((p) => p.slug === slug) || null,
+  );
+}
+
+export async function safeGetProductPageBySlug(
+  slug: string,
+  locale: Locale = "th",
+) {
+  const fallbackProducts = mockProductsServices[locale].products || [];
+  return safeFetch(
+    async () => {
+      const data = await getProductPageBySlug(slug, locale);
+      return data || null;
+    },
+    fallbackProducts.find((p) => p.slug === slug) || null,
   );
 }
 
@@ -623,24 +751,39 @@ export async function safeGetArticleBySlug(
   slug: string,
   locale: Locale = "th",
 ) {
+  const fallbackArticles = mockArticlesByLocale[locale];
   return safeFetch(
     async () => {
       const data = await getArticleBySlug(slug, locale);
-      if (!data) return mockArticles.find((a) => a.slug === slug) || null;
-      return data;
+      return data || null;
     },
-    mockArticles.find((a) => a.slug === slug) || null,
+    fallbackArticles.find((a) => a.slug === slug) || null,
   );
 }
 
 export async function safeGetCookieCategories(locale: Locale = "th") {
+  return safeFetch(async () => [], []);
+}
+
+export async function safeGetDownloadItems(locale: Locale = "th") {
   return safeFetch(
     async () => {
-      const data = await getCookieCategories(locale);
-      if (!data || data.length === 0) return mockCookieCategories;
+      const data = await getDownloadItems(locale);
+      if (!data || data.length === 0) return mockDownloadItemsByLocale[locale];
       return data;
     },
-    mockCookieCategories,
+    mockDownloadItemsByLocale[locale],
+  );
+}
+
+export async function safeGetSoftwareReleases(locale: Locale = "th") {
+  return safeFetch(
+    async () => {
+      const data = await getSoftwareReleases(locale);
+      if (!data || data.length === 0) return mockSoftwareReleasesByLocale[locale];
+      return data;
+    },
+    mockSoftwareReleasesByLocale[locale],
   );
 }
 
@@ -652,15 +795,19 @@ export async function safeGetFaq(locale: Locale = "th") {
 }
 
 export async function safeGetCookieSetting(locale: Locale = "th") {
-  return safeFetch(() => getCookieSetting(locale), mockCookieSetting);
+  return safeFetch(() => getCookieSetting(locale), mockCookieSetting[locale]);
 }
 
 export async function safeGetContactFloating(locale: Locale = "th") {
-  return safeFetch(() => getContactFloating(locale), mockContactFloating);
+  return safeFetch(() => getContactFloating(locale), mockContactFloating[locale]);
 }
 
 export async function safeGetSupportPage(locale: Locale = "th") {
-  return safeFetch(() => getSupportPage(locale), null as SupportPage | null);
+  return safeFetch(() => getSupportPage(locale), mockSupportPage[locale]);
+}
+
+export async function safeGetProductsServices(locale: Locale = "th") {
+  return safeFetch(() => getProductsServices(locale), mockProductsServices[locale]);
 }
 
 export async function safeGetNavigation(locale: Locale = "th") {

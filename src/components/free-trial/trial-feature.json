@@ -1,32 +1,34 @@
 {
-  "collectionName": "components_free_trial_trial_feature",
+  "collectionName": "components_free_trial_trial_features",
   "info": {
     "displayName": "Trial Feature",
-    "description": "Feature highlight for Free Trial page"
+    "icon": "star"
   },
   "attributes": {
     "title": {
       "type": "string",
       "required": true,
-      "description": "Feature name (e.g. Barcode Printing, Label Design)"
-    },
-    "icon": {
-      "type": "string",
-      "description": "Font Awesome icon class"
-    },
-    "description": {
-      "type": "text",
-      "description": "Short feature description"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "sortOrder": {
       "type": "integer",
-      "default": 0,
-      "description": "Display order (lower number appears first)"
+      "default": 0
     },
     "isActive": {
       "type": "boolean",
-      "default": true,
-      "description": "Show or hide this feature"
+      "default": true
+    },
+    "description": {
+      "type": "text",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     }
   }
 }

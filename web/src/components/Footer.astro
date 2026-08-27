@@ -1,13 +1,14 @@
 ---
 import { getLocale, type Locale } from "../lib/i18n";
 import { getGlobalSetting, getFooterSetting, getStrapiAbsoluteImageUrl } from "../lib/api";
+import type { FooterLink, FooterSetting, GlobalSetting } from "../lib/api";
 import { siteConfig as seoConfig } from "../lib/seo/config";
 
 interface Props {
   lang?: Locale;
   locale?: Locale;
-  footerSetting?: any;
-  globalSetting?: any;
+  footerSetting?: FooterSetting | null;
+  globalSetting?: GlobalSetting | null;
   logoUrl?: string;
   siteName?: string;
   siteDescription?: string;
@@ -30,20 +31,22 @@ if (!footerProp || !globalProp) {
   }
 }
 
-// Extract contact info from ContactInfo[] array by label matching
-const contactItems = (cmsSettings?.contactInfo || [])
-  .filter((item) => item.isActive !== false)
-  .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
-
-function findContactValue(labelPatterns: string[]): string {
-  const item = contactItems.find((item) =>
-    labelPatterns.some((pattern) => item.label?.toLowerCase().includes(pattern.toLowerCase()))
-  );
-  return item?.value || "";
-}
-
 const logoUrl = logoProp || getStrapiAbsoluteImageUrl(cmsSettings?.siteLogo) || "https://istockexpress.com/wp-content/uploads/2025/06/427512075_725937109519350_4928615355768631556_n-e1750601800316.jpg";
-const socialLinks = (footerSettings as any)?.socialLinks || {};
+const contactInfo = cmsSettings?.contactInfo || null;
+const defaultContact = {
+  heading: lang === "th" ? "ติดต่อฝ่ายขาย Ryhts" : "Ryhts Sales",
+  phone: "094-624-6649",
+  email: "sales@ryhts.com",
+  lineUrl: "https://lin.ee/xnw0e2Y",
+  facebookUrl: "https://www.facebook.com/RyhtsRibbon",
+};
+const socialLinks = {
+  ...(contactInfo?.socialLinks || {}),
+  facebook: cmsSettings?.seoConfig?.facebookUrl || contactInfo?.socialLinks?.facebook || defaultContact.facebookUrl,
+  line: cmsSettings?.seoConfig?.lineUrl || contactInfo?.socialLinks?.line || defaultContact.lineUrl,
+  linkedin: cmsSettings?.seoConfig?.linkedinUrl || contactInfo?.socialLinks?.linkedin,
+  youtube: cmsSettings?.seoConfig?.youtubeUrl || contactInfo?.socialLinks?.youtube,
+};
 const footerStats = (footerSettings?.stats?.length ? footerSettings.stats : cmsSettings?.stats || [])
   .slice()
   .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
@@ -54,27 +57,13 @@ const legalLinks = footerSettings?.legalLinks
 
 const fallbackFooterSections = [
   {
-    title: lang === "th" ? "ผลิตภัณฑ์" : "Products",
+    title: "Links",
     links: [
-      { label: t.products.istockExpress, url: "/istock-express/", sortOrder: 1 },
-      { label: t.products.istockExpressPro, url: "/istock-express-pro/", sortOrder: 2 },
-      { label: t.products.istockWMS, url: "/istock-wms/", sortOrder: 3 },
-      { label: t.products.istockSalesOrder, url: "/istock-sales-order/", sortOrder: 4 },
-      { label: t.products.istockTMS, url: "/istock-tms/", sortOrder: 5 },
-      { label: t.products.rfidSystem, url: "/rfid-system/", sortOrder: 6 },
+      { label: "Our company", url: "/about/", sortOrder: 1 },
+      { label: "News", url: "/articles/", sortOrder: 2 },
+      { label: "Contact Ryhts", url: "/contact/", sortOrder: 3 },
     ],
     sortOrder: 1,
-  },
-  {
-    title: lang === "th" ? "ซัพพอร์ต" : "Support",
-    links: [
-      { label: t.nav.support, url: "/support/", sortOrder: 1 },
-      { label: "FAQ", url: "/support/#faqs-section", sortOrder: 2 },
-      { label: lang === "th" ? "ศูนย์ช่วยเหลือ" : "Help Center", url: "/support/#help-center", sortOrder: 3 },
-      { label: t.nav.downloads, url: "/downloads/", sortOrder: 4 },
-      { label: t.nav.freeTrial, url: "/free-trial/", sortOrder: 5 },
-    ],
-    sortOrder: 2,
   },
 ];
 
@@ -93,21 +82,22 @@ const footerSections = (footerSettings?.footerSections?.length ? footerSettings.
 function normalizeInternalUrl(url?: string) {
   if (!url) return "#";
   if (/^(https?:|mailto:|tel:|#)/.test(url)) return url;
-  return url.startsWith("/") ? `${t.home}${url.replace(/^\//, "")}` : url;
+  const path = url.replace(/^\/(th|en)\//, "/");
+  return path.startsWith("/") ? `${t.home}${path.replace(/^\//, "")}` : path;
 }
 
-function getFooterLinkUrl(link: { url?: string; productPage?: { slug?: string } }) {
+function getFooterLinkUrl(link: FooterLink) {
   if (link.productPage?.slug) return `${t.home}${link.productPage.slug}/`;
   return normalizeInternalUrl(link.url);
 }
 
-const contactAddress = findContactValue(["address", "ที่อยู่"]) || t.footer.address;
-const contactPhone = findContactValue(["phone", "tel", "โทรศัพท์"]) || t.footer.phone;
-const contactEmail = findContactValue(["email", "mail", "อีเมล"]) || t.footer.email;
-const contactHours = findContactValue(["hour", "time", "เวลา", "business"]) || t.footer.hours;
+const contactAddress = contactInfo?.address || "";
+const contactPhone = contactInfo?.phone || defaultContact.phone;
+const contactEmail = contactInfo?.email || defaultContact.email;
+const contactHours = contactInfo?.businessHours || "";
 const contactPhoneHref = `tel:${contactPhone.replace(/[^\d+]/g, "")}`;
-const primaryCtaHref = normalizeInternalUrl(footerSettings?.primaryCtaUrl || "free-trial/");
-const secondaryCtaHref = normalizeInternalUrl(footerSettings?.secondaryCtaUrl || "https://lin.ee/Kd8yzFQ");
+const primaryCtaHref = normalizeInternalUrl(footerSettings?.primaryCtaUrl || "#");
+const secondaryCtaHref = normalizeInternalUrl(footerSettings?.secondaryCtaUrl || defaultContact.lineUrl);
 const isSecondaryCtaExternal = /^(https?:)?\/\//.test(secondaryCtaHref);
 ---
 
@@ -118,22 +108,22 @@ const isSecondaryCtaExternal = /^(https?:)?\/\//.test(secondaryCtaHref);
     <div class="footer-cta-content">
       <span class="footer-cta-badge">
         <span class="footer-cta-dot"></span>
-        {footerSettings?.ctaBadge || (lang === "th" ? "เริ่มต้นเลย" : "Get Started")}
+        {footerSettings?.ctaBadge || (lang === "th" ? "รับข่าวสาร" : "Newsletter")}
       </span>
-      <h2>{footerSettings?.ctaTitle || (lang === "th" ? "พร้อมเริ่มต้นใช้ iStock Express หรือยัง?" : "Ready to Start with iStock Express?")}</h2>
-      <p>{footerSettings?.ctaDescription || (lang === "th" ? "ธุรกิจของคุณไม่ควรหยุดเพราะ Stock พลาด เริ่มใช้ฟรีทันที!" : "Your business shouldn't stop because of stock mistakes. Start using for free now!")}</p>
+      <h2>{footerSettings?.ctaTitle || (lang === "th" ? "กดรับสมัครข่าวสารจากเรา" : "Subscribe to our newsletter")}</h2>
+      <p>{footerSettings?.ctaDescription || (lang === "th" ? "สมัครรับข่าวสารและติดตามสินค้าออกใหม่" : "Subscribe for news and new product updates")}</p>
       <div class="footer-cta-buttons">
         <a href={primaryCtaHref} class="btn btn-primary btn-lg">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polygon points="5 3 19 12 5 21 5 3"></polygon>
           </svg>
-          {footerSettings?.primaryCtaLabel || (lang === "th" ? "ทดลองใช้งานฟรี" : "Try for Free")}
+          {footerSettings?.primaryCtaLabel || (lang === "th" ? "สมัครรับข่าวสาร" : "Subscribe")}
         </a>
         <a href={secondaryCtaHref} target={isSecondaryCtaExternal ? "_blank" : "_self"} rel={isSecondaryCtaExternal ? "noopener noreferrer" : undefined} class="btn btn-outline-light btn-lg">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
           </svg>
-          {footerSettings?.secondaryCtaLabel || (lang === "th" ? "ติดต่อสั่งซื้อ" : "Contact to Order")}
+          {footerSettings?.secondaryCtaLabel || (lang === "th" ? "ติดต่อฝ่ายขาย Ryhts" : "Contact Ryhts Sales")}
         </a>
       </div>
     </div>
@@ -232,8 +222,8 @@ const isSecondaryCtaExternal = /^(https?:)?\/\//.test(secondaryCtaHref);
         </a>
         <p class="footer-desc">
           {footerSettings?.companyDescription || (lang === "th" 
-            ? "ระบบบริหารจัดการสต็อกสินค้าสมัยใหม่ ช่วยเพิ่มประสิทธิภาพในการทำงาน ลดต้นทุนและเพิ่มผลกำไร"
-            : "Modern inventory management system that boosts efficiency, reduces costs, and increases profits")}
+            ? "จำหน่ายริบบอนหรือผ้าหมึกพิมพ์สำหรับใช้กับเครื่องพิมพ์บาร์โค้ดทุกขนาด มีให้ท่านเลือกใช้หลายชนิด\nไรต์ส (ryhts) เรามุ่งมั่นที่จะพัฒนาสินค้านำเข้าที่ได้มาตรฐาน และให้บริการที่ตอบโจทย์ ช่วยให้การทำงานของท่านได้สะดวกรวดเร็วและมีประสิทธิภาพที่ดีขึ้น"
+            : "Supplier of ribbons and ink ribbons for barcode printers in every size, with many types to choose from. Ryhts develops imported products to a reliable standard and provides service that helps your work run faster and more efficiently.")}
         </p>
         <div class="footer-social">
           {socialLinks.facebook && (
@@ -289,15 +279,17 @@ const isSecondaryCtaExternal = /^(https?:)?\/\//.test(secondaryCtaHref);
 
       <!-- Contact Info -->
       <div class="footer-contact">
-        <h4>{lang === "th" ? "ติดต่อเรา" : "Contact Us"}</h4>
+        <h4>{defaultContact.heading}</h4>
         <ul>
-          <li>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-              <circle cx="12" cy="10" r="3"></circle>
-            </svg>
-            <span>{contactAddress}</span>
-          </li>
+          {contactAddress && (
+            <li>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+              <span>{contactAddress}</span>
+            </li>
+          )}
           <li>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
@@ -311,13 +303,15 @@ const isSecondaryCtaExternal = /^(https?:)?\/\//.test(secondaryCtaHref);
             </svg>
             <a href={`mailto:${contactEmail}`}>{contactEmail}</a>
           </li>
-          <li>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"></circle>
-              <polyline points="12 6 12 12 16 14"></polyline>
-            </svg>
-            <span>{contactHours}</span>
-          </li>
+          {contactHours && (
+            <li>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+              <span>{contactHours}</span>
+            </li>
+          )}
         </ul>
       </div>
     </div>
@@ -328,7 +322,7 @@ const isSecondaryCtaExternal = /^(https?:)?\/\//.test(secondaryCtaHref);
 <div class="footer-bottom">
   <div class="container">
     <div class="footer-bottom-inner">
-      <p>{footerSettings?.copyright || `© ${new Date().getFullYear()} ${seoConfig?.brandName || "Icon Solutions Co., Ltd."}. ${lang === "th" ? "สงวนลิขสิทธิ์" : "All rights reserved"}`}</p>
+      <p>{footerSettings?.copyright || "All Rights Reserved ©2026 | RYHTS | ryhts.com"}</p>
       <div class="footer-legal">
         {legalLinks.length > 0 ? legalLinks.map((link) => (
           <a
@@ -340,7 +334,7 @@ const isSecondaryCtaExternal = /^(https?:)?\/\//.test(secondaryCtaHref);
           </a>
         )) : (
           <>
-            <a href={`${t.home}privacy/`}>{lang === "th" ? "นโยบายความเป็นส่วนตัว" : "Privacy Policy"}</a>
+            <a href={`${t.home}privacy-policy/`}>{lang === "th" ? "นโยบายความเป็นส่วนตัว" : "Privacy Policy"}</a>
             <a href={`${t.home}cookie-policy/`}>{lang === "th" ? "นโยบายคุกกี้" : "Cookie Policy"}</a>
             <a href={`${t.home}privacy-request/`}>{lang === "th" ? "คำขอข้อมูล" : "Data Request"}</a>
             <a href={`${t.home}terms-of-service/`}>{lang === "th" ? "เงื่อนไขการให้บริการ" : "Terms of Service"}</a>

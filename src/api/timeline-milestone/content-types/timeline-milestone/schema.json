@@ -5,51 +5,57 @@
     "singularName": "timeline-milestone",
     "pluralName": "timeline-milestones",
     "displayName": "Timeline Milestone",
-    "description": "Company history milestones for About page"
+    "description": "Company history timeline entries"
   },
   "options": {
-    "draftAndPublish": true
-  },
-  "pluginOptions": {
-    "i18n": {
-      "localized": true
-    }
+    "draftAndPublish": false
   },
   "attributes": {
+    "year": {
+      "type": "integer",
+      "required": true
+    },
     "title": {
       "type": "string",
       "required": true,
-      "description": "Milestone title"
-    },
-    "milestoneDate": {
-      "type": "date",
-      "description": "Date of the milestone"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "description": {
       "type": "text",
-      "description": "Description of the milestone"
+      "required": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "date": {
+      "type": "date"
     },
     "image": {
       "type": "media",
       "multiple": false,
-      "allowedTypes": ["images"],
-      "description": "Optional image for this milestone"
-    },
-    "aboutPage": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::about-page.about-page",
-      "inversedBy": "timelineMilestones"
+      "allowedTypes": [
+        "images"
+      ]
     },
     "sortOrder": {
       "type": "integer",
-      "default": 0,
-      "description": "Display order (lower number appears first)"
+      "default": 0
     },
-    "isActive": {
-      "type": "boolean",
-      "default": true,
-      "description": "Show or hide this milestone on frontend"
+    "aboutPages": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::about-us.about-us"
+    }
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
     }
   }
 }

@@ -10,38 +10,52 @@
   "options": {
     "draftAndPublish": true
   },
-  "pluginOptions": {
-    "i18n": {
-      "localized": true
-    }
-  },
   "attributes": {
     "isEnabled": {
       "type": "boolean",
-      "default": true,
-      "description": "Enable/disable the floating contact widget"
+      "default": true
     },
     "buttonLabel": {
       "type": "string",
-      "description": "Floating button label"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "panelTitle": {
       "type": "string",
-      "description": "Contact panel heading"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "panelDescription": {
       "type": "text",
-      "description": "Contact panel description"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "closeLabel": {
       "type": "string",
-      "description": "Close button label"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "actions": {
       "type": "component",
       "repeatable": true,
-      "component": "contact-floating.contact-action",
-      "description": "Contact action buttons (phone, email, line, etc.)"
+      "component": "contact-floating.contact-action"
+    }
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
     }
   }
 }

@@ -1,0 +1,39 @@
+{
+  "kind": "singleType",
+  "collectionName": "privacy_requests",
+  "info": {
+    "singularName": "privacy-request",
+    "pluralName": "privacy-requests",
+    "displayName": "Page - Privacy Request",
+    "description": "Personal data request page labels, messages, contact information, and SEO"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "isPageEnabled": {
+      "type": "boolean",
+      "default": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
+    },
+    "settings": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.pdpa-settings"
+    },
+    "seo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.seo-meta"
+    }
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  }
+}

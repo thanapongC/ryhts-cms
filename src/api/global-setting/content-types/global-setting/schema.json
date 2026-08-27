@@ -5,45 +5,70 @@
     "singularName": "global-setting",
     "pluralName": "global-settings",
     "displayName": "Site - Global Settings",
-    "description": "Site-wide settings: header, footer contact, stats, and SEO defaults"
+    "description": "Site-wide settings used by the website header, footer, contact blocks, and SEO defaults"
   },
   "options": {
-    "draftAndPublish": true
-  },
-  "pluginOptions": {
-    "i18n": {
-      "localized": true
-    }
+    "draftAndPublish": false
   },
   "attributes": {
     "siteName": {
       "type": "string",
-      "required": true,
-      "description": "Localized site name"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "siteLogo": {
       "type": "media",
       "multiple": false,
-      "allowedTypes": ["images"],
-      "description": "Site logo image"
+      "allowedTypes": [
+        "images"
+      ]
     },
     "contactInfo": {
       "type": "component",
-      "repeatable": true,
+      "repeatable": false,
       "component": "shared.contact-info",
-      "description": "Site-wide contact information blocks"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "stats": {
       "type": "component",
       "repeatable": true,
       "component": "shared.stat-item",
-      "description": "Key site statistics (e.g. customers, products, years)"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "seoConfig": {
       "type": "component",
       "repeatable": false,
       "component": "shared.seo-config",
-      "description": "Site-wide SEO defaults, social profiles, and analytics IDs"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "headScript": {
+      "type": "text"
+    },
+    "bodyScript": {
+      "type": "text"
+    },
+    "footerScript": {
+      "type": "text"
+    }
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
     }
   }
 }

@@ -1,28 +1,32 @@
 {
-  "collectionName": "components_navigation_product_name",
+  "collectionName": "components_navigation_product_names",
   "info": {
     "displayName": "Product Name",
-    "description": "Product name mapping for navigation display"
+    "icon": "cube",
+    "description": "A product name and URL for navigation"
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
   },
   "attributes": {
     "name": {
       "type": "string",
       "required": true,
-      "description": "Display name for the product"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "url": {
       "type": "string",
-      "description": "Product URL"
+      "required": true
     },
     "sortOrder": {
       "type": "integer",
-      "default": 0,
-      "description": "Display order (lower number appears first)"
-    },
-    "isActive": {
-      "type": "boolean",
-      "default": true,
-      "description": "Show or hide this product name"
+      "default": 0
     }
   }
 }

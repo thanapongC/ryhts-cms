@@ -5,74 +5,93 @@
     "singularName": "footer-setting",
     "pluralName": "footer-settings",
     "displayName": "Site - Footer Settings",
-    "description": "Footer CTA, statistics, navigation, legal links, and copyright"
+    "description": "Footer call-to-action, statistics, company text, legal links, and copyright"
   },
   "options": {
     "draftAndPublish": true
   },
-  "pluginOptions": {
-    "i18n": {
-      "localized": true
-    }
-  },
   "attributes": {
     "ctaBadge": {
       "type": "string",
-      "description": "CTA section badge text"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "ctaTitle": {
       "type": "string",
-      "description": "CTA section heading"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "ctaDescription": {
       "type": "text",
-      "description": "CTA section description"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "primaryCtaLabel": {
       "type": "string",
-      "description": "Primary CTA button text"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "primaryCtaUrl": {
-      "type": "string",
-      "description": "Primary CTA button URL"
+      "type": "string"
     },
     "secondaryCtaLabel": {
       "type": "string",
-      "description": "Secondary CTA button text"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "secondaryCtaUrl": {
-      "type": "string",
-      "description": "Secondary CTA button URL"
+      "type": "string"
     },
     "stats": {
       "type": "component",
       "repeatable": true,
-      "component": "shared.stat-item",
-      "description": "Footer statistics display"
+      "component": "shared.stat-item"
     },
     "companyDescription": {
       "type": "text",
-      "description": "Company description text in footer"
-    },
-    "socialLinks": {
-      "type": "json",
-      "description": "Social media links as JSON object"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "footerSections": {
       "type": "component",
       "repeatable": true,
-      "component": "footer.footer-section",
-      "description": "Navigation sections in the footer"
+      "component": "footer.footer-section"
     },
     "legalLinks": {
       "type": "component",
       "repeatable": true,
-      "component": "footer.legal-link",
-      "description": "Legal page links (Privacy, Terms, etc.)"
+      "component": "footer.legal-link"
     },
     "copyright": {
       "type": "text",
-      "description": "Copyright text"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    }
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
     }
   }
 }

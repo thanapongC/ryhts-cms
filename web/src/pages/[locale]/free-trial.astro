@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { safeGetFreeTrial, getStrapiAbsoluteImageUrl } from "../../lib/api";
+import { safeGetFreeTrial, getStrapiAbsoluteImageUrl, isPageDisabled } from "../../lib/api";
 import { isValidLocale, DEFAULT_LOCALE, type Locale } from "../../lib/i18n";
 import OfflineNotice from "../../components/OfflineNotice.astro";
 import FreeTrialContent from "../../components/FreeTrialContent.astro";
@@ -10,6 +10,7 @@ if (!isValidLocale(lang)) return Astro.redirect(`/${DEFAULT_LOCALE}/free-trial`)
 
 const trialResult = await safeGetFreeTrial(lang);
 const trial = trialResult.data;
+if (trialResult.ok && isPageDisabled(trial)) return new Response(null, { status: 404 });
 
 const seo = trial?.seo;
 const siteUrl = Astro.url.origin;

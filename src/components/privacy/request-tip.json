@@ -1,29 +1,39 @@
 {
-  "collectionName": "components_privacy_request_tip",
+  "collectionName": "components_privacy_request_tips",
   "info": {
     "displayName": "Privacy Request Tip",
+    "icon": "checkCircle",
     "description": "Before-submit checklist item for the Privacy Request page"
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
   },
   "attributes": {
     "text": {
       "type": "text",
-      "localized": true,
-      "description": "Tip text to display"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "accent": {
       "type": "enumeration",
-      "enum": ["red", "orange"],
-      "description": "Accent color for the tip"
-    },
-    "isActive": {
-      "type": "boolean",
-      "default": true,
-      "description": "Show or hide this tip"
+      "enum": [
+        "red",
+        "orange"
+      ],
+      "default": "red"
     },
     "sortOrder": {
       "type": "integer",
-      "default": 0,
-      "description": "Display order (lower number appears first)"
+      "default": 0
+    },
+    "isActive": {
+      "type": "boolean",
+      "default": true
     }
   }
 }

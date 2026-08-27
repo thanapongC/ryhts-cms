@@ -2,37 +2,102 @@
   "collectionName": "components_shared_footer_labels",
   "info": {
     "displayName": "Footer Labels",
-    "description": "Shared footer heading and link labels"
+    "icon": "tag",
+    "description": "Footer section labels and headings"
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
   },
   "attributes": {
-    "contactHeading": {
+    "helpTitle": {
       "type": "string",
-      "description": "Contact section heading in footer"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
-    "linksHeading": {
+    "manualLabel": {
       "type": "string",
-      "description": "Links section heading in footer"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
-    "aboutHeading": {
+    "contactUsLabel": {
       "type": "string",
-      "description": "About section heading in footer"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
-    "newsletterHeading": {
+    "helpCenterLabel": {
       "type": "string",
-      "description": "Newsletter section heading"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
-    "newsletterPlaceholder": {
+    "privacyTitle": {
       "type": "string",
-      "description": "Newsletter email input placeholder"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
-    "newsletterButton": {
+    "privacyPolicyLabel": {
       "type": "string",
-      "description": "Newsletter subscribe button text"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
-    "isActive": {
-      "type": "boolean",
-      "default": true,
-      "description": "Show or hide these footer labels"
+    "cookiePolicyLabel": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "cookieSettingsLabel": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "dataRequestLabel": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "contactInfoTitle": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "copyright": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     }
   }
 }

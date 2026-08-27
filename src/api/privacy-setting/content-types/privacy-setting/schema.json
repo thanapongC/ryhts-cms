@@ -1,0 +1,137 @@
+{
+  "kind": "singleType",
+  "collectionName": "privacy_settings",
+  "info": {
+    "singularName": "privacy-setting",
+    "pluralName": "privacy-settings",
+    "displayName": "Page - Privacy Settings",
+    "description": "Privacy Policy page content and SEO"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "isPageEnabled": {
+      "type": "boolean",
+      "default": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
+    },
+    "heroBadge": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "heroTitle": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "heroSubtitle": {
+      "type": "text",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "lastUpdated": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "effectiveDate": {
+      "type": "date"
+    },
+    "tocTitle": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "appliesToTitle": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "appliesToProducts": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::product-page.product-page"
+    },
+    "sections": {
+      "type": "component",
+      "repeatable": true,
+      "component": "privacy.policy-section"
+    },
+    "legalContactTitle": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "legalContactDescription": {
+      "type": "text",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "legalContactInfo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.contact-info"
+    },
+    "relatedLinksTitle": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "relatedLinks": {
+      "type": "component",
+      "repeatable": true,
+      "component": "privacy.related-link"
+    },
+    "backToTopLabel": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "seo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.seo-meta"
+    }
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  }
+}

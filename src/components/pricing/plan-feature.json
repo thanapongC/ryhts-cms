@@ -1,35 +1,32 @@
 {
-  "collectionName": "components_pricing_plan_feature",
+  "collectionName": "components_pricing_plan_features",
   "info": {
     "displayName": "Plan Feature",
+    "icon": "check",
     "description": "Links a pricing feature to a plan with an included/not-included status"
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
   },
   "attributes": {
     "feature": {
       "type": "relation",
       "relation": "manyToOne",
-      "target": "api::faq.faq",
-      "description": "The feature this plan entry relates to"
+      "target": "api::pricing-feature.pricing-feature"
     },
     "included": {
       "type": "boolean",
-      "default": true,
-      "description": "Whether this feature is included in the plan"
+      "default": true
     },
     "note": {
       "type": "string",
-      "localized": true,
-      "description": "Optional note for this feature (e.g. usage limits)"
-    },
-    "sortOrder": {
-      "type": "integer",
-      "default": 0,
-      "description": "Display order (lower number appears first)"
-    },
-    "isActive": {
-      "type": "boolean",
-      "default": true,
-      "description": "Show or hide this plan feature"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     }
   }
 }

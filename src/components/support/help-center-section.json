@@ -1,35 +1,40 @@
 {
-  "collectionName": "components_support_help_center_section",
+  "collectionName": "components_support_help_center_sections",
   "info": {
     "displayName": "Support Help Center Section",
+    "icon": "book",
     "description": "Help Center heading copy for support resource cards"
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
   },
   "attributes": {
     "badge": {
       "type": "string",
-      "localized": true,
-      "description": "Badge text above the section title"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "title": {
       "type": "string",
       "required": true,
-      "localized": true,
-      "description": "Section heading text"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "subtitle": {
       "type": "text",
-      "localized": true,
-      "description": "Section subtitle or description"
-    },
-    "sortOrder": {
-      "type": "integer",
-      "default": 0,
-      "description": "Display order (lower number appears first)"
-    },
-    "isActive": {
-      "type": "boolean",
-      "default": true,
-      "description": "Show or hide this help center section"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     }
   }
 }

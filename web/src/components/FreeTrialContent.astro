@@ -9,7 +9,7 @@
  *   lang: Locale
  *   page: FreeTrial | null
  */
-import { getStrapiMedia, getStrapiAbsoluteImageUrl, filterAndSort, type FreeTrial } from "../lib/api";
+import { filterAndSort, getStrapiAbsoluteImageUrl, normalizeInternalUrl, type FreeTrial } from "../lib/api";
 
 interface Props {
   lang: "th" | "en";
@@ -23,42 +23,54 @@ const fallbackSubtitle = lang === "en"
   ? "Experience premium thermal transfer ribbons with a free trial account"
   : "สัมผัสริบบอนคุณภาพสูงพร้อมบัญชีทดลองใช้ฟรี";
 
-const title = page?.title || fallbackTitle;
-const subtitle = page?.subtitle || fallbackSubtitle;
-const featuredImage = page?.featuredImage ? getStrapiAbsoluteImageUrl(page.featuredImage) : "";
+const title = page?.heroTitle || fallbackTitle;
+const subtitle = page?.heroSubtitle || fallbackSubtitle;
+const heroBadge = page?.heroBadge || (lang === "en" ? "Free Trial" : "ทดลองใช้ฟรี");
+const formBadge = page?.formBadge || (lang === "en" ? "Free Trial" : "ทดลองใช้ฟรี");
+const formTitle = page?.formTitle || (lang === "en" ? "Start Your Free Trial" : "เริ่มทดลองใช้ฟรี");
+const formDescription = page?.formDescription || (lang === "en" ? "Fill in the form below to get started" : "กรอกข้อมูลด้านล่างเพื่อเริ่มต้นใช้งาน");
+const featuresTitle = page?.featuresTitle || (lang === "en" ? "What You Get" : "สิ่งที่คุณจะได้รับ");
+const testimonialsTitle = page?.testimonialsTitle || (lang === "en" ? "What Our Customers Say" : "ลูกค้าของเราพูดว่าอะไร");
+const ctaTitle = page?.ctaTitle;
+const ctaSubtitle = page?.ctaSubtitle;
 
 const trustItems = filterAndSort(page?.trustItems);
-const trialFeatures = filterAndSort(page?.trialFeatures);
+const trialFeatures = filterAndSort(page?.features);
 const testimonials = page?.testimonials
   ?.filter((t) => t.isActive !== false)
   ?.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0)) || [];
+const displayTestimonials = testimonials.map((testimonial) => ({
+  ...testimonial,
+  customerName: testimonial.customerName || testimonial.name || "",
+}));
 
 // Build form labels with fallbacks
-const labels = page?.formLabels?.[0] || {} as any;
+const labels = page?.formLabels || {};
 const formLabelMap = {
-  fullName: labels.full_name_label || (lang === "en" ? "Full Name" : "ชื่อ-นามสกุล"),
-  fullNamePlaceholder: labels.full_name_placeholder || (lang === "en" ? "Enter your full name" : "กรอกชื่อ-นามสกุล"),
-  position: labels.position_label || (lang === "en" ? "Position" : "ตำแหน่ง"),
-  positionPlaceholder: labels.position_placeholder || (lang === "en" ? "Enter your position" : "กรอกตำแหน่ง"),
-  email: labels.email_label || "Email",
-  emailPlaceholder: labels.email_placeholder || (lang === "en" ? "Enter your email" : "กรอกอีเมล"),
-  phone: labels.phone_label || (lang === "en" ? "Phone" : "โทรศัพท์"),
-  phonePlaceholder: labels.phone_placeholder || (lang === "en" ? "Enter your phone" : "กรอกเบอร์โทรศัพท์"),
-  address: labels.address_label || (lang === "en" ? "Address" : "ที่อยู่"),
-  addressPlaceholder: labels.address_placeholder || (lang === "en" ? "Enter your address" : "กรอกที่อยู่"),
-  company: labels.company_label || (lang === "en" ? "Company" : "บริษัท"),
-  companyPlaceholder: labels.company_placeholder || (lang === "en" ? "Enter your company name" : "กรอกชื่อบริษัท"),
-  businessDetails: labels.business_details_label || (lang === "en" ? "Business Details" : "รายละเอียดธุรกิจ"),
-  businessDetailsPlaceholder: labels.business_details_placeholder || (lang === "en" ? "Describe your business needs" : "อธิบายความต้องการทางธุรกิจ"),
-  privacyConsentPrefix: labels.privacy_consent_prefix || (lang === "en" ? "I agree to the " : "ฉันยอมรับ"),
-  privacyPolicyLabel: labels.privacy_policy_label || (lang === "en" ? "Privacy Policy" : "นโยบายความเป็นส่วนตัว"),
-  privacyConsentSuffix: labels.privacy_consent_suffix || "",
-  marketingConsentLabel: labels.marketing_consent_label || (lang === "en" ? "I agree to receive marketing communications" : "ฉันยินยอมรับข้อมูลการตลาด"),
-  marketingConsentDescription: labels.marketing_consent_description || "",
-  submitLabel: labels.submit_label || (lang === "en" ? "Start Free Trial" : "เริ่มทดลองใช้ฟรี"),
-  successTitle: labels.success_title || (lang === "en" ? "Registration Successful!" : "ลงทะเบียนสำเร็จ!"),
-  successMessage: labels.success_message || (lang === "en" ? "We will contact you shortly." : "เราจะติดต่อคุณโดยเร็วที่สุด"),
+  fullName: labels.fullNameLabel || (lang === "en" ? "Full Name" : "ชื่อ-นามสกุล"),
+  fullNamePlaceholder: labels.fullNamePlaceholder || (lang === "en" ? "Enter your full name" : "กรอกชื่อ-นามสกุล"),
+  position: labels.positionLabel || (lang === "en" ? "Position" : "ตำแหน่ง"),
+  positionPlaceholder: labels.positionPlaceholder || (lang === "en" ? "Enter your position" : "กรอกตำแหน่ง"),
+  email: labels.emailLabel || "Email",
+  emailPlaceholder: labels.emailPlaceholder || (lang === "en" ? "Enter your email" : "กรอกอีเมล"),
+  phone: labels.phoneLabel || (lang === "en" ? "Phone" : "โทรศัพท์"),
+  phonePlaceholder: labels.phonePlaceholder || (lang === "en" ? "Enter your phone" : "กรอกเบอร์โทรศัพท์"),
+  address: labels.addressLabel || (lang === "en" ? "Address" : "ที่อยู่"),
+  addressPlaceholder: labels.addressPlaceholder || (lang === "en" ? "Enter your address" : "กรอกที่อยู่"),
+  company: labels.companyLabel || (lang === "en" ? "Company" : "บริษัท"),
+  companyPlaceholder: labels.companyPlaceholder || (lang === "en" ? "Enter your company name" : "กรอกชื่อบริษัท"),
+  businessDetails: labels.businessDetailsLabel || (lang === "en" ? "Business Details" : "รายละเอียดธุรกิจ"),
+  businessDetailsPlaceholder: labels.businessDetailsPlaceholder || (lang === "en" ? "Describe your business needs" : "อธิบายความต้องการทางธุรกิจ"),
+  privacyConsentPrefix: labels.privacyConsentPrefix || (lang === "en" ? "I agree to the " : "ฉันยอมรับ"),
+  privacyPolicyLabel: labels.privacyPolicyLabel || (lang === "en" ? "Privacy Policy" : "นโยบายความเป็นส่วนตัว"),
+  privacyConsentSuffix: labels.privacyConsentSuffix || "",
+  marketingConsentLabel: labels.marketingConsentLabel || (lang === "en" ? "I agree to receive marketing communications" : "ฉันยินยอมรับข้อมูลการตลาด"),
+  marketingConsentDescription: labels.marketingConsentDescription || "",
+  submitLabel: labels.submitLabel || (lang === "en" ? "Start Free Trial" : "เริ่มทดลองใช้ฟรี"),
+  successTitle: labels.successTitle || (lang === "en" ? "Registration Successful!" : "ลงทะเบียนสำเร็จ!"),
+  successMessage: labels.successMessage || (lang === "en" ? "We will contact you shortly." : "เราจะติดต่อคุณโดยเร็วที่สุด"),
 };
+const privacyPolicyHref = normalizeInternalUrl(labels.privacyPolicyUrl || "/privacy-policy/", `/${lang}/`);
 
 const fallbackTrustItems = [
   { label: lang === "en" ? "No credit card required" : "ไม่ต้องใช้บัตรเครดิต" },
@@ -75,6 +87,7 @@ const displayTrustItems = trustItems.length > 0 ? trustItems : fallbackTrustItem
   <div class="container">
     <div class="ft-hero-content">
       <div class="ft-hero-text">
+        <span class="badge badge-primary">{heroBadge}</span>
         {page?.trustItems && trustItems.length > 0 && (
           <div class="ft-trust-bar">
             {trustItems.map((item) => (
@@ -87,15 +100,7 @@ const displayTrustItems = trustItems.length > 0 ? trustItems : fallbackTrustItem
         )}
         <h1>{title}</h1>
         <p class="ft-hero-subtitle">{subtitle}</p>
-        {page?.content && (
-          <div class="ft-hero-content-rich" set:html={page.content} />
-        )}
       </div>
-      {featuredImage && (
-        <div class="ft-hero-image">
-          <img src={featuredImage} alt={title} />
-        </div>
-      )}
     </div>
   </div>
 </section>
@@ -122,7 +127,7 @@ const displayTrustItems = trustItems.length > 0 ? trustItems : fallbackTrustItem
     <div class="container">
       <div class="text-center" style="margin-bottom: 48px;">
         <h2 class="section-title">
-          {lang === "en" ? "What You Get" : "สิ่งที่คุณจะได้รับ"}
+          {featuresTitle}
         </h2>
       </div>
       <div class="ft-features-grid">
@@ -143,9 +148,9 @@ const displayTrustItems = trustItems.length > 0 ? trustItems : fallbackTrustItem
   <div class="container">
     <div class="ft-form-wrapper">
       <div class="ft-form-header">
-        <span class="badge badge-primary">{lang === "en" ? "Free Trial" : "ทดลองใช้ฟรี"}</span>
-        <h2>{lang === "en" ? "Start Your Free Trial" : "เริ่มทดลองใช้ฟรี"}</h2>
-        <p>{lang === "en" ? "Fill in the form below to get started" : "กรอกข้อมูลด้านล่างเพื่อเริ่มต้นใช้งาน"}</p>
+        <span class="badge badge-primary">{formBadge}</span>
+        <h2>{formTitle}</h2>
+        <p>{formDescription}</p>
       </div>
 
       <form class="ft-form" action="#" method="POST">
@@ -184,7 +189,7 @@ const displayTrustItems = trustItems.length > 0 ? trustItems : fallbackTrustItem
         <div class="ft-consent">
           <label class="ft-checkbox">
             <input type="checkbox" name="privacyConsent" required />
-            <span>{formLabelMap.privacyConsentPrefix}<a href={`/${lang}/privacy-policy`}>{formLabelMap.privacyPolicyLabel}</a>{formLabelMap.privacyConsentSuffix}</span>
+            <span>{formLabelMap.privacyConsentPrefix}<a href={privacyPolicyHref}>{formLabelMap.privacyPolicyLabel}</a>{formLabelMap.privacyConsentSuffix}</span>
           </label>
           <label class="ft-checkbox">
             <input type="checkbox" name="marketingConsent" />
@@ -204,11 +209,11 @@ const displayTrustItems = trustItems.length > 0 ? trustItems : fallbackTrustItem
     <div class="container">
       <div class="text-center" style="margin-bottom: 48px;">
         <h2 class="section-title">
-          {lang === "en" ? "What Our Customers Say" : "ลูกค้าของเราพูดว่าอะไร"}
+          {testimonialsTitle}
         </h2>
       </div>
       <div class="ft-testimonials-grid">
-        {testimonials.map((t) => (
+        {displayTestimonials.map((t) => (
           <div class="ft-testimonial-card">
             <div class="ft-testimonial-quote">
               <i class="fas fa-quote-left"></i>
@@ -216,16 +221,25 @@ const displayTrustItems = trustItems.length > 0 ? trustItems : fallbackTrustItem
             </div>
             <div class="ft-testimonial-author">
               {t.avatar && (
-                <img src={getStrapiAbsoluteImageUrl(t.avatar, "small")} alt={t.name} />
+                <img src={getStrapiAbsoluteImageUrl(t.avatar, "small")} alt={t.customerName} />
               )}
               <div>
-                <strong>{t.name}</strong>
+                <strong>{t.customerName}</strong>
                 {t.position && <span>{t.position}{t.company ? `, ${t.company}` : ""}</span>}
               </div>
             </div>
           </div>
         ))}
       </div>
+    </div>
+  </section>
+)}
+
+{(ctaTitle || ctaSubtitle) && (
+  <section class="ft-cta">
+    <div class="container">
+      <h2>{ctaTitle}</h2>
+      {ctaSubtitle && <p>{ctaSubtitle}</p>}
     </div>
   </section>
 )}
@@ -240,9 +254,12 @@ const displayTrustItems = trustItems.length > 0 ? trustItems : fallbackTrustItem
 
   .ft-hero-content {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     gap: 60px;
     align-items: center;
+    max-width: 820px;
+    margin: 0 auto;
+    text-align: center;
   }
 
   .ft-hero-text h1 {
@@ -250,6 +267,10 @@ const displayTrustItems = trustItems.length > 0 ? trustItems : fallbackTrustItem
     font-weight: 700;
     margin-bottom: 16px;
     color: var(--color-text-primary);
+  }
+
+  .ft-hero-text .badge {
+    margin-bottom: 20px;
   }
 
   .ft-hero-subtitle {
@@ -452,6 +473,27 @@ const displayTrustItems = trustItems.length > 0 ? trustItems : fallbackTrustItem
   .ft-submit {
     width: 100%;
     margin-top: 24px;
+  }
+
+  .ft-cta {
+    background: var(--color-primary);
+    color: #FFFFFF;
+    padding: 72px 0;
+    text-align: center;
+  }
+
+  .ft-cta h2 {
+    color: #FFFFFF;
+    font-size: 32px;
+    margin-bottom: 12px;
+  }
+
+  .ft-cta p {
+    color: #E0F2FE;
+    max-width: 680px;
+    margin: 0 auto;
+    font-size: 18px;
+    line-height: 1.7;
   }
 
   /* Testimonials */

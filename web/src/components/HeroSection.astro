@@ -7,29 +7,49 @@
  */
 interface Props {
   customerCount?: number;
+  title?: string;
+  subtitle?: string;
+  description?: string;
+  primaryCtaText?: string;
+  primaryCtaHref?: string;
+  secondaryCtaText?: string;
+  secondaryCtaHref?: string;
+  badgeValue?: string;
+  badgeLabel?: string;
 }
 
-const { customerCount = 100 } = Astro.props;
+const {
+  customerCount = 100,
+  title = "Premier Ribbon for Premier Printing",
+  subtitle,
+  description = "ไรต์ส (ryhts) เราคือผู้จำหน่ายริบบอนหรือผ้าหมึกพิมพ์สำหรับใช้กับเครื่องพิมพ์บาร์โค้ดทุกขนาด มีให้ท่านเลือกใช้หลากหลายแบบ เรามุ่งมั่นที่จะพัฒนาสินค้านำเข้าที่ได้มาตรฐาน",
+  primaryCtaText = "ดูสินค้าทั้งหมด",
+  primaryCtaHref = "/products",
+  secondaryCtaText = "รู้จัก Ryhts",
+  secondaryCtaHref = "/about",
+  badgeValue,
+  badgeLabel = "ลูกค้าที่ไว้วางใจ",
+} = Astro.props;
+
+const heroBadgeValue = badgeValue || `${customerCount}+`;
 ---
 
 <section class="hero">
   <div class="container hero-inner">
     <div class="hero-content">
-      <h1>Premier Ribbon for Premier Printing</h1>
-      <p>
-        ไรต์ส (ryhts) เราคือผู้จำหน่ายริบบอนหรือผ้าหมึกพิมพ์สำหรับใช้กับเครื่องพิมพ์บาร์โค้ดทุกขนาด
-        มีให้ท่านเลือกใช้หลากหลายแบบ เรามุ่งมั่นที่จะพัฒนาสินค้านำเข้าที่ได้มาตรฐาน
-      </p>
+      {subtitle && <span class="hero-kicker">{subtitle}</span>}
+      <h1>{title}</h1>
+      <p>{description}</p>
       <div class="hero-actions">
-        <a href="/products" class="btn btn-primary btn-lg">ดูสินค้าทั้งหมด</a>
-        <a href="/about" class="btn btn-outline btn-lg">รู้จัก Ryhts</a>
+        <a href={primaryCtaHref} class="btn btn-primary btn-lg">{primaryCtaText}</a>
+        <a href={secondaryCtaHref} class="btn btn-outline btn-lg">{secondaryCtaText}</a>
       </div>
     </div>
     <div class="hero-visual">
       <div class="hero-shape"></div>
       <div class="hero-badge">
-        <span class="hero-badge-number">{customerCount}+</span>
-        <span class="hero-badge-text">ลูกค้าที่ไว้วางใจ</span>
+        <span class="hero-badge-number">{heroBadgeValue}</span>
+        <span class="hero-badge-text">{badgeLabel}</span>
       </div>
     </div>
   </div>
@@ -59,6 +79,19 @@ const { customerCount = 100 } = Astro.props;
     line-height: 1.15;
     margin-bottom: 20px;
     color: var(--color-text-primary);
+  }
+
+  .hero-kicker {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    margin-bottom: 14px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: var(--color-background-blue);
+    color: var(--color-primary);
+    font-size: 14px;
+    font-weight: 600;
   }
 
   .hero-content p {

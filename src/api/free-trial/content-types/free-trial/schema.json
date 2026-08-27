@@ -5,58 +5,140 @@
     "singularName": "free-trial",
     "pluralName": "free-trials",
     "displayName": "Page - Free Trial",
-    "description": "Free trial page content and form configuration"
+    "description": "Free trial page settings and form configuration"
   },
   "options": {
     "draftAndPublish": true
   },
-  "pluginOptions": {
-    "i18n": {
-      "localized": true
-    }
-  },
   "attributes": {
-    "title": {
-      "type": "string",
-      "required": true,
-      "default": "ทดลองใช้ฟรี"
+    "isPageEnabled": {
+      "type": "boolean",
+      "default": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
     },
-    "subtitle": {
+    "heroBadge": {
       "type": "string",
-      "description": "Short tagline or subtitle"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
-    "featuredImage": {
-      "type": "media",
-      "multiple": false,
-      "allowedTypes": ["images"],
-      "description": "Hero or featured image"
+    "heroTitle": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "heroSubtitle": {
+      "type": "text",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "trustItems": {
       "type": "component",
       "repeatable": true,
       "component": "free-trial.trust-item",
-      "description": "Trust signals (e.g. No credit card required)"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
-    "content": {
-      "type": "richtext",
-      "description": "Main page content (rich text)"
+    "formBadge": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
-    "trialFeatures": {
-      "type": "component",
-      "repeatable": true,
-      "component": "free-trial.trial-feature",
-      "description": "Feature highlights for the trial"
+    "formTitle": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "formDescription": {
+      "type": "text",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "formLabels": {
       "type": "component",
-      "repeatable": true,
+      "repeatable": false,
       "component": "free-trial.form-labels",
-      "description": "Localized form field labels"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "ctaTitle": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "ctaSubtitle": {
+      "type": "text",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "featuresTitle": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "features": {
+      "type": "component",
+      "repeatable": true,
+      "component": "free-trial.trial-feature",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "testimonialsTitle": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "testimonials": {
       "type": "relation",
       "relation": "manyToMany",
-      "target": "api::testimonial.testimonial"
+      "target": "api::testimonial.testimonial",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "seo": {
       "type": "component",
@@ -67,6 +149,11 @@
           "localized": true
         }
       }
+    }
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
     }
   }
 }

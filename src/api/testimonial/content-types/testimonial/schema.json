@@ -5,62 +5,65 @@
     "singularName": "testimonial",
     "pluralName": "testimonials",
     "displayName": "Testimonial",
-    "description": "Customer testimonials for Free Trial page"
+    "description": "Customer testimonials and reviews"
   },
   "options": {
-    "draftAndPublish": true
-  },
-  "pluginOptions": {
-    "i18n": {
-      "localized": true
-    }
+    "draftAndPublish": false
   },
   "attributes": {
-    "name": {
+    "customerName": {
       "type": "string",
-      "required": true,
-      "description": "Customer or company name"
+      "required": true
+    },
+    "sortOrder": {
+      "type": "integer",
+      "default": 0
+    },
+    "isActive": {
+      "type": "boolean",
+      "default": true
     },
     "position": {
       "type": "string",
-      "description": "Job title or position"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "company": {
       "type": "string",
-      "description": "Company name"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "quote": {
       "type": "text",
       "required": true,
-      "description": "Testimonial quote or review text"
-    },
-    "rating": {
-      "type": "integer",
-      "min": 1,
-      "max": 5,
-      "description": "Star rating from 1 to 5"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "avatar": {
       "type": "media",
       "multiple": false,
-      "allowedTypes": ["images"],
-      "description": "Customer or company logo image"
+      "allowedTypes": [
+        "images"
+      ]
     },
-    "freeTrialPages": {
-      "type": "relation",
-      "relation": "manyToMany",
-      "target": "api::free-trial.free-trial",
-      "mappedBy": "testimonials"
-    },
-    "sortOrder": {
+    "rating": {
       "type": "integer",
-      "default": 0,
-      "description": "Display order (lower number appears first)"
-    },
-    "isActive": {
-      "type": "boolean",
-      "default": true,
-      "description": "Show or hide this testimonial on frontend"
+      "min": 1,
+      "max": 5
+    }
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
     }
   }
 }

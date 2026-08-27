@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { safeGetContactPage, getStrapiAbsoluteImageUrl } from "../../lib/api";
+import { safeGetContactPage, safeGetGlobalSetting, getStrapiAbsoluteImageUrl, isPageDisabled } from "../../lib/api";
 import { isValidLocale, DEFAULT_LOCALE, type Locale } from "../../lib/i18n";
 import OfflineNotice from "../../components/OfflineNotice.astro";
 import PageHeader from "../../components/PageHeader.astro";
@@ -11,19 +11,44 @@ const lang = (Astro.params.locale as Locale) || DEFAULT_LOCALE;
 if (!isValidLocale(lang)) return Astro.redirect(`/${DEFAULT_LOCALE}/contact`);
 
 const pageResult = await safeGetContactPage(lang);
+const globalResult = await safeGetGlobalSetting(lang);
 
 const page = pageResult.data;
+if (pageResult.ok && isPageDisabled(page)) return new Response(null, { status: 404 });
+const globalSetting = globalResult.data;
+const contactInfo = globalSetting?.contactInfo;
 
-const contactTitle = page?.title || "ติดต่อเรา";
+const contactTitle = page?.title || (lang === "en" ? "Contact Ryhts" : "ติดต่อ Ryhts");
 const seo = page?.seo;
-const isOffline = pageResult.isOffline;
+const isOffline = pageResult.isOffline || globalResult.isOffline;
 
 const siteUrl = Astro.url.origin;
+
+const labels = {
+  breadcrumb: lang === "en" ? "Contact" : "ติดต่อเรา",
+  infoTitle: lang === "en" ? "Contact information" : "ข้อมูลติดต่อ",
+  phone: lang === "en" ? "Phone" : "โทรศัพท์",
+  email: lang === "en" ? "Email" : "อีเมล",
+  hours: lang === "en" ? "Business hours" : "เวลาทำการ",
+  address: lang === "en" ? "Address" : "ที่อยู่",
+  formTitle: lang === "en" ? "Send us a message" : "ส่งข้อความถึงเรา",
+  nameLabel: lang === "en" ? "Name *" : "ชื่อ *",
+  namePlaceholder: lang === "en" ? "Enter your name" : "กรอกชื่อของคุณ",
+  emailLabel: lang === "en" ? "Email *" : "อีเมล *",
+  emailPlaceholder: lang === "en" ? "Enter your email" : "กรอกอีเมลของคุณ",
+  phoneLabel: lang === "en" ? "Phone" : "โทรศัพท์",
+  phonePlaceholder: lang === "en" ? "Enter your phone number" : "กรอกเบอร์โทรศัพท์",
+  subjectLabel: lang === "en" ? "Subject *" : "หัวข้อ *",
+  subjectPlaceholder: lang === "en" ? "Enter subject" : "กรอกหัวข้อ",
+  messageLabel: lang === "en" ? "Message *" : "ข้อความ *",
+  messagePlaceholder: lang === "en" ? "How can we help?" : "กรอกข้อความของคุณ",
+  submitLabel: lang === "en" ? "Send message" : "ส่งข้อความ",
+};
 ---
 
 <BaseLayout
-  title={seo?.metaTitle || "Contact Us"}
-  description={seo?.metaDescription || "ติดต่อ Ryhts Ribbon"}
+  title={seo?.metaTitle || contactTitle}
+  description={seo?.metaDescription || page?.subtitle || "ติดต่อ Ryhts Ribbon"}
   ogImage={getStrapiAbsoluteImageUrl(seo?.ogImage) || undefined}
   robots={seo?.robots}
   keywords={seo?.keywords?.split(",").map(k => k.trim()) || []}
@@ -40,23 +65,149 @@ const siteUrl = Astro.url.origin;
     description: seo?.metaDescription || "",
   }}
 >
-  <PageHeader title={contactTitle} description={seo?.metaDescription} />
+  <PageHeader title={contactTitle} description={page?.subtitle || seo?.metaDescription} />
 
   <section class="section">
     <div class="container">
-      <Breadcrumb items={[{ label: "Contact Us" }]} />
+      <Breadcrumb items={[{ label: labels.breadcrumb }]} />
 
       {isOffline && (
-        <OfflineNotice title="部分内容不可用" message="Some contact information may be unavailable." />
+        <OfflineNotice
+          title={lang === "en" ? "CMS content may be unavailable" : "อาจไม่สามารถโหลดข้อมูล CMS ได้"}
+          message={lang === "en" ? "Fallback contact content is being shown." : "กำลังแสดงข้อมูลสำรองของหน้าติดต่อ"}
+        />
       )}
 
       <div class="contact-grid">
-        <ContactForm />
+        <div class="contact-info-card">
+          <h2>{labels.infoTitle}</h2>
+          {page?.content && <div class="contact-intro" set:html={page.content} />}
+          <ul>
+            {contactInfo?.phone && (
+              <li>
+                <i class="fas fa-phone" aria-hidden="true"></i>
+                <span>{labels.phone}</span>
+                <a href={`tel:${contactInfo.phone.replace(/[^0-9+]/g, "")}`}>{contactInfo.phone}</a>
+              </li>
+            )}
+            {contactInfo?.email && (
+              <li>
+                <i class="fas fa-envelope" aria-hidden="true"></i>
+                <span>{labels.email}</span>
+                <a href={`mailto:${contactInfo.email}`}>{contactInfo.email}</a>
+              </li>
+            )}
+            {contactInfo?.businessHours && (
+              <li>
+                <i class="fas fa-clock" aria-hidden="true"></i>
+                <span>{labels.hours}</span>
+                <strong>{contactInfo.businessHours}</strong>
+              </li>
+            )}
+            {contactInfo?.address && (
+              <li>
+                <i class="fas fa-location-dot" aria-hidden="true"></i>
+                <span>{labels.address}</span>
+                <strong>{contactInfo.address}</strong>
+              </li>
+            )}
+          </ul>
+        </div>
+
+        <ContactForm
+          title={labels.formTitle}
+          nameLabel={labels.nameLabel}
+          namePlaceholder={labels.namePlaceholder}
+          emailLabel={labels.emailLabel}
+          emailPlaceholder={labels.emailPlaceholder}
+          phoneLabel={labels.phoneLabel}
+          phonePlaceholder={labels.phonePlaceholder}
+          subjectLabel={labels.subjectLabel}
+          subjectPlaceholder={labels.subjectPlaceholder}
+          messageLabel={labels.messageLabel}
+          messagePlaceholder={labels.messagePlaceholder}
+          submitLabel={labels.submitLabel}
+        />
       </div>
     </div>
   </section>
 </BaseLayout>
 
 <style>
-  .contact-grid { display: grid; grid-template-columns: 1fr; gap: 48px; margin-bottom: 48px; }
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 360px minmax(0, 1fr);
+    gap: 48px;
+    align-items: start;
+    margin-bottom: 48px;
+  }
+
+  .contact-info-card {
+    padding: 28px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-background);
+    box-shadow: var(--shadow);
+  }
+
+  .contact-info-card h2 {
+    color: var(--color-text-primary);
+    font-size: 24px;
+    margin-bottom: 16px;
+  }
+
+  .contact-intro {
+    color: var(--color-text-secondary);
+    line-height: 1.75;
+    margin-bottom: 22px;
+  }
+
+  .contact-info-card ul {
+    display: grid;
+    gap: 16px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .contact-info-card li {
+    display: grid;
+    grid-template-columns: 34px 1fr;
+    gap: 2px 12px;
+    align-items: start;
+  }
+
+  .contact-info-card i {
+    grid-row: span 2;
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--color-background-blue);
+    color: var(--color-primary);
+  }
+
+  .contact-info-card span {
+    color: var(--color-text-muted);
+    font-size: 13px;
+  }
+
+  .contact-info-card a,
+  .contact-info-card strong {
+    color: var(--color-text-primary);
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .contact-info-card a:hover {
+    color: var(--color-primary);
+  }
+
+  @media (max-width: 900px) {
+    .contact-grid {
+      grid-template-columns: 1fr;
+    }
+  }
 </style>

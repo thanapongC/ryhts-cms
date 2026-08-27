@@ -10,17 +10,16 @@
   "options": {
     "draftAndPublish": true
   },
-  "pluginOptions": {
-    "i18n": {
-      "localized": true
-    }
-  },
   "attributes": {
     "settings": {
       "type": "component",
       "repeatable": false,
-      "component": "shared.cookie-consent-settings",
-      "description": "Consent UI labels and descriptions"
+      "component": "shared.cookie-consent-settings"
+    }
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
     }
   }
 }

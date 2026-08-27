@@ -1,25 +1,27 @@
 {
-  "collectionName": "components_downloads_release_change",
+  "collectionName": "components_downloads_release_changes",
   "info": {
     "displayName": "Release Change",
-    "description": "A single change item in a release notes entry"
+    "icon": "check"
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
   },
   "attributes": {
     "text": {
       "type": "string",
       "required": true,
-      "localized": true,
-      "description": "Change description text"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "sortOrder": {
       "type": "integer",
-      "default": 0,
-      "description": "Display order (lower number appears first)"
-    },
-    "isActive": {
-      "type": "boolean",
-      "default": true,
-      "description": "Show or hide this change item"
+      "default": 0
     }
   }
 }

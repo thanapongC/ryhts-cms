@@ -2,81 +2,166 @@
   "collectionName": "components_shared_cookie_consent_settings",
   "info": {
     "displayName": "Cookie Consent Settings",
-    "description": "Cookie consent banner labels, descriptions, and action text"
+    "icon": "shield",
+    "description": "PDPA cookie consent banner configuration"
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
   },
   "attributes": {
     "title": {
       "type": "string",
-      "description": "Consent banner heading text"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "description": {
       "type": "text",
-      "description": "Consent banner description text"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "necessaryLabel": {
       "type": "string",
-      "description": "Label for necessary cookies category"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
-    "necessaryDescription": {
+    "necessaryDesc": {
       "type": "text",
-      "description": "Description for necessary cookies category"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "functionalLabel": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "functionalDesc": {
+      "type": "text",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "analyticsLabel": {
       "type": "string",
-      "description": "Label for analytics cookies category"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
-    "analyticsDescription": {
+    "analyticsDesc": {
       "type": "text",
-      "description": "Description for analytics cookies category"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "marketingLabel": {
       "type": "string",
-      "description": "Label for marketing cookies category"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
-    "marketingDescription": {
+    "marketingDesc": {
       "type": "text",
-      "description": "Description for marketing cookies category"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "acceptAllLabel": {
       "type": "string",
-      "default": "Accept All",
-      "description": "Accept all cookies button text"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "rejectAllLabel": {
       "type": "string",
-      "default": "Reject All",
-      "description": "Reject all cookies button text"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "savePreferencesLabel": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "manageLabel": {
       "type": "string",
-      "default": "Manage Preferences",
-      "description": "Manage preferences button text"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
-    "saveLabel": {
+    "closeLabel": {
       "type": "string",
-      "default": "Save Preferences",
-      "description": "Save preferences button text"
-    },
-    "privacyPolicyLabel": {
-      "type": "string",
-      "description": "Privacy policy link text"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "cookiePolicyLabel": {
       "type": "string",
-      "description": "Cookie policy link text"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "privacyPolicyLabel": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "alwaysOnLabel": {
       "type": "string",
-      "description": "Label for always-on badge on required cookies"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "learnMoreLabel": {
       "type": "string",
-      "description": "Learn more link text"
-    },
-    "isActive": {
-      "type": "boolean",
-      "default": true,
-      "description": "Show or hide the cookie consent banner"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     }
   }
 }

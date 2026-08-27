@@ -1,35 +1,43 @@
 {
-  "collectionName": "components_footer_legal_link",
+  "collectionName": "components_footer_legal_links",
   "info": {
     "displayName": "Legal Link",
-    "description": "Legal page link in the footer (Privacy Policy, Terms, etc.)"
+    "icon": "link"
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
   },
   "attributes": {
     "label": {
       "type": "string",
       "required": true,
-      "description": "Link text (e.g. Privacy Policy, Terms of Service)"
-    },
-    "url": {
-      "type": "string",
-      "required": true,
-      "description": "Link URL (e.g. /privacy-policy, /terms-of-service)"
-    },
-    "target": {
-      "type": "enumeration",
-      "enum": ["_self", "_blank"],
-      "default": "_self",
-      "description": "Link target (_self or _blank)"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "sortOrder": {
       "type": "integer",
-      "default": 0,
-      "description": "Display order (lower number appears first)"
+      "default": 0
     },
     "isActive": {
       "type": "boolean",
-      "default": true,
-      "description": "Show or hide this legal link"
+      "default": true
+    },
+    "url": {
+      "type": "string",
+      "required": true
+    },
+    "target": {
+      "type": "enumeration",
+      "enum": [
+        "_self",
+        "_blank"
+      ],
+      "default": "_self"
     }
   }
 }

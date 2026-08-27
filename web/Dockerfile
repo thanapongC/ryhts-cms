@@ -5,8 +5,6 @@
 # Stage 1: Build
 FROM node:22-alpine AS builder
 
-RUN corepack enable && corepack prepare pnpm@latest --activate
-
 WORKDIR /app
 
 # Astro renders CMS-backed pages during the image build, so the CMS URL must
@@ -16,12 +14,12 @@ ENV PUBLIC_STRAPI_URL=$PUBLIC_STRAPI_URL
 ARG STRAPI_API_TOKEN=
 ENV STRAPI_API_TOKEN=$STRAPI_API_TOKEN
 
-COPY package.json pnpm-lock.yaml ./
-RUN pnpm install --frozen-lockfile
+COPY package.json package-lock.json ./
+RUN npm ci
 
 COPY . .
 ARG CMS_CONTENT_VERSION=local
-RUN echo "Building frontend content version ${CMS_CONTENT_VERSION}" && pnpm run build
+RUN echo "Building frontend content version ${CMS_CONTENT_VERSION}" && npm run build
 
 # Stage 2: Production
 FROM node:22-alpine

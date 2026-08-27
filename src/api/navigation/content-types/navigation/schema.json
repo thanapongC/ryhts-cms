@@ -5,51 +5,50 @@
     "singularName": "navigation",
     "pluralName": "navigations",
     "displayName": "Site - Navigation",
-    "description": "Site navigation menus and shared navigation labels"
+    "description": "Site navigation menus (header, footer, etc.)"
   },
   "options": {
-    "draftAndPublish": true
-  },
-  "pluginOptions": {
-    "i18n": {
-      "localized": true
-    }
+    "draftAndPublish": false
   },
   "attributes": {
     "name": {
       "type": "string",
       "required": true,
-      "description": "Navigation menu name"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "headerItems": {
       "type": "component",
       "repeatable": true,
-      "component": "navigation.nav-item",
-      "description": "Header navigation menu items"
+      "component": "navigation.nav-item"
     },
     "footerSections": {
       "type": "component",
       "repeatable": true,
-      "component": "navigation.footer-section",
-      "description": "Footer navigation sections"
+      "component": "navigation.footer-section"
     },
     "footerLabels": {
       "type": "component",
       "repeatable": false,
-      "component": "shared.footer-labels",
-      "description": "Footer heading and link labels"
+      "component": "shared.footer-labels"
     },
     "productNames": {
       "type": "component",
       "repeatable": true,
-      "component": "navigation.product-name",
-      "description": "Product name mappings for navigation display"
+      "component": "navigation.product-name"
     },
     "buttonLabels": {
       "type": "component",
       "repeatable": false,
-      "component": "shared.button-labels",
-      "description": "Shared CTA and action labels"
+      "component": "shared.button-labels"
+    }
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
     }
   }
 }

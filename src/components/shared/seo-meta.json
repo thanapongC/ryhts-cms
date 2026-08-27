@@ -1,102 +1,126 @@
 {
-  "collectionName": "components_shared_seo_meta",
+  "collectionName": "components_shared_seo_metas",
   "info": {
     "displayName": "SEO Meta",
-    "description": "Page-level SEO metadata for search engines and social sharing"
+    "icon": "search",
+    "description": "Reusable SEO metadata: title, description, OG image, schema type"
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
   },
   "attributes": {
     "metaTitle": {
       "type": "string",
-      "maxLength": 70,
-      "description": "Page title for search engines (max 70 chars)"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "maxLength": 70
     },
     "metaDescription": {
       "type": "text",
-      "maxLength": 160,
-      "description": "Page description for search engines (max 160 chars)"
-    },
-    "keywords": {
-      "type": "text",
-      "description": "Localized keyword text (comma-separated)"
-    },
-    "canonicalUrl": {
-      "type": "string",
-      "description": "Canonical URL override (only when needed; most pages auto-generate)"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "maxLength": 160
     },
     "ogTitle": {
       "type": "string",
-      "description": "Open Graph title for social sharing"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "ogDescription": {
       "type": "text",
-      "description": "Open Graph description for social sharing"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "ogImage": {
       "type": "media",
       "multiple": false,
-      "allowedTypes": ["images"],
-      "description": "Open Graph image for social sharing"
+      "allowedTypes": [
+        "images"
+      ]
     },
     "ogType": {
       "type": "enumeration",
-      "enum": ["website", "article", "product"],
-      "default": "website",
-      "description": "Open Graph type"
+      "enum": [
+        "website",
+        "article",
+        "product"
+      ],
+      "default": "website"
     },
-    "twitterTitle": {
-      "type": "string",
-      "description": "Twitter Card title"
-    },
-    "twitterDescription": {
-      "type": "text",
-      "description": "Twitter Card description"
-    },
-    "twitterImage": {
-      "type": "media",
-      "multiple": false,
-      "allowedTypes": ["images"],
-      "description": "Twitter Card image"
+    "canonicalUrl": {
+      "type": "string"
     },
     "noindex": {
       "type": "boolean",
-      "default": false,
-      "description": "If true, page will not be indexed by search engines"
+      "default": false
     },
     "nofollow": {
       "type": "boolean",
-      "default": false,
-      "description": "If true, links on this page will not be followed"
+      "default": false
     },
     "noarchive": {
       "type": "boolean",
-      "default": false,
-      "description": "If true, search engines will not cache this page"
+      "default": false
     },
     "nosnippet": {
       "type": "boolean",
-      "default": false,
-      "description": "If true, search engines will not show a snippet"
+      "default": false
     },
     "maxSnippet": {
       "type": "integer",
-      "description": "Maximum snippet length in characters (-1 for no limit)"
+      "default": -1
     },
     "maxImagePreview": {
       "type": "enumeration",
-      "enum": ["none", "standard", "large"],
-      "description": "Maximum image preview size"
+      "enum": [
+        "none",
+        "standard",
+        "large"
+      ],
+      "default": "large"
     },
     "maxVideoPreview": {
       "type": "integer",
-      "description": "Maximum video preview in seconds (-1 for no limit)"
+      "default": -1
     },
     "schemaType": {
-      "type": "string",
-      "description": "Structured data type (e.g. WebPage, AboutPage, FAQPage, ProductPage, Article)"
+      "type": "enumeration",
+      "enum": [
+        "WebPage",
+        "AboutPage",
+        "ProductPage",
+        "CollectionPage",
+        "FAQPage",
+        "ContactPage",
+        "Article",
+        "SoftwareApplication"
+      ],
+      "default": "WebPage"
+    },
+    "keywords": {
+      "type": "text",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "alternateLanguages": {
-      "type": "json",
-      "description": "JSON object for exceptional hreflang overrides"
+      "type": "json"
     }
   }
 }

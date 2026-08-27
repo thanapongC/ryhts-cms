@@ -1,0 +1,142 @@
+{
+  "kind": "singleType",
+  "collectionName": "about_u_s",
+  "info": {
+    "singularName": "about-us",
+    "pluralName": "about-us-pages",
+    "displayName": "Page - About Us",
+    "description": "About Us page content: company intro, mission, vision, team, partners, timeline"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "isPageEnabled": {
+      "type": "boolean",
+      "default": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
+    },
+    "pageTitle": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "pageDescription": {
+      "type": "text",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "companyIntro": {
+      "type": "blocks",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "mission": {
+      "type": "blocks",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "vision": {
+      "type": "blocks",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "teamTitle": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "teamSubtitle": {
+      "type": "text",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "teamMembers": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::team-member.team-member"
+    },
+    "partnerTitle": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "partnerSubtitle": {
+      "type": "text",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "partners": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::partner.partner"
+    },
+    "timelineTitle": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "timelineSubtitle": {
+      "type": "text",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "milestones": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::timeline-milestone.timeline-milestone"
+    },
+    "contactInfo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.contact-info"
+    },
+    "seo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.seo-meta"
+    }
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  }
+}

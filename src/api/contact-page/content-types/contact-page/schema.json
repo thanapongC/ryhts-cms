@@ -4,36 +4,53 @@
   "info": {
     "singularName": "contact-page",
     "pluralName": "contact-pages",
-    "displayName": "Page - Contact Us",
-    "description": "Contact us page content"
+    "displayName": "Page - Contact",
+    "description": "Contact page content, introduction, featured media, and SEO"
   },
   "options": {
     "draftAndPublish": true
   },
-  "pluginOptions": {
-    "i18n": {
-      "localized": true
-    }
-  },
   "attributes": {
+    "isPageEnabled": {
+      "type": "boolean",
+      "default": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
+    },
     "title": {
       "type": "string",
       "required": true,
-      "default": "ติดต่อเรา"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "subtitle": {
-      "type": "string",
-      "description": "Short tagline or subtitle"
+      "type": "text",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "featuredImage": {
       "type": "media",
       "multiple": false,
-      "allowedTypes": ["images"],
-      "description": "Hero or featured image"
+      "allowedTypes": [
+        "images"
+      ]
     },
     "content": {
       "type": "richtext",
-      "description": "Main page content (rich text)"
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "seo": {
       "type": "component",
@@ -44,6 +61,11 @@
           "localized": true
         }
       }
+    }
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
     }
   }
 }

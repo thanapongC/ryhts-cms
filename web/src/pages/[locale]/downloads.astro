@@ -1,0 +1,340 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import OfflineNotice from "../../components/OfflineNotice.astro";
+import {
+  safeGetDownloadsPage,
+  safeGetDownloadItems,
+  safeGetSoftwareReleases,
+  getStrapiAbsoluteImageUrl,
+  filterAndSort,
+  isPageDisabled,
+} from "../../lib/api";
+import { formatDate } from "../../lib/constants";
+import { isValidLocale, DEFAULT_LOCALE, type Locale } from "../../lib/i18n";
+
+const lang = (Astro.params.locale as Locale) || DEFAULT_LOCALE;
+if (!isValidLocale(lang)) return Astro.redirect(`/${DEFAULT_LOCALE}/downloads`);
+
+const pageResult = await safeGetDownloadsPage(lang);
+const documentsResult = await safeGetDownloadItems(lang);
+const releasesResult = await safeGetSoftwareReleases(lang);
+
+const page = pageResult.data;
+if (pageResult.ok && isPageDisabled(page)) return new Response(null, { status: 404 });
+const documents = filterAndSort(page?.documents?.length ? page.documents : documentsResult.data);
+const releases = filterAndSort(page?.releaseNotes?.length ? page.releaseNotes : releasesResult.data);
+const latestVersion = page?.latestVersion || releases.find((release) => release.isLatest) || releases[0];
+const seo = page?.seo;
+const isOffline = pageResult.isOffline || documentsResult.isOffline || releasesResult.isOffline;
+const siteUrl = Astro.url.origin;
+const localeDate = lang === "en" ? "en-US" : "th-TH";
+
+const labels = {
+  download: lang === "en" ? "Download" : "ดาวน์โหลด",
+  preview: lang === "en" ? "Preview" : "ดูตัวอย่าง",
+  latest: lang === "en" ? "Latest version" : "เวอร์ชันล่าสุด",
+  releaseNotes: lang === "en" ? "Release notes" : "บันทึกการเปลี่ยนแปลง",
+  fileSize: lang === "en" ? "File size" : "ขนาดไฟล์",
+  releaseDate: lang === "en" ? "Release date" : "วันที่เผยแพร่",
+  noFiles: lang === "en" ? "No downloads available yet" : "ยังไม่มีไฟล์ดาวน์โหลด",
+};
+
+function getDownloadUrl(item: { file?: { url?: string } | null; previewUrl?: string; downloadFile?: { url?: string } | null; downloadUrl?: string }) {
+  return getStrapiAbsoluteImageUrl(item.file || item.downloadFile) || item.previewUrl || item.downloadUrl || "#";
+}
+---
+
+<BaseLayout
+  title={seo?.metaTitle || page?.heroTitle || labels.download}
+  description={seo?.metaDescription || page?.heroSubtitle || ""}
+  ogImage={getStrapiAbsoluteImageUrl(seo?.ogImage) || undefined}
+  robots={seo?.robots}
+  keywords={seo?.keywords?.split(",").map((keyword) => keyword.trim()) || []}
+  locale={lang}
+  hreflangs={[
+    { lang: "th", href: `${siteUrl}/th/downloads` },
+    { lang: "en", href: `${siteUrl}/en/downloads` },
+    { lang: "x-default", href: `${siteUrl}/th/downloads` },
+  ]}
+  jsonLd={{
+    "@context": "https://schema.org",
+    "@type": seo?.schemaType || "CollectionPage",
+    name: seo?.metaTitle || page?.heroTitle || labels.download,
+    description: seo?.metaDescription || page?.heroSubtitle || "",
+  }}
+>
+  <section class="downloads-hero">
+    <div class="container downloads-hero-inner">
+      <div>
+        {page?.heroBadge && <span class="eyebrow">{page.heroBadge}</span>}
+        <h1>{page?.heroTitle || (lang === "en" ? "Download Center" : "ศูนย์ดาวน์โหลด")}</h1>
+        <p>{page?.heroSubtitle}</p>
+      </div>
+      {latestVersion && (
+        <article class="latest-card">
+          <span class="latest-label">{labels.latest}</span>
+          <h2>{latestVersion.name}</h2>
+          <strong>v{latestVersion.version}</strong>
+          <p>{latestVersion.summary}</p>
+          <a href={getDownloadUrl(latestVersion)} class="btn btn-primary">{labels.download} →</a>
+        </article>
+      )}
+    </div>
+  </section>
+
+  <section class="section downloads-section">
+    <div class="container">
+      {isOffline && (
+        <OfflineNotice
+          title={lang === "en" ? "CMS content may be unavailable" : "อาจไม่สามารถโหลดข้อมูล CMS ได้"}
+          message={lang === "en" ? "Fallback download content is being shown." : "กำลังแสดงข้อมูลสำรองของหน้าดาวน์โหลด"}
+        />
+      )}
+
+      <div class="section-heading">
+        <h2 class="section-title">{page?.documentsTitle || labels.download}</h2>
+      </div>
+
+      {documents.length > 0 ? (
+        <div class="download-grid">
+          {documents.map((item) => (
+            <article class="download-card">
+              <div class="download-icon" aria-hidden="true"><i class="fas fa-file-arrow-down"></i></div>
+              <div class="download-body">
+                <h3>{item.title}</h3>
+                <p>{item.description}</p>
+                <div class="download-meta">
+                  {item.fileSize && <span>{labels.fileSize}: {item.fileSize}</span>}
+                  {item.releaseDate && <span>{labels.releaseDate}: {formatDate(item.releaseDate, localeDate)}</span>}
+                </div>
+              </div>
+              <div class="download-actions">
+                {item.previewUrl && <a href={item.previewUrl} class="btn btn-outline" target="_blank" rel="noopener noreferrer">{labels.preview}</a>}
+                <a href={getDownloadUrl(item)} class="btn btn-primary" target="_blank" rel="noopener noreferrer">{labels.download}</a>
+              </div>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <div class="empty-state">
+          <i class="fas fa-folder-open" aria-hidden="true"></i>
+          <p>{labels.noFiles}</p>
+        </div>
+      )}
+    </div>
+  </section>
+
+  {releases.length > 0 && (
+    <section class="section section-alt release-section">
+      <div class="container">
+        <div class="section-heading">
+          <h2 class="section-title">{labels.releaseNotes}</h2>
+        </div>
+        <div class="release-list">
+          {releases.map((release) => (
+            <article class="release-card">
+              <div class="release-header">
+                <div>
+                  <h3>{release.name} v{release.version}</h3>
+                  <span>{formatDate(release.releaseDate, localeDate)}</span>
+                </div>
+                {release.isLatest && <strong>{labels.latest}</strong>}
+              </div>
+              <p>{release.summary}</p>
+              {release.changes && release.changes.length > 0 && (
+                <ul>
+                  {filterAndSort(release.changes).map((change) => <li>{change.text}</li>)}
+                </ul>
+              )}
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+</BaseLayout>
+
+<style>
+  .downloads-hero {
+    padding: 140px 0 72px;
+    background: linear-gradient(180deg, var(--color-background) 0%, var(--color-background-soft) 100%);
+    border-bottom: 1px solid var(--color-border-light);
+  }
+
+  .downloads-hero-inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 360px;
+    gap: 48px;
+    align-items: center;
+  }
+
+  .eyebrow,
+  .latest-label {
+    display: inline-flex;
+    width: fit-content;
+    margin-bottom: 14px;
+    padding: 7px 12px;
+    border-radius: 999px;
+    background: var(--color-background-blue);
+    color: var(--color-primary);
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .downloads-hero h1 {
+    max-width: 760px;
+    margin-bottom: 18px;
+    color: var(--color-text-primary);
+    font-size: 44px;
+    line-height: 1.18;
+  }
+
+  .downloads-hero p,
+  .download-card p,
+  .release-card p {
+    color: var(--color-text-secondary);
+    line-height: 1.75;
+  }
+
+  .latest-card,
+  .download-card,
+  .release-card {
+    background: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+  }
+
+  .latest-card {
+    padding: 28px;
+  }
+
+  .latest-card h2,
+  .download-card h3,
+  .release-card h3 {
+    color: var(--color-text-primary);
+  }
+
+  .latest-card strong {
+    display: block;
+    margin: 10px 0;
+    color: var(--color-primary);
+    font-size: 28px;
+  }
+
+  .section-heading {
+    margin-bottom: 32px;
+  }
+
+  .download-grid,
+  .release-list {
+    display: grid;
+    gap: 18px;
+  }
+
+  .download-card {
+    display: grid;
+    grid-template-columns: 56px minmax(0, 1fr) auto;
+    gap: 20px;
+    align-items: center;
+    padding: 24px;
+  }
+
+  .download-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: var(--color-background-blue);
+    color: var(--color-primary);
+    font-size: 22px;
+  }
+
+  .download-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 18px;
+    margin-top: 12px;
+    color: var(--color-text-muted);
+    font-size: 13px;
+  }
+
+  .download-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .release-card {
+    padding: 24px;
+  }
+
+  .release-header {
+    display: flex;
+    gap: 18px;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  .release-header span {
+    color: var(--color-text-muted);
+    font-size: 14px;
+  }
+
+  .release-header strong {
+    flex-shrink: 0;
+    border-radius: 999px;
+    background: var(--color-background-blue);
+    color: var(--color-primary);
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  .release-card ul {
+    display: grid;
+    gap: 8px;
+    margin: 18px 0 0;
+    padding-left: 20px;
+    color: var(--color-text-secondary);
+  }
+
+  .empty-state {
+    padding: 48px;
+    text-align: center;
+    color: var(--color-text-muted);
+  }
+
+  .empty-state i {
+    display: block;
+    margin-bottom: 14px;
+    color: var(--color-primary);
+    font-size: 44px;
+  }
+
+  @media (max-width: 1024px) {
+    .downloads-hero-inner {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .downloads-hero {
+      padding: 120px 0 48px;
+    }
+
+    .downloads-hero h1 {
+      font-size: 30px;
+    }
+
+    .download-card {
+      grid-template-columns: 1fr;
+    }
+
+    .download-actions {
+      justify-content: flex-start;
+    }
+  }
+</style>

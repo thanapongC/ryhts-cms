@@ -1,63 +1,413 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
-import { safeGetProducts, safeGetCategories } from "../../../lib/api";
+import { getStrapiMedia, safeGetProductsServices, isPageDisabled } from "../../../lib/api";
+import type { ProductPage } from "../../../lib/api";
 import { isValidLocale, DEFAULT_LOCALE, type Locale } from "../../../lib/i18n";
 import OfflineNotice from "../../../components/OfflineNotice.astro";
 import PageHeader from "../../../components/PageHeader.astro";
 import Breadcrumb from "../../../components/Breadcrumb.astro";
-import ProductCard from "../../../components/ProductCard.astro";
-import CategoryFilters from "../../../components/CategoryFilters.astro";
 
 const lang = (Astro.params.locale as Locale) || DEFAULT_LOCALE;
 if (!isValidLocale(lang)) return Astro.redirect(`/${DEFAULT_LOCALE}/products`);
 
-const productsResult = await safeGetProducts(lang, 1, 12);
-const categoriesResult = await safeGetCategories(lang);
+const pageResult = await safeGetProductsServices(lang);
+const page = pageResult.data;
+if (pageResult.ok && isPageDisabled(page)) return new Response(null, { status: 404 });
+const seo = page?.seo;
 
-const products = productsResult.data?.data || [];
-const categories = categoriesResult.data || [];
-const isOffline = productsResult.isOffline;
-const activeCategory = Astro.url.searchParams.get("category") || undefined;
+const products = (page?.products || [])
+  .filter((product) => product.isActive !== false)
+  .slice()
+  .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+
+const heroStats = (page?.heroStats || [])
+  .slice()
+  .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+const whyStats = (page?.whyStats || [])
+  .slice()
+  .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+
+const isOffline = pageResult.isOffline;
 
 const siteUrl = Astro.url.origin;
+
+function normalizeInternalUrl(url?: string) {
+  if (!url) return "#";
+  if (/^(https?:|mailto:|tel:|#)/.test(url)) return url;
+  const path = url.replace(/^\/(th|en)\//, "/").replace(/^\//, "");
+  return `/${lang}/${path}`;
+}
+
+function getProductHref(product: ProductPage) {
+  return `/${lang}/products/${product.slug}`;
+}
+
+function getProductImage(product: ProductPage) {
+  return getStrapiMedia(product.thumbnail?.url);
+}
+
+function getCardFeatures(product: ProductPage) {
+  return Array.isArray(product.cardFeatures)
+    ? product.cardFeatures.filter((feature): feature is string => typeof feature === "string")
+    : [];
+}
+
+function getPlatformLabel(product: ProductPage) {
+  if (product.platform === "handheld_mobile") return "Mobile";
+  if (product.platform === "windows_pc") return "Windows";
+  if (product.platform === "web") return "Web";
+  return lang === "th" ? "งานพิมพ์บาร์โค้ด" : "Barcode Printing";
+}
 ---
 
 <BaseLayout
-  title="Products"
-  description="สินค้าริบบอนสำหรับเครื่องพิมพ์บาร์โค้ดทุกขนาด"
+  title={seo?.metaTitle || page?.heroTitle || (lang === "th" ? "สินค้าและบริการ" : "Products & Services")}
+  description={seo?.metaDescription || page?.heroDescription || (lang === "th" ? "สินค้าริบบอนสำหรับเครื่องพิมพ์บาร์โค้ดทุกขนาด" : "Ribbon products for barcode printers of every size")}
   locale={lang}
   hreflangs={[
     { lang: "th", href: `${siteUrl}/th/products` },
     { lang: "en", href: `${siteUrl}/en/products` },
     { lang: "x-default", href: `${siteUrl}/th/products` },
   ]}
-  jsonLd={{ "@context": "https://schema.org", "@type": "CollectionPage", name: "Products" }}
+  jsonLd={{ "@context": "https://schema.org", "@type": seo?.schemaType || "CollectionPage", name: page?.heroTitle || "Products" }}
 >
-  <PageHeader title="สินค้าของเรา" description="ริบบอนสำหรับเครื่องพิมพ์บาร์โค้ดทุกขนาด" />
+  <PageHeader
+    title={page?.heroTitle || (lang === "th" ? "สินค้าของเรา" : "Our Products")}
+    description={page?.heroDescription || (lang === "th" ? "ริบบอนสำหรับเครื่องพิมพ์บาร์โค้ดทุกขนาด" : "Ribbons for barcode printers of every size")}
+  />
 
   <section class="section">
     <div class="container">
-      <Breadcrumb items={[{ label: "Products" }]} />
-      <CategoryFilters categories={categories} activeSlug={activeCategory} />
+      <Breadcrumb items={[{ label: lang === "th" ? "สินค้าและบริการ" : "Products & Services" }]} />
 
-      {isOffline && products.length === 0 ? (
-        <OfflineNotice title="ไม่สามารถโหลดสินค้าได้" message="Unable to load products." />
-      ) : products.length > 0 ? (
-        <div class="products-grid">
-          {products.map((product) => <ProductCard product={product} />)}
+      {isOffline && (
+        <OfflineNotice
+          title={lang === "th" ? "กำลังใช้ข้อมูลสำรอง" : "Showing fallback content"}
+          message={lang === "th" ? "ไม่สามารถเชื่อมต่อ CMS ได้ในขณะนี้" : "CMS is currently unavailable."}
+        />
+      )}
+
+      {(page?.heroBadge || page?.heroPrimaryCtaText || page?.heroSecondaryCtaText || heroStats.length > 0) && (
+        <div class="products-hero-panel">
+          <div class="products-hero-actions">
+            {page?.heroBadge && <span class="section-badge">{page.heroBadge}</span>}
+            <div class="products-actions">
+              {page?.heroPrimaryCtaText && (
+                <a href={normalizeInternalUrl(page.heroPrimaryCtaUrl)} class="btn btn-primary">
+                  {page.heroPrimaryCtaText}
+                </a>
+              )}
+              {page?.heroSecondaryCtaText && (
+                <a href="#products-grid" class="btn btn-outline">
+                  {page.heroSecondaryCtaText}
+                </a>
+              )}
+            </div>
+          </div>
+          {heroStats.length > 0 && (
+            <div class="stats-grid compact">
+              {heroStats.map((stat) => (
+                <div class="stat-item">
+                  <strong>{stat.value}</strong>
+                  <span>{stat.label}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      <div class="section-heading">
+        {page?.productsBadge && <span class="section-badge">{page.productsBadge}</span>}
+        <h2>{page?.productsTitle || (lang === "th" ? "เลือกริบบอนให้เหมาะกับงานพิมพ์ของคุณ" : "Choose the right ribbon for your labels")}</h2>
+        {page?.productsSubtitle && <p>{page.productsSubtitle}</p>}
+      </div>
+
+      {products.length > 0 ? (
+        <div class="products-grid" id="products-grid">
+          {products.map((product) => {
+            const imageUrl = getProductImage(product);
+            const cardFeatures = getCardFeatures(product);
+            return (
+              <a href={getProductHref(product)} class="product-service-card">
+                {imageUrl ? (
+                  <div class="product-service-image">
+                    <img src={imageUrl} alt={product.pageTitle || product.name} loading="lazy" />
+                  </div>
+                ) : (
+                  <div class="product-service-image product-service-placeholder" aria-hidden="true">
+                    <i class="fas fa-barcode"></i>
+                  </div>
+                )}
+                <div class="product-service-body">
+                  <span class="product-service-platform">{getPlatformLabel(product)}</span>
+                  <h3>{product.pageTitle || product.name}</h3>
+                  {product.shortDesc && <p>{product.shortDesc}</p>}
+                  {cardFeatures.length > 0 && (
+                    <ul class="product-service-features">
+                      {cardFeatures.slice(0, 3).map((feature) => (
+                        <li>
+                          <i class="fas fa-check" aria-hidden="true"></i>
+                          <span>{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  <span class="product-service-link">{lang === "th" ? "อ่านรายละเอียด" : "Read more"}</span>
+                </div>
+              </a>
+            );
+          })}
         </div>
       ) : (
         <div class="empty-state">
           <i class="fas fa-box-open" style="font-size: 48px; color: var(--color-primary);"></i>
-          <p>ยังไม่มีสินค้าในขณะนี้</p>
+          <p>{lang === "th" ? "ยังไม่มีสินค้าในขณะนี้" : "No products available."}</p>
         </div>
+      )}
+
+      {(page?.whyTitle || page?.whySubtitle || whyStats.length > 0) && (
+        <section class="why-section">
+          {page?.whyBadge && <span class="section-badge">{page.whyBadge}</span>}
+          {page?.whyTitle && <h2>{page.whyTitle}</h2>}
+          {page?.whySubtitle && <p>{page.whySubtitle}</p>}
+          {whyStats.length > 0 && (
+            <div class="stats-grid">
+              {whyStats.map((stat) => (
+                <div class="stat-item">
+                  <strong>{stat.value}</strong>
+                  <span>{stat.label}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
       )}
     </div>
   </section>
 </BaseLayout>
 
 <style>
-  .products-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
-  @media (max-width: 1024px) { .products-grid { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 768px) { .products-grid { grid-template-columns: 1fr; } }
+  .products-hero-panel {
+    display: grid;
+    grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.3fr);
+    gap: 24px;
+    align-items: center;
+    padding: 28px;
+    margin-bottom: 48px;
+    background: var(--color-background-soft);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+  }
+
+  .products-hero-actions {
+    display: grid;
+    gap: 18px;
+  }
+
+  .products-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .section-heading {
+    max-width: 720px;
+    margin-bottom: 32px;
+  }
+
+  .section-heading h2,
+  .why-section h2 {
+    font-size: 32px;
+    color: var(--color-text-primary);
+    margin: 12px 0;
+  }
+
+  .section-heading p,
+  .why-section p {
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+  }
+
+  .section-badge {
+    display: inline-flex;
+    width: fit-content;
+    padding: 6px 12px;
+    color: var(--color-primary);
+    background: var(--color-background-blue);
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .stats-grid.compact {
+    gap: 12px;
+  }
+
+  .stat-item {
+    padding: 16px;
+    background: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+  }
+
+  .stat-item strong {
+    display: block;
+    color: var(--color-primary);
+    font-size: 24px;
+    margin-bottom: 4px;
+  }
+
+  .stat-item span {
+    color: var(--color-text-secondary);
+    font-size: 14px;
+  }
+
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+  }
+
+  .product-service-card {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    overflow: hidden;
+    color: inherit;
+    text-decoration: none;
+    background: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    transition: all var(--transition);
+  }
+
+  .product-service-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--color-border-blue);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .product-service-image {
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background: var(--color-background-blue);
+  }
+
+  .product-service-placeholder {
+    display: grid;
+    place-items: center;
+    color: var(--color-primary);
+    background:
+      linear-gradient(135deg, rgba(1, 127, 228, 0.08), rgba(1, 127, 228, 0.18)),
+      var(--color-background-blue);
+  }
+
+  .product-service-placeholder i {
+    font-size: 52px;
+  }
+
+  .product-service-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .product-service-body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    padding: 24px;
+  }
+
+  .product-service-platform {
+    width: fit-content;
+    margin-bottom: 12px;
+    padding: 5px 10px;
+    color: var(--color-primary);
+    background: var(--color-background-blue);
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .product-service-body h3 {
+    margin-bottom: 10px;
+    color: var(--color-text-primary);
+    font-size: 20px;
+  }
+
+  .product-service-body p {
+    flex: 1;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+  }
+
+  .product-service-features {
+    display: grid;
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .product-service-features li {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    color: var(--color-text-secondary);
+    font-size: 14px;
+  }
+
+  .product-service-features i {
+    margin-top: 4px;
+    color: var(--color-primary);
+    font-size: 11px;
+  }
+
+  .product-service-link {
+    margin-top: 16px;
+    color: var(--color-primary);
+    font-weight: 600;
+  }
+
+  .why-section {
+    margin-top: 64px;
+    padding: 40px;
+    background: var(--color-background-blue);
+    border-radius: var(--radius-lg);
+  }
+
+  @media (max-width: 1024px) {
+    .products-hero-panel {
+      grid-template-columns: 1fr;
+    }
+
+    .products-grid,
+    .stats-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .products-grid,
+    .stats-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .products-hero-panel,
+    .why-section {
+      padding: 22px;
+    }
+
+    .section-heading h2,
+    .why-section h2 {
+      font-size: 26px;
+    }
+  }
 </style>

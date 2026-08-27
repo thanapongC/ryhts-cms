@@ -1,0 +1,61 @@
+{
+  "kind": "collectionType",
+  "collectionName": "download_items",
+  "info": {
+    "singularName": "download-item",
+    "pluralName": "download-items",
+    "displayName": "Download Item",
+    "description": "A downloadable document, installer, or resource"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "sortOrder": {
+      "type": "integer",
+      "default": 0
+    },
+    "isActive": {
+      "type": "boolean",
+      "default": true
+    },
+    "description": {
+      "type": "text",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "file": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "files"
+      ]
+    },
+    "previewUrl": {
+      "type": "string"
+    },
+    "fileSize": {
+      "type": "string"
+    },
+    "releaseDate": {
+      "type": "date"
+    }
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  }
+}

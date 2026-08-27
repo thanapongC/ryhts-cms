@@ -1,0 +1,81 @@
+{
+  "kind": "singleType",
+  "collectionName": "downloads_pages",
+  "info": {
+    "singularName": "downloads-page",
+    "pluralName": "downloads-pages",
+    "displayName": "Page - Downloads",
+    "description": "CMS settings and selected downloads for the Download Center"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "isPageEnabled": {
+      "type": "boolean",
+      "default": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
+    },
+    "heroBadge": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "heroTitle": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "heroSubtitle": {
+      "type": "text",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "documentsTitle": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "documents": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::download-item.download-item"
+    },
+    "latestVersion": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::software-release.software-release"
+    },
+    "releaseNotes": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::software-release.software-release"
+    },
+    "seo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.seo-meta"
+    }
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  }
+}

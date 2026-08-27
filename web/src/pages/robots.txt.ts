@@ -95,7 +95,7 @@ function buildRobotsTxt(): string {
  * GET /robots.txt
  *
  * Returns robots.txt generated from SEO config.
- * Cache header: public, max-age=86400 (1 day)
+ * Cache header: no-store
  */
 export const GET: APIRoute = async () => {
   const content = buildRobotsTxt();
@@ -104,7 +104,9 @@ export const GET: APIRoute = async () => {
     status: 200,
     headers: {
       "Content-Type": "text/plain; charset=utf-8",
-      "Cache-Control": "public, max-age=86400",
+      "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0, s-maxage=0",
+      "Pragma": "no-cache",
+      "Expires": "0",
     },
   });
 };
