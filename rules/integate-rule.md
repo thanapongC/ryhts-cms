@@ -30,6 +30,7 @@ Rules:
 - Add every rendered relation/component/media field to `populate`.
 - Use `fetchStrapiSingle` for single types.
 - Use `fetchStrapiCollection` for collection types.
+- Use `cache: "no-store"` for Strapi requests so CMS changes, `isPageEnabled`, and `isActive` state are reflected immediately.
 - Catch errors and return `null` or `[]` so static fallback still works.
 
 Example:
@@ -172,7 +173,29 @@ Relation-derived URLs should also use `t.home`:
 if (link.productPage?.slug) return `${t.home}${link.productPage.slug}/`;
 ```
 
-## 7. Fallback rule
+## 7. Page availability and fallback rule
+
+Public page single types use `isPageEnabled` as the CMS-controlled visibility switch.
+
+Rules:
+
+- Add `isPageEnabled` to the TypeScript interface for every public page single type.
+- Fetch the page for the current locale before rendering route content.
+- If the CMS request succeeded and `isPageEnabled === false`, return `new Response(null, { status: 404 })`.
+- Treat missing or `null` `isPageEnabled` as enabled so older records keep rendering.
+- Do not render static fallback content for a page that CMS explicitly disabled.
+
+Use this route pattern:
+
+```ts
+const pageResult = await getPageData(lang);
+
+if (pageResult.ok && pageResult.data?.isPageEnabled === false) {
+  return new Response(null, { status: 404 });
+}
+```
+
+Product and article detail pages must also return `404` when the requested record is missing, unpublished, or `isActive === false`.
 
 Frontend must not break when CMS is unavailable, missing, unpublished, or partially empty.
 
@@ -188,11 +211,17 @@ Example:
 const heroTitle = cmsData?.heroTitle || t.freeTrial.heroTitle;
 ```
 
+Fallback rules:
+
+- Use static/i18n fallback when Strapi is unavailable or optional CMS content is missing.
+- Do not replace an online CMS response with fallback records when CMS intentionally returns an empty active collection.
+- Do not use fallback content to bypass `isPageEnabled === false` or `isActive === false`.
+
 For sections/lists:
 
 ```ts
-const sections = cmsData?.sections?.length
-  ? cmsData.sections
+const sections = cmsResult.ok
+  ? cmsData?.sections ?? []
   : fallbackSections;
 ```
 
@@ -203,6 +232,7 @@ Every repeatable CMS list must:
 - filter inactive items
 - sort by `sortOrder`
 - handle empty arrays
+- preserve an intentionally empty online CMS response when all records are inactive
 
 Use this pattern:
 
@@ -214,6 +244,14 @@ const features = cmsData?.features
 ```
 
 Do not render unsorted CMS arrays directly if order matters.
+
+For public collections with detail pages, add Strapi API filters where practical:
+
+```ts
+filters[isActive][$ne]=false
+```
+
+Then keep the frontend `isActive !== false` filter as a second guard for relation data and partially populated responses.
 
 ## 9. Relation rendering rule
 
@@ -1041,14 +1079,33 @@ Rules:
 - Localize section components for TH and EN.
 - Populate every section component and relation before rendering.
 
-## 19. Definition of done
+## 19. CMS admin security rule
+
+Admin registration is disabled by default.
+
+Implementation:
+
+- Middleware: `src/middlewares/disable-admin-registration.js`
+- Registration override: `ADMIN_REGISTRATION_ENABLED=true`
+
+Rules:
+
+- Keep public admin registration routes blocked in normal environments.
+- Block registration endpoints such as `/admin/register-admin`, `/admin/register`, and `/admin/registration-info`.
+- Keep `/admin/init` available so a properly initialized Strapi instance can still report setup state.
+- Do not enable admin registration in production unless there is an explicit operational reason and a rollback plan.
+- Verify blocked registration routes return `403` after changing Strapi middleware or admin configuration.
+
+## 20. Definition of done
 
 CMS/frontend integration is done only when:
 
 - schema is valid JSON
 - TypeScript interfaces match schema
 - fetch function populates all displayed fields
+- Strapi fetches use the current no-store policy
 - Astro component renders CMS data and fallback
+- disabled pages and inactive detail records return `404`
 - TH and EN seed data exist
 - relation counts are verified
 - live CMS build passes

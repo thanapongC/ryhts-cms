@@ -223,9 +223,22 @@ Rules:
 - Each URL includes `lastmod`, `changefreq`, `priority`, and hreflang alternates.
 - `lastmod` is generated from the current build/request date.
 - English priority is `0.1` lower than Thai, with minimum `0.1`.
-- Sitemap response cache header is `public, max-age=3600`.
+- Sitemap response uses no-store headers while real-time CMS mode is active.
+- Disabled CMS pages and inactive public records should not be added to sitemap output when sitemap generation is CMS-aware.
 
 When adding a public route, also add it to `sitePages`.
+
+## CMS Visibility And SEO
+
+CMS visibility controls affect SEO output.
+
+Rules:
+
+- Public page single types with `isPageEnabled === false` must return `404`, not a rendered page with fallback SEO.
+- Public detail records with `isActive === false` must return `404`, not a rendered page with stale metadata.
+- Navigation, sitemap, JSON-LD, and related-link surfaces should exclude disabled pages and inactive records when the data is available.
+- Use `seo.noindex` for pages that should render but not appear in search results.
+- Use `isPageEnabled` or `isActive` for content that should not be publicly reachable.
 
 ## Robots.txt Rules
 

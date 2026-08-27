@@ -46,7 +46,33 @@ This project uses Strapi as the source of editable website content and Astro as 
   - `target`
   - dates, unless the exact displayed text is stored as string.
 
-## 4. Reusable component pattern
+## 4. Page visibility and active records
+
+Every public page single type must include:
+
+- `isPageEnabled`: boolean, default `true`, not localized.
+
+Rules:
+
+- Use `isPageEnabled` to hide a public page without deleting content or unpublishing localized records.
+- Put `isPageEnabled` first in the Content Manager edit layout with the label `Page visible on website`.
+- Frontend pages must return `404` when CMS is online and the current locale record has `isPageEnabled === false`.
+- Missing or `null` `isPageEnabled` values should be treated as enabled for backward compatibility with older records.
+- Do not use static fallback content to render a page that CMS explicitly disabled.
+
+Every public repeatable record that can appear in listings, navigation, relation cards, or detail routes should include:
+
+- `isActive`: boolean, default `true`, not localized.
+- `sortOrder`: integer, default `0`, when the frontend controls display order from CMS.
+
+Rules:
+
+- Use `isActive` to hide records without deleting content.
+- Frontend collection queries and relation rendering must filter `isActive !== false`.
+- Product and blog detail pages must return `404` for inactive records instead of rendering fallback content.
+- People and testimonial records should expose `position` clearly in the editor layout when the frontend displays it.
+
+## 5. Reusable component pattern
 
 Use components for repeatable or grouped page content.
 
@@ -94,7 +120,7 @@ Component namespace rules:
   - Example: `shared.contact-info`, `shared.seo-meta`
 - Do not place page-only labels in `shared.*`; this makes later editor changes harder to reason about.
 
-## 5. Relation pattern
+## 6. Relation pattern
 
 Use relations when editors should connect real CMS records instead of typing URLs manually.
 
@@ -112,7 +138,7 @@ Preferred relation rules:
 - Relation fields must be populated in `web/src/lib/strapi.ts`.
 - Relation display should use a useful main field such as `name`, `title`, or `pageTitle`.
 
-## 6. SEO component rule
+## 7. SEO component rule
 
 Every public page schema should include one page-level SEO component.
 
@@ -194,21 +220,22 @@ The frontend layout supports:
 
 Canonical URLs are guarded in frontend code so CMS mistakes do not create wrong-locale canonical output.
 
-## 7. Editor UX / field position
+## 8. Editor UX / field position
 
 Field order should match how the frontend page is read.
 
 Recommended page order:
 
-1. Hero fields
-2. Status, trust, or summary fields
-3. Main body section components
-4. Relations used by those sections
-5. CTA/form fields
-6. Legal/contact fields
-7. Related links
-8. Legacy fallback fields, if retained for backward compatibility
-9. SEO
+1. `isPageEnabled`
+2. Hero fields
+3. Status, trust, or summary fields
+4. Main body section components
+5. Relations used by those sections
+6. CTA/form fields
+7. Legal/contact fields
+8. Related links
+9. Legacy fallback fields, if retained for backward compatibility
+10. SEO
 
 Recommended component order:
 
@@ -226,9 +253,9 @@ For section components, use this order instead:
 4. CTA labels
 5. display/tone fields
 
-Use `scripts/configure-cms-editor-layouts.mjs` after schema changes to apply Content Manager positions.
+Use `npm run cms:layouts` after schema changes to apply Content Manager positions. The script configures page visibility controls, repeatable record active/order fields, component labels, and list/edit layouts.
 
-## 8. Frontend integration rule
+## 9. Frontend integration rule
 
 Every schema field rendered on the website must be represented in:
 
@@ -248,7 +275,7 @@ Frontend list rendering must:
 
 - filter `isActive !== false`
 - sort by `sortOrder`
-- fallback to static/i18n content when CMS is missing
+- fallback to static/i18n content only when CMS is unavailable or the page does not provide CMS-managed records
 
 Frontend relation rendering must:
 
@@ -256,7 +283,7 @@ Frontend relation rendering must:
 - normalize locale URLs for TH/EN
 - avoid duplicating `/th/` or `/en/`
 
-## 9. Seed data rule
+## 10. Seed data rule
 
 If a schema is used by a page, provide a seed script when possible.
 
@@ -264,6 +291,8 @@ Seed scripts should:
 
 - create TH and EN data
 - publish single types
+- set public page `isPageEnabled` to `true` unless intentionally testing hidden-page behavior
+- set public repeatable records `isActive` to `true` unless intentionally testing hidden-record behavior
 - include realistic mock content
 - create or link relations
 - avoid stale duplicate single-type records
@@ -278,17 +307,18 @@ Current seed scripts include:
 - `scripts/seed-free-trial-page.mjs`
 - `scripts/seed-support-page.mjs`
 
-## 10. Verification checklist
+## 11. Verification checklist
 
 After every schema/frontend integration:
 
 1. Validate JSON schemas.
 2. Run `node --check` on changed scripts.
-3. Run `node scripts/configure-cms-editor-layouts.mjs`.
+3. Run `npm run cms:layouts`.
 4. Seed or update mock data.
 5. Verify API response with populated relations/components.
 6. Run `npm --prefix web run build`.
 7. Inspect generated HTML for real CMS text and relation URLs.
+8. If visibility fields changed, verify disabled pages or inactive records return `404`.
 
 Minimum API verification should confirm:
 
@@ -296,8 +326,10 @@ Minimum API verification should confirm:
 - expected component counts
 - expected relation counts
 - localized TH and EN records are populated
+- `isPageEnabled` exists on public page single types
+- `isActive` exists on public repeatable records
 
-## 11. Exported site setting schemas
+## 12. Exported site setting schemas
 
 This section exports current non-page setting schemas only. It intentionally excludes all `Page - ...` single types and page-specific schemas.
 
@@ -451,7 +483,7 @@ Rules:
 - Normalize manual URLs for TH/EN in the frontend.
 - Keep navigation labels here only when they are shared across the site; page-specific CTA labels belong on the relevant page schema.
 
-## 12. Current design patterns by page
+## 13. Current design patterns by page
 
 ### Free Trial
 
